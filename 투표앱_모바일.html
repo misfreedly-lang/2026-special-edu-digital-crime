@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>디지털 추리 · 실시간 투표</title>
+<!-- Firebase JS SDK (Compat Mode) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{font-family:"Apple SD Gothic Neo","Pretendard","Malgun Gothic",system-ui,sans-serif;background:#0B0F16;color:#EAEEF3;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 16px 36px;user-select:none}
+  .header{text-align:center;margin-bottom:20px}
+  .case-tag{font-family:ui-monospace,Consolas,monospace;color:#F2B544;letter-spacing:.2em;font-size:12px;margin-bottom:4px;font-weight:700}
+  .brand-title{font-weight:900;font-size:22px;color:#FFF;letter-spacing:-0.5px}
+  
+  .card{width:100%;max-width:440px;background:#161D28;border:1.5px solid #2A323D;border-radius:20px;padding:24px 20px;box-shadow:0 16px 45px rgba(0,0,0,.5);transition:all .3s ease}
+  
+  .q-text{font-size:21px;font-weight:800;line-height:1.35;margin-bottom:20px;color:#FFF}
+  .opts-container{display:flex;flex-direction:column;gap:12px}
+  
+  .opt-btn{width:100%;text-align:left;font-size:17px;font-weight:700;color:#EAEEF3;background:#0E141C;border:2px solid #2A323D;border-radius:14px;padding:16px 18px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .15s ease}
+  .opt-btn:active{transform:scale(.98)}
+  .opt-btn.sel{border-color:#F2B544;background:rgba(242,181,68,.14);color:#F2B544;box-shadow:0 0 20px rgba(242,181,68,.15)}
+  .opt-btn .ck{font-weight:900;opacity:0;font-size:18px}.opt-btn.sel .ck{opacity:1}
+  
+  .status-msg{margin-top:18px;text-align:center;color:#43C6A0;font-weight:700;font-size:14.5px;min-height:22px;display:flex;align-items:center;justify-content:center;gap:6px}
+  
+  .wait-box{text-align:center;padding:36px 12px;color:#8B97A4}
+  .wait-icon{font-size:42px;margin-bottom:14px;animation:float 3s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  .wait-title{font-size:18px;font-weight:700;color:#D5DD8E;line-height:1.45}
+  .wait-sub{font-size:13.5px;color:#6FA8D6;margin-top:8px;font-weight:500}
+  
+  .footer{margin-top:auto;padding-top:24px;color:#5A646F;font-size:11.5px;font-family:ui-monospace,Consolas,monospace;letter-spacing:.05em;text-align:center}
+  .live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#43C6A0;margin-right:6px;vertical-align:middle;box-shadow:0 0 8px #43C6A0;animation:blink 1.2s infinite}
+  @keyframes blink{50%{opacity:.3}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="case-tag">DIGITAL DETECTIVE · REALTIME VOTE</div>
+  <div class="brand-title">우리 반 그 아이 · 현장 참여</div>
+</div>
+
+<div class="card" id="mainCard">
+  <div class="wait-box">
+    <div class="wait-icon">📡</div>
+    <div class="wait-title">파이어베이스 실시간 동기화 연결 중…</div>
+    <div class="wait-sub">잠시만 기다려 주세요</div>
+  </div>
+</div>
+
+<div class="footer">
+  <span class="live-dot"></span>ROOM: <span id="roomDisplay">NOSUNG</span> · 100% 익명 처리 (개인정보 미수집)
+</div>
+
+<script>
+  // URL 쿼리 파라미터에서 room 추출 (기본값: NOSUNG)
+  const urlParams = new URLSearchParams(window.location.search);
+  const ROOM = urlParams.get('room') || 'NOSUNG';
+  document.getElementById('roomDisplay').textContent = ROOM;
+
+  // 익명 사용자 식별 토큰 (브라우저별 1개 부여)
+  let userToken = localStorage.getItem("dd_user_token");
+  if(!userToken){
+    userToken = "u_" + Date.now() + "_" + Math.random().toString(36).substring(2, 9);
+    localStorage.setItem("dd_user_token", userToken);
+  }
+
+  // Firebase Realtime Database 초기화
+  const firebaseConfig = {
+    databaseURL: "https://special-edu-teather-class-default-rtdb.asia-southeast1.firebasedatabase.app"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const mainCard = document.getElementById('mainCard');
+  let currentActive = null;
+  let isSubmitting = false;
+
+  // 질문 매핑 객체
+  const QUESTION_TEXTS = {
+    "A1": "여기까지 — 위험 신호가 있습니까?",
+    "A2": "이 ‘상담 선생님’의 정체는?",
+    "C1": "준호의 상태, 한 단어로?",
+    "C2": "이제 무엇으로 보입니까?",
+    "C3": "스스로 보냈는데, 피해자일까요?",
+    "D1": "지금 누구를 보호하고 싶나요?",
+    "D2": "민수를 어떻게 해야 할까요?",
+    "D3": "민수는 가해자? 피해자? 둘 다?"
+  };
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
+  }
+
+  // Firebase /rooms/{ROOM}/active 경로를 실시간 수신 (Websocket 0.1초 소목 연동)
+  db.ref('rooms/' + ROOM + '/active').on('value', (snapshot) => {
+    const active = snapshot.val();
+    renderUI(active);
+  });
+
+  function renderUI(active) {
+    if (!active || !active.open || !active.q) {
+      currentActive = null;
+      mainCard.innerHTML = `
+        <div class="wait-box">
+          <div class="wait-icon">🔎</div>
+          <div class="wait-title">다음 단서를 기다리는 중입니다</div>
+          <div class="wait-sub">강사 화면을 주목해 주세요</div>
+        </div>`;
+      return;
+    }
+
+    currentActive = active;
+    const qCode = active.q;
+    const qTitle = QUESTION_TEXTS[qCode] || active.q;
+    const opts = (active.opts || "").split("|").filter(Boolean);
+    const myChoice = localStorage.getItem(`dd_v_${ROOM}_${qCode}`) || "";
+
+    let html = `<div class="q-text">${escapeHtml(qTitle)}</div><div class="opts-container">`;
+    opts.forEach(opt => {
+      const isSel = (opt === myChoice);
+      html += `
+        <button class="opt-btn ${isSel ? 'sel' : ''}" onclick="submitVote('${escapeHtml(opt)}')">
+          <span>${escapeHtml(opt)}</span>
+          <span class="ck">✓</span>
+        </button>`;
+    });
+    html += `</div>
+      <div class="status-msg" id="statusMsg">
+        ${myChoice ? '✔ 제출 완료 (다시 누르면 변경 가능)' : '원하시는 항목을 선택해 주세요'}
+      </div>`;
+
+    mainCard.innerHTML = html;
+  }
+
+  // 투표 제출 함수 (Firebase에 즉시 저장)
+  window.submitVote = function(choice) {
+    if (!currentActive || !currentActive.q || isSubmitting) return;
+    isSubmitting = true;
+
+    const qCode = currentActive.q;
+    const statusMsg = document.getElementById('statusMsg');
+    if (statusMsg) statusMsg.textContent = "전송 중…";
+
+    // 1) 로컬 스토리지 보존
+    localStorage.setItem(`dd_v_${ROOM}_${qCode}`, choice);
+
+    // 2) Firebase DB에 기록: /rooms/{ROOM}/votes/{qCode}/{userToken} = choice
+    db.ref(`rooms/${ROOM}/votes/${qCode}/${userToken}`).set({
+      choice: choice,
+      timestamp: firebase.database.ServerValue.TIMESTAMP
+    }).then(() => {
+      isSubmitting = false;
+      // 버튼 UI 즉시 반영
+      const buttons = mainCard.querySelectorAll('.opt-btn');
+      buttons.forEach(btn => {
+        const text = btn.querySelector('span').textContent;
+        if (text === choice) {
+          btn.classList.add('sel');
+        } else {
+          btn.classList.remove('sel');
+        }
+      });
+      if (statusMsg) statusMsg.textContent = "✔ 제출 완료 (다시 누르면 변경 가능)";
+    }).catch((err) => {
+      isSubmitting = false;
+      console.error(err);
+      if (statusMsg) statusMsg.textContent = "⚠ 전송 실패. 다시 시도해 주세요.";
+    });
+  };
+</script>
+</body>
+</html>

@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>장애학생 디지털 성범죄 예방 - 발표자료 v3 (Chapter Ⅲ)</title>
+  <!-- Google Fonts: Noto Sans KR, Inter, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================
+       DESIGN SYSTEM V3 - FORENSIC NOIR V3 THEME
+       ========================================== */
+    :root {
+      --bg-slate: #0D121D;          /* 주 배경 (딥 슬레이트 네이비) */
+      --bg-navy: #080C14;           /* 보조 배경 (딥 네이비) */
+      --bg-card: #151D2A;           /* 어두운 카드 배경 */
+      --bg-card-border: rgba(255, 183, 51, 0.25);
+      
+      --accent-gold: #FFB733;        /* 강조 앰버 Gold */
+      --accent-gold-glow: rgba(255, 183, 51, 0.35);
+      --signal-red: #FF4D4F;         /* 경고 크림슨 Red */
+      --signal-red-glow: rgba(255, 77, 79, 0.4);
+      --vibrant-teal: #36CFC9;       /* 보호 Vibrant Teal */
+      --vibrant-teal-glow: rgba(54, 207, 201, 0.35);
+      
+      --text-main: #F5F7FA;          /* 본문 오프화이트 (명암비 극대화) */
+      --text-sub: #C4D1DF;           /* 서브 캡션 (Soft Ice Blue) */
+      --text-dark: #6C7A89;
+      
+      --font-family: 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #05080E;
+      color: var(--text-main);
+      font-family: var(--font-family);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* 16:9 Presentation Stage Container (Venue Screen Optimized: 1920x1080) */
+    #stage-container {
+      position: relative;
+      width: 100vw;
+      height: 56.25vw; /* 16:9 ratio */
+      max-height: 100vh;
+      max-width: 177.78vh; /* 16:9 ratio */
+      background-color: var(--bg-slate);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Forensic Corner Brackets Motif */
+    .corner-bracket {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-color: rgba(255, 183, 51, 0.4);
+      border-style: solid;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .bracket-tl { top: 20px; left: 24px; border-width: 2px 0 0 2px; }
+    .bracket-tr { top: 20px; right: 24px; border-width: 2px 2px 0 0; }
+    .bracket-bl { bottom: 60px; left: 24px; border-width: 0 0 2px 2px; }
+    .bracket-br { bottom: 60px; right: 24px; border-width: 0 2px 2px 0; }
+
+    /* Global Header Area */
+    header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 56px;
+      padding: 16px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      background: linear-gradient(to bottom, rgba(13, 18, 29, 0.95), rgba(13, 18, 29, 0));
+    }
+
+    .header-logo {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-tag {
+      background: rgba(255, 183, 51, 0.15);
+      color: var(--accent-gold);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      border: 1px solid rgba(255, 183, 51, 0.3);
+    }
+
+    /* Chapter Indicator Dots */
+    .chapter-indicators {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .indicator-dot {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      transition: all 0.3s ease;
+    }
+
+    .indicator-dot .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .indicator-dot.active {
+      color: var(--accent-gold);
+    }
+
+    .indicator-dot.active .dot {
+      background-color: var(--accent-gold);
+      box-shadow: 0 0 10px var(--accent-gold);
+      transform: scale(1.3);
+    }
+
+    /* Main Viewport & Slide Deck */
+    #slide-viewport {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 70px 80px 80px 80px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      transform: scale(0.98);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+    }
+
+    /* Typography & Utilities v3 */
+    .highlight-gold { color: var(--accent-gold); }
+    .highlight-red { color: var(--signal-red); }
+    .highlight-teal { color: var(--vibrant-teal); }
+    
+    .title-large {
+      font-size: 3.4rem;
+      font-weight: 900;
+      line-height: 1.25;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+    }
+
+    .title-medium {
+      font-size: 2.4rem;
+      font-weight: 800;
+      line-height: 1.3;
+      margin-bottom: 16px;
+    }
+
+    .subtitle {
+      font-size: 1.35rem;
+      color: var(--text-sub);
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    /* Navigation Footer Bar */
+    footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 52px;
+      padding: 0 36px;
+      background: rgba(8, 12, 20, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 20;
+    }
+
+    .slide-counter {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--text-sub);
+      letter-spacing: 1px;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-main);
+      padding: 6px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav:hover {
+      background: var(--accent-gold);
+      color: #000;
+      border-color: var(--accent-gold);
+    }
+
+    .btn-toggle-notes {
+      background: rgba(255, 183, 51, 0.12);
+      border: 1px solid rgba(255, 183, 51, 0.35);
+      color: var(--accent-gold);
+    }
+
+    /* Presenter Notes Overlay Panel */
+    #notes-panel {
+      position: absolute;
+      bottom: 52px;
+      left: 0;
+      width: 100%;
+      max-height: 180px;
+      background: rgba(7, 11, 18, 0.95);
+      border-top: 2px solid var(--accent-gold);
+      padding: 16px 36px;
+      overflow-y: auto;
+      z-index: 15;
+      display: none;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.7);
+    }
+
+    #notes-panel.visible {
+      display: block;
+    }
+
+    .notes-header {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .notes-content {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #D1D9E0;
+    }
+
+    /* ==========================================
+       CHAPTER III SPECIFIC STYLES
+       ========================================== */
+    .slide-ch-cover {
+      background: var(--bg-navy);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 60px;
+      padding-left: 120px;
+    }
+
+    .roman-num {
+      font-family: var(--font-mono);
+      font-size: 10rem;
+      font-weight: 900;
+      color: var(--accent-gold);
+      line-height: 1;
+      text-shadow: 0 0 40px var(--accent-gold-glow);
+    }
+
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      margin-top: 24px;
+    }
+
+    .split-card {
+      border-radius: 16px;
+      padding: 36px 32px;
+      position: relative;
+    }
+
+    .split-card.muted {
+      background: var(--bg-card);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .split-card.glowing {
+      background: rgba(255,183,51,0.06);
+      border: 2px solid rgba(255,183,51,0.45);
+      box-shadow: 0 0 30px rgba(255,183,51,0.12);
+    }
+
+    .split-tag {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    .split-tag.muted { background: rgba(255,255,255,0.08); color: var(--text-sub); }
+    .split-tag.glow { background: rgba(255,183,51,0.15); color: var(--accent-gold); border: 1px solid rgba(255,183,51,0.4); }
+
+    .warning-card-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 40px;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 16px;
+      padding: 40px;
+      margin-top: 24px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .progress-tracker-badge {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+      background: rgba(0,0,0,0.4);
+      padding: 4px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 183, 51, 0.3);
+    }
+
+    .warning-icon-box {
+      height: 200px;
+      border-radius: 12px;
+      background: rgba(255, 183, 51, 0.08);
+      border: 1px solid rgba(255, 183, 51, 0.2);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .timeline-dual-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    .timeline-column {
+      background: var(--bg-card);
+      border-radius: 14px;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .timeline-column.danger {
+      border-color: rgba(255,77,79,0.5);
+      background: rgba(255,77,79,0.04);
+    }
+
+    .timeline-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.08);
+      font-size: 1.05rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="stage-container">
+    <!-- Forensic Corner Brackets Motif -->
+    <div class="corner-bracket bracket-tl"></div>
+    <div class="corner-bracket bracket-tr"></div>
+    <div class="corner-bracket bracket-bl"></div>
+    <div class="corner-bracket bracket-br"></div>
+
+    <!-- Header Bar -->
+    <header>
+      <div class="header-logo">
+        <span>공주대 1정 연수 v3</span>
+        <span class="header-tag">CHAPTER Ⅲ</span>
+      </div>
+
+      <div class="chapter-indicators">
+        <div class="indicator-dot" id="ind-part1">
+          <div class="dot"></div>
+          <span>오프닝</span>
+        </div>
+        <div class="indicator-dot" id="ind-chap1">
+          <div class="dot"></div>
+          <span>CH.Ⅰ</span>
+        </div>
+        <div class="indicator-dot" id="ind-chap2">
+          <div class="dot"></div>
+          <span>CH.Ⅱ</span>
+        </div>
+        <div class="indicator-dot active" id="ind-chap3">
+          <div class="dot"></div>
+          <span>CH.Ⅲ</span>
+        </div>
+        <div class="indicator-dot" id="ind-chap4">
+          <div class="dot"></div>
+          <span>CH.Ⅳ</span>
+        </div>
+        <div class="indicator-dot" id="ind-chap5">
+          <div class="dot"></div>
+          <span>CH.Ⅴ</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Slide Deck Viewport -->
+    <div id="slide-viewport">
+
+      <!-- p26 · CHAPTER Ⅲ Cover -->
+      <div class="slide slide-ch-cover active" data-chapter="chap3" data-notes="『(톤 낮추고 진지하게) 이제 범죄 피해 혹은 가해자로 장애학생이 왜 더 취약할 수 밖에 없는가에 대해서 알아보려고 합니다.』">
+        <div class="roman-num">Ⅲ</div>
+        <div>
+          <div style="font-family: var(--font-mono); color: var(--accent-gold); font-size: 1.2rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 8px;">CHAPTER Ⅲ</div>
+          <h2 class="title-large" style="margin-bottom: 0;">장애학생이 왜<br><span class="highlight-gold">더 취약한가</span></h2>
+        </div>
+      </div>
+
+      <!-- p27 · 개인의 결함이 아니라, 악용되는 '구조'에 초점 -->
+      <div class="slide" data-chapter="chap3" data-notes="『장애학생이 범죄 피해·가해자가 되었을 때 장애 때문이라고 속단하면 구조적 해결책을 제안하기 어렵습니다. 개인 결함이 아니라 가해자가 파고드는 4가지 구조적 빈틈에 초점을 맞추겠습니다.』">
+        <h2 class="title-medium">개인의 결함이 아니라, <span class="highlight-gold">악용되는 '구조'</span>에 초점</h2>
+        <p class="subtitle">'장애 때문' 속단 탈피 ⟶ 가해자가 파고드는 4가지 구조적 빈틈 분석</p>
+        <div class="split-grid">
+          <div class="split-card muted">
+            <div class="split-tag muted">❌ 개인 결함 프레임</div>
+            <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-sub); margin-bottom: 12px;">"장애학생 특성 때문이다"</div>
+            <p style="color: var(--text-dark); line-height: 1.6;">판단력 부족, 경계심 부족 등 개인의 탓으로 돌려 낙인과 원망만 남기고 구조적 해결책을 제시하지 못함</p>
+          </div>
+          <div class="split-card glowing">
+            <div class="split-tag glow">⭕ 취약성 구조 프레임</div>
+            <div style="font-size: 1.6rem; font-weight: 800; color: var(--accent-gold); margin-bottom: 12px;">"취약한 환경 구조가 악용된다"</div>
+            <p style="color: var(--text-main); line-height: 1.6;">사회적 고립, 경계부재, 위계순응, 일상의 의존성이라는 4가지 구조적 빈틈을 교사와 학교가 메워주어야 함</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p28 · 취약성 ① 사회적 고립과 관계 욕구 -->
+      <div class="slide" data-chapter="chap3" data-notes="『관계의 고립입니다. 또래 관계가 좁고 고립될수록 온라인의 얄팍한 호의에 목마르게 됩니다. 가해자는 외로움이라는 구조를 파고듭니다.』">
+        <h2 class="title-medium">취약성 ① <span class="highlight-gold">사회적 고립과 관계 욕구</span></h2>
+        <div class="warning-card-layout">
+          <div class="progress-tracker-badge">취약성 1 / 4</div>
+          <div class="warning-icon-box">
+            <div style="font-size: 4rem;">🤝</div>
+            <div style="font-weight: 800; color: var(--accent-gold);">관계의 빈틈</div>
+          </div>
+          <div>
+            <h3 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 16px;">현실 또래 관계의 고립</h3>
+            <p style="font-size: 1.3rem; color: var(--text-sub); line-height: 1.7;">
+              학교 현장에서 친구 관계가 좁고 외로움에 노출된 장애학생일수록<br>
+              온라인 공간에서 접근하는 가해자의 <b style="color: var(--accent-gold);">얄팍한 호의와 친밀함</b>에 쉽게 마음을 열고 무너집니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p29 · 취약성 ② 동의·경계 개념의 부재 -->
+      <div class="slide" data-chapter="chap3" data-notes="『경계 교육의 부재입니다. "싫다"고 명확히 거절할 기회와 경계 설정 경험이 없어 무리한 요구 앞에서도 멈출 선을 찾지 못합니다.』">
+        <h2 class="title-medium">취약성 ② <span class="highlight-gold">동의·경계 개념의 부재</span></h2>
+        <div class="warning-card-layout">
+          <div class="progress-tracker-badge">취약성 2 / 4</div>
+          <div class="warning-icon-box">
+            <div style="font-size: 4rem;">🛑</div>
+            <div style="font-weight: 800; color: var(--accent-gold);">경계의 부재</div>
+          </div>
+          <div>
+            <h3 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 16px;">"싫다"고 거절해 본 경험의 결여</h3>
+            <p style="font-size: 1.3rem; color: var(--text-sub); line-height: 1.7;">
+              자신의 몸과 사진에 대해 스스로 <b style="color: var(--accent-gold);">'어디까지 허용할 것인가'</b>에 대한 경계 교육 부족으로<br>
+              가해자의 성적 침해 요구에도 거절하지 못하고 무비판적으로 수용하게 됩니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p30 · 취약성 ③ 위계·위력에 대한 취약성 -->
+      <div class="slide" data-chapter="chap3" data-notes="『순응을 강요받아 온 역사입니다. 늘 지시에 따르던 아이는 권력을 쥔 가해자의 강압적 요구를 거절하지 못합니다. 순응이라는 생존 방식이 악용됩니다.』">
+        <h2 class="title-medium">취약성 ③ <span class="highlight-gold">위계·위력에 대한 취약성</span></h2>
+        <div class="warning-card-layout">
+          <div class="progress-tracker-badge">취약성 3 / 4</div>
+          <div class="warning-icon-box">
+            <div style="font-size: 4rem;">⚠️</div>
+            <div style="font-weight: 800; color: var(--signal-red);">순응의 악용</div>
+          </div>
+          <div>
+            <h3 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 16px;">늘 지시에 맞춰온 '순응'의 생존 방식</h3>
+            <p style="font-size: 1.3rem; color: var(--text-sub); line-height: 1.7;">
+              주변 어른이나 선배, 권력자에게 무조건 따라야 했던 생활 습관이 착종되어<br>
+              권력을 쥔 가해자의 강압적이거나 조종적인 요구를 <b style="color: var(--signal-red);">거절할 엄두를 내지 못합니다.</b>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p31 · 취약성 ④ 일상적 의존성 -->
+      <div class="slide" data-chapter="chap3" data-notes="『일상적 의존성입니다. 도움에 기대어야 하는 환경에서 가해자가 '도와줄 유일한 구원자'로 위장할 때 방어벽이 무너집니다.』">
+        <h2 class="title-medium">취약성 ④ <span class="highlight-gold">일상적 의존성</span></h2>
+        <div class="warning-card-layout">
+          <div class="progress-tracker-badge">취약성 4 / 4</div>
+          <div class="warning-icon-box">
+            <div style="font-size: 4rem;">🛡️</div>
+            <div style="font-weight: 800; color: var(--accent-gold);">의존의 허점</div>
+          </div>
+          <div>
+            <h3 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 16px;">도움을 주는 유일한 보호자로 위장</h3>
+            <p style="font-size: 1.3rem; color: var(--text-sub); line-height: 1.7;">
+              일상생활에서 누군가의 도움에 의존해야 하는 특성을 악용하여<br>
+              가해자가 친절한 <b style="color: var(--accent-gold);">'구원자' 또는 '조력자'</b>의 가면을 쓰고 접근할 때 방어막이 완전히 무너집니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p32 · 피해 후 대처, 무엇이 다른가 -->
+      <div class="slide" data-chapter="chap3" data-notes="『비장애 학생은 직관적으로 범죄임을 알고 계정을 잠그고 신고합니다. 장애학생은 무슨 일이 일어났는지조차 모릅니다. 그래서 피해가 더 늦게 발견됩니다.』">
+        <h2 class="title-medium">피해 후 대처, <span class="highlight-gold">무엇이 다른가</span></h2>
+        <p class="subtitle">비장애 학생 vs 장애 학생의 피해 인지 및 신고 대응 타임라인 대조</p>
+        <div class="timeline-dual-grid">
+          <div class="timeline-column">
+            <div style="font-size: 1.2rem; font-weight: 800; color: var(--vibrant-teal); margin-bottom: 16px;">비장애 학생 (빠른 차단)</div>
+            <div class="timeline-step"><span>1️⃣</span> <b>즉시 범죄 인지</b> — "이상하다, 신고해야지"</div>
+            <div class="timeline-step"><span>2️⃣</span> <b>계정 차단 및 캡처</b> — 증거 확보 및 대화방 이탈</div>
+            <div class="timeline-step"><span>3️⃣</span> <b>부모·교사 알림</b> — 적극적인 구제 요청</div>
+            <div class="timeline-step"><span>4️⃣</span> <b>초기 단기 수사 착수</b> — 빠른 피해 최소화</div>
+          </div>
+          <div class="timeline-column danger">
+            <div style="font-size: 1.2rem; font-weight: 800; color: var(--signal-red); margin-bottom: 16px;">장애 학생 (발견 지연 ⚠️)</div>
+            <div class="timeline-step"><span>1️⃣</span> <b>심각성 미인지</b> — 칭찬이나 장난으로 오해</div>
+            <div class="timeline-step"><span>2️⃣</span> <b>휴대폰 집착 및 불안</b> — 알림에 극심한 행동 변화</div>
+            <div class="timeline-step"><span>3️⃣</span> <b>피해 진술의 한계</b> — 정황 표현에 어려움</div>
+            <div class="timeline-step"><span>4️⃣</span> <b>장기간 은밀한 누적</b> — 심각한 상태에서 뒤늦게 발견</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- p33 · 발견 가능성은 곁에 있는 우리의 관심과 도움 -->
+      <div class="slide" data-chapter="chap3" style="text-align: center; align-items: center;" data-notes="『스스로 못 지키면, 그 신호를 읽어내야 하는 것은 곁에 있는 우리의 도움 뿐입니다.』">
+        <div style="background: rgba(255, 183, 51, 0.1); border: 1px solid var(--accent-gold); padding: 8px 24px; border-radius: 30px; color: var(--accent-gold); font-weight: 800; margin-bottom: 24px;">
+          KEY LESSON FOR TEACHERS
+        </div>
+        <h2 style="font-size: 3.2rem; font-weight: 900; line-height: 1.35; margin-bottom: 24px;">
+          스스로 못 지키면 ⟶ <br>
+          <span class="highlight-gold">곁에 있는 우리의 도움만이 유일하다</span>
+        </h2>
+        <p style="font-size: 1.4rem; color: var(--text-sub); max-width: 800px; line-height: 1.6;">
+          학생에게 스스로 자기 보호 책임을 묻는 것은 한계가 있습니다.<br>
+          교사가 미세한 변화와 구조 요청 신호를 읽어내는 안목을 가져야 합니다.
+        </p>
+      </div>
+
+      <!-- p34 · '인식 없는 가해'의 늪 -->
+      <div class="slide" data-chapter="chap3" data-notes="『뚜렷한 인식 없이 가해자가 되기도 합니다. "재밌는 사진이니 올려보라"는 부추김에 응하거나, 친구 놀이라는 제안에 가족 사진을 딥페이크 재료로 공유하는 등 인식 없는 가해자로 빠져듭니다.』">
+        <h2 class="title-medium"><span class="highlight-red">'인식 없는 가해'</span>의 늪</h2>
+        <p class="subtitle">범죄 의도 없이 또래 부추김이나 놀이로 오인하여 공범이 되는 위험 구조</p>
+        <div class="split-grid" style="margin-top: 28px;">
+          <div class="split-card muted" style="border-color: rgba(255, 77, 79, 0.4);">
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--signal-red); margin-bottom: 12px;">⚠️ 사례 A. 부추김에 의한 유포</div>
+            <p style="font-size: 1.15rem; color: var(--text-main); line-height: 1.6;">
+              "재밌는 사진이니 톡방에 올리면 선물을 줄게"라는 또래의 부추김과 미끼에 속아 합성 사진을 무심코 단톡방에 게시
+            </p>
+          </div>
+          <div class="split-card muted" style="border-color: rgba(255, 77, 79, 0.4);">
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--signal-red); margin-bottom: 12px;">⚠️ 사례 B. 사진 제공 및 공유</div>
+            <p style="font-size: 1.15rem; color: var(--text-main); line-height: 1.6;">
+              범죄 딥페이크 재료인 줄 모르고 '친구 놀이'라는 말에 가족이나 지인의 사진을 타인에게 전송하여 공범으로 전환
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p35 · 단죄가 아니라 '교육적 개입'이 필요 -->
+      <div class="slide" data-chapter="chap3" data-notes="『가해자를 '나쁜 놈'이라고만 보면 처벌밖에 답이 없습니다. 인식 없는 가해를 고려한다면 무엇이 왜 범죄인지 이해시키고 고통을 알려주는 교육적 개입이 필요합니다.』">
+        <h2 class="title-medium">단죄와 처벌을 넘어 ⟶ <span class="highlight-gold">교육적 개입</span></h2>
+        <div class="split-grid">
+          <div class="split-card muted">
+            <div class="split-tag muted">❌ 단순 낙인과 처벌</div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-sub); margin-bottom: 12px;">"나쁜 아이이니 처벌하자"</div>
+            <p style="color: var(--text-dark); line-height: 1.6;">왜 잘못되었는지 깨닫지 못한 채 처벌만 받을 경우, 또 다른 범죄 표적이 되거나 재발 위험성이 높음</p>
+          </div>
+          <div class="split-card glowing">
+            <div class="split-tag glow">⭕ 이해와 선도 중심 교육</div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent-gold); margin-bottom: 12px;">"무엇이 왜 범죄인지 알려주자"</div>
+            <p style="color: var(--text-main); line-height: 1.6;">상대방이 겪는 고통을 이해시키고, 디지털 경계와 올바른 행동 방식을 가르치는 교육적 접근 병행</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p36 · 피해와 가해가 한 사람 안에 겹친다 -->
+      <div class="slide" data-chapter="chap3" data-notes="『피해자였다가 가해자로 변하는 경우도 있습니다. 약점 잡힌 피해자였다가 "사진 유포를 막으려면 다른 친구 신상이나 사진을 가져오라"는 협박에 굴복해 겹지인방 가해자로 전환되기도 합니다.』">
+        <h2 class="title-medium">피해와 가해가 <span class="highlight-red">한 사람 안에 겹친다</span></h2>
+        <p class="subtitle">협박에 굴복하여 피해자에서 가해자로 전환되는 복합적 구조</p>
+        <div style="background: var(--bg-card); border: 1px solid var(--bg-card-border); border-radius: 16px; padding: 36px; margin-top: 24px; display: flex; align-items: center; justify-content: space-around;">
+          <div style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 8px;">🛡️</div>
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--accent-gold);">1. 약점 잡힌 피해자</div>
+            <div style="font-size: 0.95rem; color: var(--text-sub); margin-top: 6px;">음란사진 요구에 응함</div>
+          </div>
+          <div style="font-size: 2.5rem; color: var(--signal-red);">⟶</div>
+          <div style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 8px;">💥</div>
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--signal-red);">2. 추가 유포 협박</div>
+            <div style="font-size: 0.95rem; color: var(--text-sub); margin-top: 6px;">"다른 친구 사진 가져와"</div>
+          </div>
+          <div style="font-size: 2.5rem; color: var(--signal-red);">⟶</div>
+          <div style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 8px;">⚠️</div>
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--signal-red);">3. 가해자로 전환</div>
+            <div style="font-size: 0.95rem; color: var(--text-sub); margin-top: 6px;">'겹지인방' 공범 복제</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Presenter Notes Overlay Panel -->
+    <div id="notes-panel">
+      <div class="notes-header">
+        <span>🎙️ 강사 발표자 노트 (스크립트)</span>
+      </div>
+      <div class="notes-content" id="notes-content">
+        슬라이드 메모가 여기에 표시됩니다.
+      </div>
+    </div>
+
+    <!-- Navigation Footer Controls -->
+    <footer>
+      <div class="slide-counter">
+        SLIDE <span id="current-slide-num" class="highlight-gold">01</span> / 11
+      </div>
+
+      <div class="nav-controls">
+        <button class="btn-nav btn-toggle-notes" onclick="openPresenterView()" title="노트북/빔프로젝터 듀얼 스크린 발표자 모드 (단축키 P)">
+          🖥️ 발표자 모드 (듀얼스크린)
+        </button>
+        <button class="btn-nav btn-toggle-notes" onclick="toggleNotes()">
+          💬 하단 노트 토글
+        </button>
+        <button class="btn-nav" onclick="prevSlide()">
+          ◀ 이전
+        </button>
+        <button class="btn-nav" onclick="nextSlide()">
+          다음 ▶
+        </button>
+        <button class="btn-nav" onclick="toggleFullscreen()">
+          ⛶ 전체화면
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // ==========================================
+    // PRESENTATION & DUAL-SCREEN ENGINE SCRIPT V3
+    // ==========================================
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let currentIndex = 0;
+    
+    const slideNumElem = document.getElementById('current-slide-num');
+    const notesPanel = document.getElementById('notes-panel');
+    const notesContent = document.getElementById('notes-content');
+    
+    const indPart1 = document.getElementById('ind-part1');
+    const indChap1 = document.getElementById('ind-chap1');
+    const indChap2 = document.getElementById('ind-chap2');
+    const indChap3 = document.getElementById('ind-chap3');
+    const indChap4 = document.getElementById('ind-chap4');
+    const indChap5 = document.getElementById('ind-chap5');
+
+    // Detect if running inside an iframe (Presenter View preview mode)
+    const isInsideIframe = (window !== window.top);
+
+    // BroadcastChannel for Dual Screen Sync — ONLY for the main top-level window
+    const channel = isInsideIframe ? null : new BroadcastChannel('presentation_sync_ch3');
+
+    function updateSlide(index, fromSync = false) {
+      if (index < 0) index = 0;
+      if (index >= totalSlides) index = totalSlides - 1;
+      
+      slides.forEach((s, i) => {
+        if (i === index) {
+          s.classList.add('active');
+        } else {
+          s.classList.remove('active');
+        }
+      });
+
+      currentIndex = index;
+
+      // Update slide number display (padded 2 digits)
+      slideNumElem.textContent = String(currentIndex + 1).padStart(2, '0');
+
+      // Update presenter notes
+      const currentNotes = slides[currentIndex].getAttribute('data-notes') || '발표자 노트가 없습니다.';
+      notesContent.textContent = currentNotes;
+
+      // Hide header and footer inside iframe preview mode
+      if (isInsideIframe) {
+        const hdr = document.querySelector('header');
+        const ftr = document.querySelector('footer');
+        if (hdr) hdr.style.display = 'none';
+        if (ftr) ftr.style.display = 'none';
+      }
+
+      // Broadcast to Presenter Window if updated locally (only from main window)
+      if (!fromSync && channel) {
+        const nextNotes = (currentIndex < totalSlides - 1) ? slides[currentIndex + 1].getAttribute('data-notes') : '마지막 슬라이드입니다.';
+        channel.postMessage({
+          type: 'SLIDE_CHANGE',
+          index: currentIndex,
+          total: totalSlides,
+          currentNotes: currentNotes,
+          nextNotes: nextNotes
+        });
+      }
+
+      // Sync Presenter Window UI (Preview & Script Editor)
+      syncPresenterView();
+    }
+
+    function nextSlide() {
+      if (currentIndex < totalSlides - 1) {
+        updateSlide(currentIndex + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentIndex > 0) {
+        updateSlide(currentIndex - 1);
+      }
+    }
+
+    function toggleNotes() {
+      notesPanel.classList.toggle('visible');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // Presenter View Window Launcher (Dual Screen Setup with Iframe Rendering)
+    let presenterWindow = null;
+
+    function getSlideNotes(idx) {
+      if (idx < 0 || idx >= totalSlides) return '슬라이드가 없습니다.';
+      return slides[idx].getAttribute('data-notes') || '발표자 노트가 없습니다.';
+    }
+
+    // Dedicated preview renderer for Presenter View Iframes (called via postMessage)
+    function setSlideForPreview(index) {
+      if (index < 0 || index >= totalSlides) return;
+      slides.forEach((s, i) => {
+        if (i === index) {
+          s.classList.add('active');
+        } else {
+          s.classList.remove('active');
+        }
+      });
+    }
+
+    // Iframe listens for postMessage commands from parent/opener
+    if (isInsideIframe) {
+      window.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'SET_SLIDE') {
+          setSlideForPreview(event.data.index);
+        }
+      });
+    }
+
+    function syncPresenterView() {
+      if (!presenterWindow || presenterWindow.closed) return;
+
+      const doc = presenterWindow.document;
+      const currNotes = getSlideNotes(currentIndex);
+
+      // 1. Update slide numbers
+      if (doc.getElementById('pv-slide-curr')) {
+        doc.getElementById('pv-slide-curr').textContent = String(currentIndex + 1).padStart(2, '0');
+        doc.getElementById('pv-slide-total').textContent = String(totalSlides).padStart(2, '0');
+      }
+
+      // 2. Update script editor
+      if (doc.getElementById('pv-script-edit') && doc.activeElement !== doc.getElementById('pv-script-edit')) {
+        doc.getElementById('pv-script-edit').value = currNotes;
+      }
+
+      // 3. Update Current Slide Iframe via postMessage (currentIndex)
+      const iframeCurr = doc.getElementById('pv-iframe-curr');
+      if (iframeCurr && iframeCurr.contentWindow) {
+        iframeCurr.contentWindow.postMessage({ type: 'SET_SLIDE', index: currentIndex }, '*');
+      }
+
+      // 4. Update Next Slide Iframe via postMessage (currentIndex + 1)
+      const iframeNext = doc.getElementById('pv-iframe-next');
+      if (iframeNext && iframeNext.contentWindow) {
+        if (currentIndex < totalSlides - 1) {
+          iframeNext.style.display = 'block';
+          iframeNext.contentWindow.postMessage({ type: 'SET_SLIDE', index: currentIndex + 1 }, '*');
+          if (doc.getElementById('pv-next-title')) doc.getElementById('pv-next-title').textContent = `🔮 NEXT (SLIDE ${String(currentIndex + 2).padStart(2, '0')})`;
+        } else {
+          iframeNext.style.display = 'none';
+          if (doc.getElementById('pv-next-title')) doc.getElementById('pv-next-title').textContent = '🔮 NEXT (마지막 슬라이드)';
+        }
+      }
+    }
+
+    function openPresenterView() {
+      const windowFeatures = 'width=1400,height=850,menubar=no,toolbar=no,location=no,status=no';
+      presenterWindow = window.open('', 'PresenterViewWindow_CH3', windowFeatures);
+
+      if (presenterWindow) {
+        presenterWindow.document.write(`
+          <!DOCTYPE html>
+          <html lang="ko">
+          <head>
+            <meta charset="UTF-8">
+            <title>강사 발표자 모드 v3 (CHAPTER Ⅲ)</title>
+            <style>
+              * { box-sizing: border-box; margin: 0; padding: 0; }
+              body { background: #070A10; color: #EAEEF3; font-family: 'Noto Sans KR', -apple-system, sans-serif; padding: 14px; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+              
+              .pv-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #FFB733; padding-bottom: 8px; margin-bottom: 10px; }
+              .pv-title { font-size: 1.1rem; font-weight: 800; color: #FFB733; display: flex; align-items: center; gap: 8px; }
+              .pv-timer { font-family: monospace; font-size: 1.3rem; color: #36CFC9; font-weight: bold; background: rgba(54,207,201,0.1); padding: 4px 12px; border-radius: 6px; border: 1px solid rgba(54,207,201,0.3); }
+
+              /* 50:50 Layout Split */
+              .pv-main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; flex: 1; min-height: 0; }
+              
+              /* Left Column (50%): Previews (Top Large Current, Bottom Next) */
+              .pv-left-col { display: flex; flex-direction: column; gap: 10px; height: 100%; overflow: hidden; }
+              
+              .preview-card { background: #121824; border: 1px solid rgba(255,183,51,0.3); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; overflow: hidden; }
+              .preview-card-header { font-size: 0.8rem; font-weight: 800; color: #FFB733; margin-bottom: 6px; display: flex; justify-content: space-between; }
+              
+              .iframe-wrap { flex: 1; background: #0D121D; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); overflow: hidden; position: relative; width: 100%; height: 100%; }
+              .iframe-wrap iframe { width: 100%; height: 100%; border: none; }
+
+              /* Right Column (50%): Large Script Editor */
+              .pv-right-col { background: #121824; border: 1px solid rgba(255,183,51,0.3); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; height: 100%; }
+              .script-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+              .script-title { font-size: 0.95rem; font-weight: 800; color: #FFB733; }
+              
+              .script-editor { flex: 1; background: #080C14; color: #FFF; border: 1px solid rgba(255,183,51,0.4); border-radius: 8px; padding: 16px; font-size: 1.3rem; line-height: 1.8; font-family: inherit; resize: none; outline: none; }
+              .script-editor:focus { border-color: #FFB733; box-shadow: 0 0 12px rgba(255,183,51,0.4); }
+
+              /* Bottom Controls Bar */
+              .pv-footer { margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
+              .pv-btn-group { display: flex; gap: 10px; }
+              .btn-pv { background: #FFB733; color: #000; border: none; padding: 10px 24px; font-size: 1.05rem; font-weight: 800; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
+              .btn-pv:hover { background: #FFC857; transform: translateY(-2px); }
+              .btn-pv-sub { background: rgba(255,255,255,0.1); color: #FFF; border: 1px solid rgba(255,255,255,0.2); }
+              .btn-pv-sub:hover { background: rgba(255,255,255,0.2); }
+            </style>
+          </head>
+          <body>
+            <div class="pv-header">
+              <div class="pv-title">
+                <span>🎙️ 강사 발표자 모드 v3 (CHAPTER Ⅲ)</span>
+                <span style="font-size: 0.8rem; color: #C4D1DF; font-weight: normal;">| 16:9 실물 Iframe 0초 실시간 동기화 중</span>
+              </div>
+              <div class="pv-timer" id="pv-clock">⏱ 진행시간: 00:00</div>
+            </div>
+
+            <div class="pv-main-grid">
+              <!-- Left Column: Previews (50% Width) -->
+              <div class="pv-left-col">
+                <!-- Current Slide (Top Large 65% Height) -->
+                <div class="preview-card" style="height: 65%;">
+                  <div class="preview-card-header">
+                    <span>📺 현재 송출 화면 (대형 실물 16:9)</span>
+                    <span style="color: #36CFC9;">SLIDE <span id="pv-slide-curr">01</span> / <span id="pv-slide-total">11</span></span>
+                  </div>
+                  <div class="iframe-wrap">
+                    <iframe id="pv-iframe-curr" src="강의_발표자료_챕터3.html"></iframe>
+                  </div>
+                </div>
+
+                <!-- Next Slide (Bottom 35% Height) -->
+                <div class="preview-card" style="height: 35%;">
+                  <div class="preview-card-header">
+                    <span id="pv-next-title">🔮 NEXT (다음 슬라이드)</span>
+                  </div>
+                  <div class="iframe-wrap">
+                    <iframe id="pv-iframe-next" src="강의_발표자료_챕터3.html" style="opacity: 0.85;"></iframe>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column: Large Script Editor (50% Width) -->
+              <div class="pv-right-col">
+                <div class="script-header">
+                  <div class="script-title">🎙️ 강사 원본 스크립트 (실시간 수정 및 영구 자동 저장 💾)</div>
+                  <span style="font-size: 0.75rem; color: #36CFC9; font-weight: bold;">* 수정 즉시 내 PC 브라우저(localStorage)에 영구 보존됩니다.</span>
+                </div>
+                <textarea class="script-editor" id="pv-script-edit" placeholder="스크립트를 입력하거나 수정하세요..."></textarea>
+              </div>
+            </div>
+
+            <!-- Footer Controls -->
+            <div class="pv-footer">
+              <div style="font-size: 0.85rem; color: #C4D1DF;">
+                키보드 <kbd>◀</kbd> <kbd>▶</kbd> 또는 <kbd>Space</kbd>로 발표 제어 가능
+              </div>
+
+              <div class="pv-btn-group">
+                <button class="btn-pv btn-pv-sub" onclick="window.opener.prevSlide()">◀ 이전 슬라이드</button>
+                <button class="btn-pv" onclick="window.opener.nextSlide()">다음 슬라이드 ▶</button>
+              </div>
+            </div>
+
+            <script>
+              // Timer Logic
+              let seconds = 0;
+              setInterval(() => {
+                seconds++;
+                const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+                const s = String(seconds % 60).padStart(2, '0');
+                document.getElementById('pv-clock').textContent = '⏱ 진행시간: ' + m + ':' + s;
+              }, 1000);
+
+              // Live Script Edit Sync back to Parent Window
+              const scriptEditor = document.getElementById('pv-script-edit');
+              scriptEditor.addEventListener('input', (e) => {
+                if (window.opener && !window.opener.closed) {
+                  window.opener.updateCurrentScriptNotes(e.target.value);
+                }
+              });
+
+              // Keyboard Navigation Passthrough to Main Window
+              document.addEventListener('keydown', (e) => {
+                if (document.activeElement === scriptEditor) return;
+                if (e.key === 'ArrowRight' || e.key === 'Space' || e.key === 'PageDown') {
+                  window.opener.nextSlide();
+                  e.preventDefault();
+                } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                  window.opener.prevSlide();
+                  e.preventDefault();
+                }
+              });
+            <\/script>
+          </body>
+          </html>
+        `);
+        presenterWindow.document.close();
+
+        setTimeout(() => {
+          syncPresenterView();
+        }, 300);
+
+        const iframeCurr = presenterWindow.document.getElementById('pv-iframe-curr');
+        const iframeNext = presenterWindow.document.getElementById('pv-iframe-next');
+        if (iframeCurr) iframeCurr.onload = () => syncPresenterView();
+        if (iframeNext) iframeNext.onload = () => syncPresenterView();
+      }
+    }
+
+    // Load saved script notes from localStorage if available
+    slides.forEach((s, i) => {
+      const savedNotes = localStorage.getItem(`script_notes_ch3_slide_${i}`);
+      if (savedNotes !== null) {
+        s.setAttribute('data-notes', savedNotes);
+      }
+    });
+
+    // Function to handle live script modification from presenter window
+    function updateCurrentScriptNotes(newNotes) {
+      if (slides[currentIndex]) {
+        slides[currentIndex].setAttribute('data-notes', newNotes);
+        notesContent.textContent = newNotes;
+        // Save to Browser's LocalStorage permanently
+        localStorage.setItem(`script_notes_ch3_slide_${currentIndex}`, newNotes);
+      }
+    }
+
+    // === Only activate interactive features in the MAIN top-level window ===
+    if (!isInsideIframe) {
+      channel.onmessage = (event) => {
+        if (event.data.type === 'SLIDE_CHANGE') {
+          const { index } = event.data;
+          if (currentIndex !== index) {
+            updateSlide(index, true);
+          }
+        }
+      };
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'Space' || e.key === 'PageDown') {
+          nextSlide();
+        } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+          prevSlide();
+        } else if (e.key === 'n' || e.key === 'N') {
+          toggleNotes();
+        } else if (e.key === 'f' || e.key === 'F') {
+          toggleFullscreen();
+        } else if (e.key === 'p' || e.key === 'P') {
+          openPresenterView();
+        }
+      });
+
+      updateSlide(0);
+    } else {
+      const hdr = document.querySelector('header');
+      const ftr = document.querySelector('footer');
+      if (hdr) hdr.style.display = 'none';
+      if (ftr) ftr.style.display = 'none';
+    }
+  </script>
+</body>
+</html>

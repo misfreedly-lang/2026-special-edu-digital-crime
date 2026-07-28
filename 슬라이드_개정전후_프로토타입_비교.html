@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>강의자료 화면구성 개정 전후(Before vs After) 프로토타입 5종</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>
+    :root {
+      --bg-dark: #0D121D;
+      --bg-card-dark: #151D2A;
+      --bg-before: #1A2230;
+      --amber: #FFB733;
+      --red: #FF4D4F;
+      --teal: #36CFC9;
+      --text-main: #F5F7FA;
+      --text-sub: #C4D1DF;
+      --text-muted: #7E8E9F;
+      --border-color: rgba(255, 183, 51, 0.2);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      padding: 30px 20px;
+      line-height: 1.5;
+    }
+
+    header {
+      max-width: 1400px;
+      margin: 0 auto 30px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--amber);
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
+
+    p.subtitle {
+      font-size: 1.1rem;
+      color: var(--text-sub);
+    }
+
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      max-width: 1400px;
+      margin: 20px auto 40px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: var(--bg-card-dark);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-sub);
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .tab-btn:hover, .tab-btn.active {
+      background: var(--amber);
+      color: #0d121d;
+      border-color: var(--amber);
+      box-shadow: 0 0 15px rgba(255, 183, 51, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .comparison-section {
+      max-width: 1500px;
+      margin: 0 auto 50px;
+      display: none;
+    }
+
+    .comparison-section.active {
+      display: block;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-meta {
+      background: rgba(255, 183, 51, 0.08);
+      border-left: 4px solid var(--amber);
+      padding: 15px 20px;
+      border-radius: 0 12px 12px 0;
+      margin-bottom: 25px;
+    }
+
+    .slide-meta h2 {
+      font-size: 1.4rem;
+      color: var(--amber);
+      margin-bottom: 5px;
+    }
+
+    .slide-meta p {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    @media (max-width: 1100px) {
+      .comparison-grid { grid-template-columns: 1fr; }
+    }
+
+    .slide-box {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.08);
+      background: var(--bg-card-dark);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .box-header {
+      padding: 12px 20px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      letter-spacing: 0.5px;
+    }
+
+    .box-header.before {
+      background: #252D3C;
+      color: #AEB9C5;
+      border-bottom: 2px solid #5A697B;
+    }
+
+    .box-header.after {
+      background: linear-gradient(90deg, #1E293B, #0F172A);
+      color: var(--amber);
+      border-bottom: 2px solid var(--amber);
+    }
+
+    .slide-content {
+      aspect-ratio: 16 / 9;
+      padding: 30px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #0E1420;
+    }
+
+    /* 슬라이드 1: 전통 vs 디지털 */
+    .v2-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #F5F7FA;
+      color: #111;
+      border-radius: 8px;
+      overflow: hidden;
+      font-size: 0.75rem;
+      margin-top: 10px;
+    }
+
+    .v2-table th { background: #334155; color: white; padding: 6px; text-align: center; }
+    .v2-table td { padding: 6px 8px; border-bottom: 1px solid #ddd; }
+
+    .v3-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      height: 100%;
+    }
+
+    .card-contrast {
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-muted {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text-muted);
+    }
+
+    .card-glowing {
+      background: linear-gradient(145deg, rgba(255, 183, 51, 0.1), rgba(255, 77, 79, 0.15));
+      border: 1.5px solid var(--amber);
+      box-shadow: 0 0 20px rgba(255, 183, 51, 0.2);
+    }
+
+    .badge-tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-right: 4px;
+      margin-bottom: 4px;
+    }
+
+    .badge-amber { background: var(--amber); color: #000; }
+    .badge-red { background: var(--red); color: #fff; }
+
+    /* 슬라이드 2: 법적 처벌 */
+    .v3-punish-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .punish-card {
+      background: #17202E;
+      border-radius: 10px;
+      padding: 14px;
+      border-left: 4px solid var(--amber);
+      position: relative;
+    }
+
+    .punish-card.highlight {
+      border-left-color: var(--red);
+      background: linear-gradient(135deg, #221820, #17202E);
+      box-shadow: 0 0 15px rgba(255, 77, 79, 0.3);
+    }
+
+    .punish-num {
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--amber);
+      margin: 4px 0;
+    }
+
+    .punish-card.highlight .punish-num { color: var(--red); }
+
+    /* 슬라이드 3: OX 퀴즈 */
+    .ox-stamp {
+      position: absolute;
+      top: 25%;
+      right: 12%;
+      width: 90px;
+      height: 90px;
+      border: 5px solid var(--teal);
+      color: var(--teal);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      font-weight: 900;
+      transform: rotate(-15deg);
+      box-shadow: 0 0 20px rgba(54, 207, 201, 0.4);
+      animation: stampDrop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes stampDrop {
+      0% { transform: scale(3) rotate(0deg); opacity: 0; }
+      100% { transform: scale(1) rotate(-15deg); opacity: 1; }
+    }
+
+    .accordion-item {
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      font-size: 0.75rem;
+      border-left: 3px solid var(--teal);
+    }
+
+    /* 슬라이드 4: 4-TRACK */
+    .rails-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .rail-item {
+      background: #161F2E;
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .rail-item.active-rail {
+      background: linear-gradient(90deg, rgba(255, 183, 51, 0.2), #161F2E);
+      border: 1.5px solid var(--amber);
+      box-shadow: 0 0 15px rgba(255, 183, 51, 0.3);
+      animation: pulseRail 2s infinite;
+    }
+
+    @keyframes pulseRail {
+      0%, 100% { box-shadow: 0 0 10px rgba(255, 183, 51, 0.2); }
+      50% { box-shadow: 0 0 25px rgba(255, 183, 51, 0.6); }
+    }
+
+    /* 슬라이드 5: 디지털 추리 웹 연동 */
+    .web-bridge-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 15px;
+      height: 100%;
+      align-items: center;
+    }
+
+    .qr-zone {
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+    }
+
+    .qr-mock {
+      width: 110px;
+      height: 110px;
+      background: repeating-conic-gradient(#000 0% 25%, #fff 0% 50%) 50% / 15px 15px;
+      border: 4px solid #000;
+      margin-bottom: 8px;
+    }
+
+    .step-card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .step-card-item {
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-num {
+      background: var(--amber);
+      color: #000;
+      font-weight: 800;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+    }
+
+    .corner-bracket {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border: 2px solid var(--amber);
+      opacity: 0.6;
+    }
+    .cb-tl { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+    .cb-tr { top: 8px; right: 8px; border-left: none; border-bottom: none; }
+    .cb-bl { bottom: 8px; left: 8px; border-right: none; border-top: none; }
+    .cb-br { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+
+    .desc-box {
+      padding: 15px 20px;
+      background: #111823;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.85rem;
+      color: var(--text-sub);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>강의자료 화면구성 개정 전후(Before vs After) 프로토타입</h1>
+    <p class="subtitle">1급 정교사 연수 · 특수교사 대상 디지털 성범죄 예방 강의 | 5개 대표 슬라이드 비교</p>
+  </header>
+
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="showTab(1)">1. 전통 vs 디지털 범죄 (p15)</button>
+    <button class="tab-btn" onclick="showTab(2)">2. 주요 처벌 및 법적근거 (p20)</button>
+    <button class="tab-btn" onclick="showTab(3)">3. OX 퀴즈 1번 문항 (p22)</button>
+    <button class="tab-btn" onclick="showTab(4)">4. 현장 대응 4-TRACK (p45)</button>
+    <button class="tab-btn" onclick="showTab(5)">5. 디지털 추리 Web 안내 (p52)</button>
+  </div>
+
+  <!-- SLIDE 1 -->
+  <div id="tab-1" class="comparison-section active">
+    <div class="slide-meta">
+      <h2>Slide 1. [p15] 전통적 vs 디지털 성범죄 4대 차이</h2>
+      <p>💡 <b>개정 포인트</b>: 기존 텍스트 빽빽한 흰색 서류 표 형태에서 <b>'스플릿 대조 카드(Split Contrast)'</b>로 개정하여 매체/지속성/가해범위/인식 오류 4대 차이를 1초 만에 인지하도록 시각화.</p>
+    </div>
+    <div class="comparison-grid">
+      <!-- BEFORE -->
+      <div class="slide-box">
+        <div class="box-header before">
+          <span>[ BEFORE ] 기존 화면구성 v2</span>
+          <span>라이트 도시에 표준 표</span>
+        </div>
+        <div class="slide-content">
+          <div style="font-size: 0.9rem; font-weight: 700; color: var(--amber);">전통적 범죄와 디지털 성범죄의 4대 핵심 차이</div>
+          <table class="v2-table">
+            <thead>
+              <tr>
+                <th>구분</th>
+                <th>전통적 성범죄</th>
+                <th>디지털 성범죄</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>① 핵심 매개체</td>
+                <td>물리적 공간 · 신체 접촉</td>
+                <td>온라인 네트워크 · AI 기술 매체</td>
+              </tr>
+              <tr>
+                <td>② 피해 지속성</td>
+                <td>사건 발생 시점 집중</td>
+                <td>무한 복제·재유포 (영구적 피해)</td>
+              </tr>
+              <tr>
+                <td>③ 가해자 범위</td>
+                <td>특정 개인</td>
+                <td>익명 불특정 다수 (소비자=가해자)</td>
+              </tr>
+              <tr>
+                <td>④ 인식의 오류</td>
+                <td>범죄 자각</td>
+                <td>'단순 재미·실수·장난'의 안일함</td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="font-size: 0.7rem; color: #888;">* 다크 배경 위 흰 서류 카드로 가독성 유지 시도했으나 텍스트가 조밀하여 답답함.</div>
+        </div>
+        <div class="desc-box">❌ <b>한계점</b>: 표준 표 규격으로 텍스트 정보가 밀집되어 연수생들이 표 글자를 읽느라 강사의 멘트에 집중하기 어려움.</div>
+      </div>
+
+      <!-- AFTER -->
+      <div class="slide-box">
+        <div class="box-header after">
+          <span>[ AFTER ] 개정 화면구성 v3</span>
+          <span>스플릿 대조 카드 (Split Contrast)</span>
+        </div>
+        <div class="slide-content">
+          <div class="corner-bracket cb-tl"></div><div class="corner-bracket cb-tr"></div>
+          <div class="corner-bracket cb-bl"></div><div class="corner-bracket cb-br"></div>
+          <div style="font-size: 0.95rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">
+            경계를 넘은 범죄: <span style="color:var(--amber)">무한 복제와 익명성</span>의 위협
+          </div>
+          <div class="v3-split">
+            <div class="card-contrast card-muted">
+              <div style="font-size: 0.75rem; font-weight: 700; color: #7E8E9F;">기존 · 물리적 범죄</div>
+              <div style="font-size: 1rem; font-weight: 800;">"한 번, 한 장소"</div>
+              <div style="font-size: 0.7rem; line-height: 1.3;">• 신체 접촉 중심<br>• 사건 발생 시점 종료<br>• 가해자 명확히 구분</div>
+            </div>
+            <div class="card-contrast card-glowing">
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--amber);">디지털 성범죄 (4대 특성)</div>
+              <div style="font-size: 1.05rem; font-weight: 900; color: var(--red);">"영구적 · 무한 복제"</div>
+              <div>
+                <span class="badge-tag badge-amber">AI·온라인 매개</span>
+                <span class="badge-tag badge-red">영구 재유포</span>
+                <span class="badge-tag badge-amber">소비자=가해자</span>
+                <span class="badge-tag badge-red">장난 인식 오류</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="desc-box">✅ <b>개정 효과</b>: 대조감을 극대화하고 핵심 키워드 뱃지만 노출하여 강사의 멘트에 귀를 기울이게 만드는 프리미엄 시각 레이아웃.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2 -->
+  <div id="tab-2" class="comparison-section">
+    <div class="slide-meta">
+      <h2>Slide 2. [p20] 주요 법적 근거와 처벌 수위 (<표-1>)</h2>
+      <p>💡 <b>개정 포인트</b>: 단순 법령 조항 나열에서 벗어나 <b>형량 수치 거대 강조 + NEW 2024 개정 뱃지</b>를 통해 교사들에게 법적 경각심을 극적으로 각인.</p>
+    </div>
+    <div class="comparison-grid">
+      <!-- BEFORE -->
+      <div class="slide-box">
+        <div class="box-header before">[ BEFORE ] 기존 화면구성 v2</div>
+        <div class="slide-content">
+          <div style="font-size: 0.85rem; font-weight: 700; color: var(--amber);">"단순 장난·시청·전달이었다"는 변명은 통하지 않는다</div>
+          <div style="font-size: 0.75rem; color: var(--text-sub); margin-top: 10px;">
+            • 불법촬영 및 유포: 7년 이하 징역 / 5천만원 이하 벌금<br>
+            • 딥페이크 소지·저장·시청: 3년 이하 징역 / 3천만원 이하 벌금 (2024 개정)<br>
+            • 통신매체이용음란: 2년 이하 징역 / 2천만원 이하 벌금<br>
+            • 아동·청소년 성착취물 제작: 무기징역 또는 5년 이상 유기징역
+          </div>
+        </div>
+        <div class="desc-box">❌ <b>한계점</b>: 텍스트 줄글 형태라 주요 형량 숫자나 2024년 신설된 중요한 시청 처벌 조항이 눈에 띄지 않음.</div>
+      </div>
+
+      <!-- AFTER -->
+      <div class="slide-box">
+        <div class="box-header after">[ AFTER ] 개정 화면구성 v3 (Infographic Risk Cards)</div>
+        <div class="slide-content">
+          <div style="font-size: 0.9rem; font-weight: 800;">법은 디지털 성범죄를 <span style="color:var(--red)">어떻게 처벌하는가</span></div>
+          <div class="v3-punish-grid">
+            <div class="punish-card">
+              <div style="font-size: 0.7rem; font-weight: 700;">불법촬영 & 딥페이크 유포</div>
+              <div class="punish-num">7년 이하 / 5천만</div>
+              <div style="font-size: 0.65rem; color: var(--text-sub);">제작 및 유포 주범 처벌</div>
+            </div>
+            <div class="punish-card highlight">
+              <span class="badge-tag badge-red" style="position:absolute; top:-8px; right:8px; font-size:0.6rem;">NEW 2024 신설</span>
+              <div style="font-size: 0.7rem; font-weight: 700; color:var(--red);">딥페이크 소지·시청</div>
+              <div class="punish-num">3년 이하 / 3천만</div>
+              <div style="font-size: 0.65rem; color: #FFAAAB;">알고 본 사람도 즉시 처벌</div>
+            </div>
+            <div class="punish-card">
+              <div style="font-size: 0.7rem; font-weight: 700;">통신매체이용음란 (통매음)</div>
+              <div class="punish-num">2년 이하 / 2천만</div>
+              <div style="font-size: 0.65rem; color: var(--text-sub);">성적 수치심 전송 행위</div>
+            </div>
+            <div class="punish-card" style="border-left-color: #A855F7;">
+              <div style="font-size: 0.7rem; font-weight: 700;">아청물 제작·성착취</div>
+              <div class="punish-num" style="color:#C084FC;">무기 / 5년 이상</div>
+              <div style="font-size: 0.65rem; color: var(--text-sub);">아청법 최상위 중형 적용</div>
+            </div>
+          </div>
+        </div>
+        <div class="desc-box">✅ <b>개정 효과</b>: 형량 숫자를 획기적으로 키우고 2024 신설 시청 처벌법에 붉은 네온 펄스 효과를 부여하여 실무 경각심 최고조 형성.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3 -->
+  <div id="tab-3" class="comparison-section">
+    <div class="slide-meta">
+      <h2>Slide 3. [p22] OX 퀴즈 1번 문항 (딥페이크 실수 시청)</h2>
+      <p>💡 <b>개정 포인트</b>: 퀴즈 진행 시 <b>3D O/X 스탬프 쾅 하강 모션 + 3단계 해설 아코디언 카드</b>로 시각적 집중도와 학습 참여 유도.</p>
+    </div>
+    <div class="comparison-grid">
+      <!-- BEFORE -->
+      <div class="slide-box">
+        <div class="box-header before">[ BEFORE ] 기존 화면구성 v2</div>
+        <div class="slide-content">
+          <div style="font-size: 0.85rem; font-weight: 700;">Q1. 단톡방 딥페이크 영상을 모르고 재생했다가 바로 껐다. 처벌 대상인가?</div>
+          <div style="font-size: 1.5rem; font-weight: 900; color: var(--teal); margin: 10px 0;">[ 정답: X ]</div>
+          <div style="font-size: 0.7rem; color: var(--text-sub); line-height: 1.4;">
+            1단계: 고의성(일부러 하려는 의도)이 없었으므로 처벌 대상 제외<br>
+            2단계: 2024 개정으로 '알고도 시청/소지'한 경우는 3년 이하 징역 처벌 강조<br>
+            3단계: 전달이나 공유를 하지 않은 올바른 대처 강조
+          </div>
+        </div>
+        <div class="desc-box">❌ <b>한계점</b>: 정답과 해설이 단순 텍스트로 표시되어 퀴즈 게임 특유의 쾌감과 몰입감이 부족함.</div>
+      </div>
+
+      <!-- AFTER -->
+      <div class="slide-box">
+        <div class="box-header after">[ AFTER ] 개정 화면구성 v3 (Interactive Q Card & 3D Stamp)</div>
+        <div class="slide-content">
+          <div style="background: rgba(255,183,51,0.1); border: 1px solid var(--amber); border-radius: 8px; padding: 10px 14px;">
+            <div style="font-size: 0.7rem; font-weight: 800; color: var(--amber);">Q1. 수사 판단 사례</div>
+            <div style="font-size: 0.8rem; font-weight: 700; color: #fff;">"단톡방 딥페이크 영상, 실수로 재생 후 바로 껐다면 처벌될까?"</div>
+          </div>
+          <div class="ox-stamp">X</div>
+          <div style="margin-top: 15px;">
+            <div class="accordion-item"><b>1단계 [고의성 유무]</b>: 모르고 바로 껐으므로 고의성 없어 처벌 대상 X</div>
+            <div class="accordion-item" style="border-left-color: var(--red);"><b>2단계 [2024 신설법 핵심]</b>: '알고도 끝까지 시청·다운로드' 시 3년 이하 징역 명심</div>
+            <div class="accordion-item"><b>3단계 [대처 평가]</b>: 댓글·전달 안 한 미동조 올바른 대처</div>
+          </div>
+        </div>
+        <div class="desc-box">✅ <b>개정 효과</b>: 청록색 3D 스탬프가 쾅 찍히는 애니메이션과 3단계 단계별 해설 아코디언 배치로 퀴즈 몰입도와 기억 저장률 배가.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4 -->
+  <div id="tab-4" class="comparison-section">
+    <div class="slide-meta">
+      <h2>Slide 4. [p45] 현장 대응 4-TRACK (<표-3>)</h2>
+      <p>💡 <b>개정 포인트</b>: 한 사안 발생 시 4개 절차가 동시 작동하는 복잡한 매뉴얼을 <b>'Parallel Rails (평행 레일) 시스템'</b>으로 시각화하고, 특수교사가 가장 잘 놓치는 '인권지원단' 레일을 발광 처리.</p>
+    </div>
+    <div class="comparison-grid">
+      <!-- BEFORE -->
+      <div class="slide-box">
+        <div class="box-header before">[ BEFORE ] 기존 화면구성 v2</div>
+        <div class="slide-content">
+          <div style="font-size: 0.85rem; font-weight: 700; color: var(--amber);">한 사건에 4개 트랙이 동시에 작동한다</div>
+          <div style="font-size: 0.7rem; color: var(--text-sub); margin-top: 10px; line-height: 1.5;">
+            • Track 1 (학교폭력 절차): 학교장 보고, 48시간 내 교육청 보고<br>
+            • Track 2 (성범죄 신고): 아동·청소년 대상 성범죄 인지 즉시 112/117 신고 의무<br>
+            • Track 3 (장애학생 인권지원단): 교육청 인권지원단 보고 및 지원 요청 (★필수)<br>
+            • Track 4 (아동학대 신고): 가정 내 방임·학대 정황 시 병행 신고
+          </div>
+        </div>
+        <div class="desc-box">❌ <b>한계점</b>: 4개 대응 트랙이 평면적 목록으로 처리되어 실무 현장에서 4개 절차가 동시에 평행 구동한다는 동시성(Simultaneity) 감각 전달 약함.</div>
+      </div>
+
+      <!-- AFTER -->
+      <div class="slide-box">
+        <div class="box-header after">[ AFTER ] 개정 화면구성 v3 (Parallel Rails System)</div>
+        <div class="slide-content">
+          <div style="font-size: 0.9rem; font-weight: 800;">사안 발생 즉시: <span style="color:var(--amber)">4-TRACK 동시 가동</span></div>
+          <div class="rails-container">
+            <div class="rail-item">
+              <span><b>Track ①</b> 학교폭력 절차</span>
+              <span class="badge-tag badge-amber">48시간 내 보고</span>
+            </div>
+            <div class="rail-item">
+              <span><b>Track ②</b> 성범죄 수사 기관 신고</span>
+              <span class="badge-tag badge-red">112/117 즉시 신고</span>
+            </div>
+            <div class="rail-item active-rail">
+              <span><b style="color:var(--amber);">Track ③ 장애학생 인권지원단</b></span>
+              <span class="badge-tag badge-amber">★특수교사 필수 누락 주의!</span>
+            </div>
+            <div class="rail-item">
+              <span><b>Track ④</b> 아동학대 병행 신고</span>
+              <span style="font-size:0.65rem; color:#888;">학대 정황 결부 시</span>
+            </div>
+          </div>
+        </div>
+        <div class="desc-box">✅ <b>개정 효과</b>: 4개 디스플레이 레일이 동시 가동되는 수평 흐름을 시각화하고, 특수교사가 실수하기 쉬운 Track 3에 앰버 펄스 발광을 부여하여 실수 방지.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5 -->
+  <div id="tab-5" class="comparison-section">
+    <div class="slide-meta">
+      <h2>Slide 5. [p52] [활동 2] 디지털 추리 웹 연동 안내</h2>
+      <p>💡 <b>개정 포인트</b>: 모바일 참여 연동 화면을 <b>'수사본부 관제탑 UI'</b>로 전면 수정하여 초대형 QR 코드 스캐닝과 3단계 참여 가이드를 제공해 연수생 전원 스무스한 접속 유도.</p>
+    </div>
+    <div class="comparison-grid">
+      <!-- BEFORE -->
+      <div class="slide-box">
+        <div class="box-header before">[ BEFORE ] 기존 화면구성 v2</div>
+        <div class="slide-content">
+          <div style="font-size: 1rem; font-weight: 800; color: var(--amber);">디지털 추리: 우리 반 그 아이</div>
+          <div style="margin: 15px auto; text-align: center;">
+            <div style="width: 80px; height: 80px; background: #fff; color: #000; margin: 0 auto; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.7rem;">QR CODE</div>
+          </div>
+          <div style="font-size: 0.75rem; text-align: center; color: var(--text-sub);">
+            QR 코드를 찍고 모바일 화면으로 의견을 제출해주세요.<br>(정답 맞히기 아님 · 익명 투표)
+          </div>
+        </div>
+        <div class="desc-box">❌ <b>한계점</b>: QR 코드가 작고 가이드 라인이 단순하여 넓은 연수원 강당 뒤편 교사들의 카메라 스캔 실패 및 접속 지연 발생 우려.</div>
+      </div>
+
+      <!-- AFTER -->
+      <div class="slide-box">
+        <div class="box-header after">[ AFTER ] 개정 화면구성 v3 (Web Control Tower UI)</div>
+        <div class="slide-content">
+          <div style="font-size: 0.85rem; font-weight: 800; color: var(--amber); margin-bottom: 5px;">
+            [활동 2] 디지털 추리 관제탑 접속
+          </div>
+          <div class="web-bridge-grid">
+            <div class="qr-zone">
+              <div class="qr-mock"></div>
+              <div style="font-size: 0.7rem; font-weight: 800;">스마트폰 카메라 스캔</div>
+            </div>
+            <div class="step-card-list">
+              <div class="step-card-item">
+                <div class="step-num">1</div>
+                <div>QR 코드 카메라 인식</div>
+              </div>
+              <div class="step-card-item">
+                <div class="step-num">2</div>
+                <div>익명 닉네임 자동 생성</div>
+              </div>
+              <div class="step-card-item" style="border: 1px solid var(--amber);">
+                <div class="step-num" style="background:var(--red); color:#fff;">3</div>
+                <div style="color:var(--amber); font-weight:700;">단서 투표 & 의견 제출</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="desc-box">✅ <b>개정 효과</b>: 화면 절반을 활용한 거대 QR 스캔 존과 우측 3단계 가이드 카드로 강당 먼 자리에서도 단숨에 인식하여 100% 모바일 연동 성공 유도.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showTab(num) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.comparison-section').forEach(sec => sec.classList.remove('active'));
+
+      event.target.classList.add('active');
+      document.getElementById('tab-' + num).classList.add('active');
+    }
+  </script>
+</body>
+</html>

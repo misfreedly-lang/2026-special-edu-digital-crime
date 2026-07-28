@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>디지털 추리 · 통합 진행</title>
+<style>
+  :root{
+    --ink:#0A0E14; --ink2:#121821; --panel:#141B26; --amber:#F2B544; --red:#E5484D;
+    --cold:#6FA8D6; --teal:#43C6A0; --text:#EAEEF3; --muted:#8B97A4; --line:#2A323D;
+    --sans:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+    --mono:ui-monospace,"SF Mono","Roboto Mono",Consolas,monospace;
+    --bar:56px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;background:#000}
+  body{font-family:var(--sans);color:var(--text);display:flex;flex-direction:column}
+
+  /* ===== 상단 마스터 진행바 ===== */
+  #bar{height:var(--bar);flex:0 0 var(--bar);display:flex;align-items:center;gap:clamp(8px,1.4vw,18px);
+    padding:0 clamp(12px,2vw,26px);background:linear-gradient(180deg,#0E141E,#0A0E14);
+    border-bottom:1px solid var(--line);position:relative;z-index:10;user-select:none}
+  #bar.hidden{display:none}
+  .brand{font-family:var(--mono);font-size:clamp(10px,1.2vw,13px);letter-spacing:.16em;color:var(--muted);
+    text-transform:uppercase;white-space:nowrap}
+  .brand b{color:var(--amber);font-weight:800}
+
+  /* progress chips */
+  .chips{display:flex;align-items:center;gap:clamp(4px,.8vw,10px);flex:1;justify-content:center;flex-wrap:nowrap;overflow:hidden}
+  .chip{display:flex;align-items:center;gap:.5em;cursor:pointer;white-space:nowrap;
+    font-family:var(--mono);font-size:clamp(10px,1.15vw,13px);letter-spacing:.06em;
+    color:var(--muted);background:rgba(255,255,255,.03);border:1px solid var(--line);
+    padding:.42em .8em;border-radius:999px;transition:.18s}
+  .chip .n{display:inline-flex;align-items:center;justify-content:center;width:1.5em;height:1.5em;border-radius:50%;
+    background:#20293580;font-weight:800;font-size:.9em}
+  .chip:hover{border-color:var(--amber);color:var(--text)}
+  .chip.active{color:#1A1205;background:var(--amber);border-color:var(--amber);font-weight:800}
+  .chip.active .n{background:rgba(0,0,0,.22);color:#1A1205}
+  .chip.done{color:var(--text);border-color:#3a4756}
+  .chip.done .n{background:var(--teal);color:#062018}
+  .chip .arrow{color:var(--line);margin:0 -.1em}
+
+  /* nav buttons */
+  .navwrap{display:flex;align-items:center;gap:.4em}
+  .nbtn{cursor:pointer;font-family:var(--sans);font-weight:800;font-size:clamp(12px,1.4vw,15px);
+    color:var(--text);background:var(--panel);border:1px solid var(--line);padding:.5em 1em;border-radius:9px;
+    display:flex;align-items:center;gap:.4em;transition:.15s;white-space:nowrap}
+  .nbtn:hover:not(:disabled){border-color:var(--amber);color:var(--amber)}
+  .nbtn.primary{background:var(--amber);color:#1A1205;border-color:var(--amber)}
+  .nbtn.primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(242,181,68,.35)}
+  .nbtn:disabled{opacity:.32;cursor:default}
+  .icon{cursor:pointer;color:var(--muted);background:var(--panel);border:1px solid var(--line);
+    width:2.3em;height:2.3em;border-radius:9px;display:flex;align-items:center;justify-content:center;
+    font-size:clamp(13px,1.5vw,16px);transition:.15s}
+  .icon:hover{color:var(--amber);border-color:var(--amber)}
+
+  /* ===== 무대(iframe / 메타 화면) ===== */
+  #wrap{flex:1;position:relative;background:#000;overflow:hidden}
+  #frame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#05080C;display:block}
+  #frame.hide{display:none}
+
+  /* 메타 디브리핑 화면 */
+  #meta{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:0 8vw;
+    background:radial-gradient(120% 100% at 50% 40%,#0E1B18 0%,var(--ink) 58%,#04060A 100%)}
+  #meta.show{display:flex}
+  #meta::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:repeating-linear-gradient(to bottom,rgba(255,255,255,.025) 0 1px,transparent 1px 3px);
+    mix-blend-mode:overlay;opacity:.5}
+  #meta .eyebrow{font-family:var(--mono);color:var(--teal);letter-spacing:.3em;text-transform:uppercase;
+    font-size:clamp(11px,1.5vw,16px);margin-bottom:1.1em}
+  #meta .arc{display:flex;align-items:center;gap:clamp(8px,1.6vw,20px);margin-bottom:1.5em;flex-wrap:wrap;justify-content:center}
+  #meta .node{font-family:var(--mono);font-weight:800;font-size:clamp(12px,1.6vw,17px);letter-spacing:.06em;
+    padding:.5em .9em;border-radius:10px;border:1.5px solid var(--line);color:var(--muted)}
+  #meta .node.a{border-color:var(--amber);color:var(--amber)}
+  #meta .node.c{border-color:#E9962F;color:#E9962F}
+  #meta .node.d{border-color:var(--red);color:var(--red)}
+  #meta .link{color:var(--line);font-size:1.2em}
+  #meta .lead{font-weight:900;line-height:1.3;font-size:clamp(24px,4.2vw,50px);letter-spacing:-.01em;max-width:16em}
+  #meta .lead .am{color:var(--amber)} #meta .lead .tl{color:var(--teal)}
+  #meta .sub{margin-top:1.3em;color:var(--muted);font-size:clamp(14px,2vw,21px);line-height:1.6;max-width:30em;font-weight:600}
+  #meta .sub b{color:var(--text)}
+  #meta .tie{margin-top:1.8em;font-family:var(--mono);font-size:clamp(11px,1.5vw,14px);letter-spacing:.08em;
+    color:var(--teal);border-top:1px solid #1e3a33;padding-top:1.1em}
+
+  /* 하단 힌트 */
+  #hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;z-index:9;pointer-events:none;
+    font-family:var(--mono);font-size:clamp(10px,1.3vw,13px);letter-spacing:.05em;color:#5c6773;
+    transition:opacity .4s ease}
+  #hint b{color:var(--amber)}
+  #hint.fade{opacity:0}
+
+  /* 참여 QR 버튼(상단바) */
+  .nbtn.qr{background:rgba(67,198,160,.12);border-color:#2f6a5a;color:var(--teal)}
+  .nbtn.qr:hover{border-color:var(--teal);color:var(--teal)}
+  .nbtn.qr.pulse{animation:qrpulse 1.6s ease-in-out infinite}
+  @keyframes qrpulse{0%,100%{box-shadow:0 0 0 0 rgba(67,198,160,.0)}50%{box-shadow:0 0 0 4px rgba(67,198,160,.28)}}
+
+  /* 참여 QR 오버레이 */
+  #qrpanel{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;
+    gap:clamp(14px,2.4vw,26px);text-align:center;padding:0 6vw;
+    background:radial-gradient(120% 100% at 50% 42%,#0E1B18 0%,#06090F 62%,#03050A 100%)}
+  #qrpanel.show{display:flex}
+  #qrpanel .qh{font-family:var(--mono);letter-spacing:.28em;text-transform:uppercase;color:var(--teal);
+    font-size:clamp(12px,1.6vw,16px)}
+  #qrpanel .qtitle{font-weight:900;font-size:clamp(26px,4.4vw,52px);line-height:1.2}
+  #qrpanel .qtitle .am{color:var(--amber)}
+  #qrbox{background:#fff;border-radius:18px;padding:clamp(14px,2vw,22px);box-shadow:0 24px 70px rgba(0,0,0,.6);
+    width:clamp(200px,34vh,340px);height:clamp(200px,34vh,340px);display:flex;align-items:center;justify-content:center}
+  #qrbox img{width:100%;height:100%;image-rendering:pixelated;border-radius:4px}
+  #qrbox .ph{color:#0A0E14;font-family:var(--mono);font-size:13px;line-height:1.6;padding:14px;text-align:center}
+  #qrpanel .qmeta{display:flex;flex-direction:column;gap:.5em;align-items:center}
+  #qrpanel .qcode{font-family:var(--mono);font-size:clamp(15px,2.2vw,22px);color:var(--text);letter-spacing:.04em}
+  #qrpanel .qcode b{color:var(--amber);font-weight:800;letter-spacing:.12em}
+  #qrpanel .qurl{font-family:var(--mono);font-size:clamp(11px,1.5vw,14px);color:var(--muted);word-break:break-all;max-width:34em}
+  #qrpanel .qnote{font-size:clamp(12px,1.6vw,15px);color:var(--muted);font-weight:600}
+  #qrpanel .qclose{margin-top:.3em;cursor:pointer;font-family:var(--sans);font-weight:800;
+    background:var(--amber);color:#1A1205;border:none;border-radius:999px;padding:.6em 1.7em;font-size:clamp(14px,1.8vw,18px)}
+  #qrpanel .qwarn{color:#E9A23B;font-family:var(--mono);font-size:clamp(11px,1.5vw,14px)}
+
+  @media (max-width:720px){
+    .brand{display:none}
+    .chip .n{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <div class="brand">ACTIVITY · <b>디지털 추리</b></div>
+  <div class="chips" id="chips"></div>
+  <div class="navwrap">
+    <select id="roomSelect" style="background:#161D28;color:#F2B544;border:1px solid #F2B544;padding:4px 8px;border-radius:6px;font-weight:800;font-size:13px;cursor:pointer;">
+      <option value="CLASS_01">🏫 1반 (CLASS_01)</option>
+      <option value="CLASS_02">🏫 2반 (CLASS_02)</option>
+      <option value="CLASS_03">🏫 3반 (CLASS_03)</option>
+      <option value="CLASS_04">🏫 4반 (CLASS_04)</option>
+      <option value="CLASS_05">🏫 5반 (CLASS_05)</option>
+      <option value="CLASS_06">🏫 6반 (CLASS_06)</option>
+      <option value="CLASS_07">🏫 7반 (CLASS_07)</option>
+      <option value="CLASS_08">🏫 8반 (CLASS_08)</option>
+      <option value="CLASS_09">🏫 9반 (CLASS_09)</option>
+      <option value="CLASS_10">🏫 10반 (CLASS_10)</option>
+    </select>
+    <button class="nbtn qr" id="qrToggle" title="교사 참여 QR 띄우기 (Q)">📱 참여 QR</button>
+    <button class="nbtn" id="prev">◂ 이전</button>
+    <button class="nbtn primary" id="next">다음 사건 ▸</button>
+    <div class="icon" id="reload" title="현재 화면 다시 재생">↻</div>
+    <div class="icon" id="fs" title="전체화면">⛶</div>
+    <div class="icon" id="hideBar" title="진행바 숨기기 (H)">▲</div>
+  </div>
+</div>
+
+<div id="wrap">
+  <iframe id="frame" title="디지털 추리 단계" allow="autoplay; fullscreen"></iframe>
+
+  <!-- 마지막: 메타 디브리핑 -->
+  <div id="meta">
+    <div class="eyebrow">META DEBRIEFING · 세 사건을 잇다</div>
+    <div class="arc">
+      <span class="node a">CASE A · 알아보는 눈</span>
+      <span class="link">→</span>
+      <span class="node c">CASE C · 빠른 해석의 함정</span>
+      <span class="link">→</span>
+      <span class="node d">CASE D · 경계가 무너질 때</span>
+    </div>
+    <div class="lead">탐정의 목적은 <span class="am">범인 지목</span>,<br>우리 교사의 목적은 <span class="tl">학생의 안전</span>.</div>
+    <div class="sub">사실관계가 모호해도 — 판단을 미루더라도, <b>안전 절차를 즉시 작동시키는 것.</b> 그것이 발견자의 역할입니다.</div>
+    <div class="tie">각 사건의 교훈 → Ⅳ장 ‘대응 4트랙’으로 연결 (학폭 · 성범죄 신고 · 인권지원단 · 아동학대)</div>
+  </div>
+
+  <!-- 교사 참여 QR 오버레이 -->
+  <div id="qrpanel">
+    <div class="qh">JOIN · 익명 투표 참여</div>
+    <div class="qtitle">휴대폰으로 <span class="am">이 QR</span>을 스캔하세요</div>
+    <div id="qrbox"><div class="ph" id="qrph">배포 후 QR이<br>여기에 표시됩니다</div></div>
+    <div class="qmeta">
+      <div class="qcode">세션 코드 · <b id="qrRoom">NOSUNG</b></div>
+      <div class="qurl" id="qrUrl"></div>
+      <div class="qnote">이름·로그인 없음 · 한 번 스캔하면 끝까지 자동으로 따라옵니다</div>
+      <div class="qwarn" id="qrWarn"></div>
+    </div>
+    <button class="qclose" id="qrClose">닫고 계속 ▸</button>
+  </div>
+
+  <div id="hint"></div>
+</div>
+
+<script>
+/* ===================== 실시간 투표 연동 설정 (Firebase RTDB 기반) =====================
+ *  - 데이터베이스: special-edu-teather-class-default-rtdb.asia-southeast1.firebasedatabase.app
+ *  - 수강생 접속 페이지: '투표앱_모바일.html' (또는 웹 서버 호스팅 URL)
+ *  - ROOM 코드: NOSUNG (사건 화면과 동일)
+ */
+var VOTE_URL   = "투표앱_모바일.html";   // 호스팅 주소 (예: "https://yourdomain.com/투표앱_모바일.html")
+var ROOM       = "NOSUNG";
+var QR_DATAURI = "";                      // (옵션) QR 이미지 base64
+/* ==================================================================================== */
+</script>
+<script>
+(function(){
+  // ===== 진행 단계 정의 =====
+  var STAGES = [
+    { key:'intro', n:'0', label:'오프닝',  type:'frame', src:'디지털추리_게임오프닝_사운드.html',
+      hint:'화면 안의 <b>▶ 사건 열기</b>를 눌러 오프닝 영상을 재생 → 끝나면 상단 <b>다음 사건 ▸</b>' },
+    { key:'A', n:'A', label:'CASE A · 좋은 어른', type:'frame', src:'디지털추리_사건A_화면.html',
+      hint:'사건 안에서는 <b>←/→</b> 또는 화면 하단 <b>다음</b> · 디브리핑까지 끝나면 상단 <b>다음 사건 ▸</b>' },
+    { key:'C', n:'C', label:'CASE C · 사라진 용돈', type:'frame', src:'디지털추리_사건C_화면.html',
+      hint:'사건 안에서는 <b>←/→</b> 또는 화면 하단 <b>다음</b> · 디브리핑까지 끝나면 상단 <b>다음 사건 ▸</b>' },
+    { key:'D', n:'D', label:'CASE D · 우리 반의 가해자', type:'frame', src:'디지털추리_사건D_화면.html',
+      hint:'사건 안에서는 <b>←/→</b> 또는 화면 하단 <b>다음</b> · 디브리핑까지 끝나면 상단 <b>다음 사건 ▸</b>' },
+    { key:'meta', n:'✓', label:'마무리', type:'meta',
+      hint:'세 사건을 하나로 잇는 마무리 메시지 · 여기서 Ⅳ장 4트랙으로 이어갑니다' }
+  ];
+
+  var idx = 0;
+  var bar=document.getElementById('bar'), chips=document.getElementById('chips'),
+      frame=document.getElementById('frame'), meta=document.getElementById('meta'),
+      hint=document.getElementById('hint'),
+      prevBtn=document.getElementById('prev'), nextBtn=document.getElementById('next'),
+      reloadBtn=document.getElementById('reload'), fsBtn=document.getElementById('fs'),
+      hideBtn=document.getElementById('hideBar'), qrToggle=document.getElementById('qrToggle'),
+      qrpanel=document.getElementById('qrpanel'), qrClose=document.getElementById('qrClose');
+  var visited={};
+  var hintTimer=null, qrShownOnce=false;
+
+  /* ---- 참여 QR 오버레이 ---- */
+  function joinURL(){ return VOTE_URL ? (VOTE_URL + (VOTE_URL.indexOf('?')<0?'?':'&') + 'room=' + encodeURIComponent(ROOM)) : ''; }
+  function initQR(){
+    document.getElementById('qrRoom').textContent = ROOM;
+    var box=document.getElementById('qrbox'), ph=document.getElementById('qrph'),
+        urlEl=document.getElementById('qrUrl'), warn=document.getElementById('qrWarn');
+    var url=joinURL();
+    urlEl.textContent = url || '';
+    if(QR_DATAURI){
+      box.innerHTML='<img alt="참여 QR" src="'+QR_DATAURI+'">'; warn.textContent='';
+    } else if(url){
+      ph.innerHTML='QR 이미지 대기 중<br><small>아래 주소로도 접속 가능</small>';
+      warn.textContent='※ QR 이미지 미삽입 — 위 세션코드·주소로 안내하세요';
+    } else {
+      ph.innerHTML='배포 후 URL을<br>설정하면 QR이<br>여기 표시됩니다';
+      warn.textContent='※ VOTE_URL 미설정 (투표연동_설치가이드.md 참고)';
+    }
+  }
+  function toggleQR(force){
+    var willShow = (typeof force==='boolean') ? force : !qrpanel.classList.contains('show');
+    qrpanel.classList.toggle('show', willShow);
+    if(willShow){ qrToggle.classList.remove('pulse'); }
+  }
+  qrToggle.addEventListener('click', function(){ toggleQR(); });
+  qrClose.addEventListener('click', function(){ toggleQR(false); });
+
+  var roomSelect = document.getElementById('roomSelect');
+  if(roomSelect){
+    roomSelect.addEventListener('change', function(){
+      ROOM = this.value;
+      initQR();
+      try {
+        if(frame && frame.contentWindow){
+          frame.contentWindow.ROOM = ROOM;
+          if(typeof frame.contentWindow.syncVote === 'function'){
+            frame.contentWindow.syncVote();
+          }
+        }
+      } catch(e){}
+    });
+  }
+
+  // build chips
+  STAGES.forEach(function(s,i){
+    if(i>0){ var ar=document.createElement('span'); ar.className='arrow'; ar.textContent='›'; chips.appendChild(ar); }
+    var c=document.createElement('div'); c.className='chip'; c.dataset.i=i;
+    c.innerHTML='<span class="n">'+s.n+'</span><span>'+s.label.split(' · ')[0]+'</span>';
+    c.title=s.label;
+    c.addEventListener('click', function(){ go(+this.dataset.i); });
+    chips.appendChild(c);
+  });
+  var chipEls=Array.prototype.slice.call(chips.querySelectorAll('.chip'));
+
+  function showHint(html){
+    hint.innerHTML=html; hint.classList.remove('fade');
+    if(hintTimer) clearTimeout(hintTimer);
+    hintTimer=setTimeout(function(){ hint.classList.add('fade'); }, 6000);
+  }
+
+  function render(){
+    var s=STAGES[idx];
+    // chips state
+    chipEls.forEach(function(c,i){
+      c.classList.toggle('active', i===idx);
+      c.classList.toggle('done', i<idx || (visited[i] && i!==idx));
+    });
+    // stage content
+    if(s.type==='frame'){
+      meta.classList.remove('show'); frame.classList.remove('hide');
+      // 같은 소스면 다시 로드하지 않음(진행 상태 보존), 다르면 로드
+      var target = encodeURI(s.src);
+      if(frame.getAttribute('data-src')!==s.src){
+        frame.setAttribute('data-src', s.src);
+        frame.src = target;
+      }
+      setTimeout(focusFrame, 60);
+    } else { // meta
+      frame.classList.add('hide'); meta.classList.add('show');
+    }
+    // CASE A 최초 진입 시 참여 QR 버튼을 한 번 강조(교사 접속 유도)
+    if(STAGES[idx].key==='A' && !qrShownOnce){ qrShownOnce=true; qrToggle.classList.add('pulse'); }
+    visited[idx]=true;
+    // nav buttons
+    prevBtn.disabled = idx<=0;
+    prevBtn.textContent = idx<=0 ? '◂ 이전' : '◂ '+ (STAGES[idx-1].label.split(' · ')[0]);
+    if(idx>=STAGES.length-1){ nextBtn.disabled=true; nextBtn.textContent='끝'; }
+    else { nextBtn.disabled=false; nextBtn.textContent = (STAGES[idx].key==='intro'? '수사 시작 ▸' : (idx>=1 && idx<=3 ? '다음 사건 ▸' : '다음 ▸')); }
+    showHint(s.hint||'');
+  }
+
+  function focusFrame(){ try{ frame.contentWindow.focus(); }catch(e){} }
+  function go(i){ i=Math.max(0,Math.min(STAGES.length-1,i)); if(i===idx){ return; } idx=i; render(); }
+
+  prevBtn.addEventListener('click', function(){ go(idx-1); });
+  nextBtn.addEventListener('click', function(){ go(idx+1); });
+  reloadBtn.addEventListener('click', function(){
+    var s=STAGES[idx];
+    if(s.type==='frame'){ frame.src = encodeURI(s.src); setTimeout(focusFrame,60); }
+  });
+
+  // 전체화면 (문서 전체 = 진행바 포함)
+  fsBtn.addEventListener('click', function(){
+    var el=document.documentElement;
+    if(!document.fullscreenElement){ (el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el); }
+    else { (document.exitFullscreen||document.webkitExitFullscreen||function(){}).call(document); }
+  });
+
+  // 진행바 숨기기/보이기
+  function toggleBar(){
+    bar.classList.toggle('hidden');
+    hideBtn.textContent = bar.classList.contains('hidden') ? '▼' : '▲';
+  }
+  hideBtn.addEventListener('click', function(e){ e.stopPropagation(); toggleBar(); });
+
+  // 상단바 레벨 단축키: H(진행바), PageDown/PageUp(사건 이동). ←/→ 는 iframe 사건 내부 전용이라 건드리지 않음.
+  document.addEventListener('keydown', function(e){
+    if(e.key==='h'||e.key==='H'){ toggleBar(); }
+    else if(e.key==='q'||e.key==='Q'){ toggleQR(); }
+    else if(e.key==='Escape' && qrpanel.classList.contains('show')){ toggleQR(false); }
+    else if(e.key==='PageDown'){ e.preventDefault(); go(idx+1); }
+    else if(e.key==='PageUp'){ e.preventDefault(); go(idx-1); }
+  });
+
+  initQR();
+  render();
+})();
+</script>
+</body>
+</html>

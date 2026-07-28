@@ -1,0 +1,3071 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>장애학생 디지털 성범죄 예방 - 발표자료 & 강의 스크립트 통합본 (A4 / iPad PDF)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Original Presentation Styles */
+    
+    :root {
+--bg-slate: #0D121D;          /* 주 배경 (딥 슬레이트 네이비) */
+      --bg-navy: #080C14;           /* 보조 배경 (딥 네이비) */
+      --bg-card: #151D2A;           /* 어두운 카드 배경 */
+      --bg-card-border: rgba(255, 183, 51, 0.25);
+      
+      --accent-gold: #FFB733;        /* 강조 앰버 Gold */
+      --accent-gold-glow: rgba(255, 183, 51, 0.35);
+      --signal-red: #FF4D4F;         /* 경고 크림슨 Red */
+      --signal-red-glow: rgba(255, 77, 79, 0.4);
+      --vibrant-teal: #36CFC9;       /* 보호 Vibrant Teal */
+      --vibrant-teal-glow: rgba(54, 207, 201, 0.35);
+      
+      --text-main: #F5F7FA;          /* 본문 오프화이트 (명암비 극대화) */
+      --text-sub: #C4D1DF;           /* 서브 캡션 (Soft Ice Blue) */
+      --text-dark: #6C7A89;
+      
+      --font-family: 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+}
+    * {
+box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+}
+    body {
+background-color: #05080E;
+      color: var(--text-main);
+      font-family: var(--font-family);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+}
+    #stage-container {
+position: relative;
+      width: 100vw;
+      height: 56.25vw; /* 16:9 ratio */
+      max-height: 100vh;
+      max-width: 177.78vh; /* 16:9 ratio */
+      background-color: var(--bg-slate);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+}
+    .corner-bracket {
+position: absolute;
+      width: 24px;
+      height: 24px;
+      border-color: rgba(255, 183, 51, 0.4);
+      border-style: solid;
+      pointer-events: none;
+      z-index: 10;
+}
+    .bracket-tl {
+top: 20px; left: 24px; border-width: 2px 0 0 2px;
+}
+    .bracket-tr {
+top: 20px; right: 24px; border-width: 2px 2px 0 0;
+}
+    .bracket-bl {
+bottom: 60px; left: 24px; border-width: 0 0 2px 2px;
+}
+    .bracket-br {
+bottom: 60px; right: 24px; border-width: 0 2px 2px 0;
+}
+    header {
+position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 56px;
+      padding: 16px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      background: linear-gradient(to bottom, rgba(13, 18, 29, 0.95), rgba(13, 18, 29, 0));
+}
+    .header-logo {
+font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+}
+    .header-tag {
+background: rgba(255, 183, 51, 0.15);
+      color: var(--accent-gold);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      border: 1px solid rgba(255, 183, 51, 0.3);
+}
+    .chapter-indicators {
+display: flex;
+      align-items: center;
+      gap: 12px;
+}
+    .indicator-dot {
+display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      transition: all 0.3s ease;
+}
+    .indicator-dot .dot {
+width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+}
+    .indicator-dot.active {
+color: var(--accent-gold);
+}
+    .indicator-dot.active .dot {
+background-color: var(--accent-gold);
+      box-shadow: 0 0 10px var(--accent-gold);
+      transform: scale(1.3);
+}
+    #slide-viewport {
+flex: 1;
+      position: relative;
+      width: 100%;
+      height: 100%;
+}
+    .slide {
+position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 70px 80px 80px 80px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      transform: scale(0.98);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+}
+    .slide.active {
+opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+}
+    .highlight-gold {
+color: var(--accent-gold);
+}
+    .highlight-red {
+color: var(--signal-red);
+}
+    .highlight-teal {
+color: var(--vibrant-teal);
+}
+    .title-large {
+font-size: 3.4rem;
+      font-weight: 900;
+      line-height: 1.25;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+}
+    .title-medium {
+font-size: 2.4rem;
+      font-weight: 800;
+      line-height: 1.3;
+      margin-bottom: 16px;
+}
+    .subtitle {
+font-size: 1.35rem;
+      color: var(--text-sub);
+      font-weight: 400;
+      line-height: 1.6;
+}
+    .caption {
+font-size: 1.05rem;
+      color: var(--text-sub);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 12px 20px;
+      border-left: 4px solid var(--accent-gold);
+      border-radius: 0 8px 8px 0;
+      margin-top: 24px;
+}
+    footer {
+position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 52px;
+      padding: 0 36px;
+      background: rgba(8, 12, 20, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 20;
+}
+    .slide-counter {
+font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--text-sub);
+      letter-spacing: 1px;
+}
+    .nav-controls {
+display: flex;
+      align-items: center;
+      gap: 12px;
+}
+    .btn-nav {
+background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-main);
+      padding: 6px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+}
+    .btn-nav:hover {
+background: var(--accent-gold);
+      color: #000;
+      border-color: var(--accent-gold);
+}
+    .btn-toggle-notes {
+background: rgba(255, 183, 51, 0.12);
+      border: 1px solid rgba(255, 183, 51, 0.35);
+      color: var(--accent-gold);
+}
+    #notes-panel {
+position: absolute;
+      bottom: 52px;
+      left: 0;
+      width: 100%;
+      max-height: 180px;
+      background: rgba(7, 11, 18, 0.95);
+      border-top: 2px solid var(--accent-gold);
+      padding: 16px 36px;
+      overflow-y: auto;
+      z-index: 15;
+      display: none;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.7);
+}
+    #notes-panel.visible {
+display: block;
+}
+    .notes-header {
+font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+}
+    .notes-content {
+font-size: 0.95rem;
+      line-height: 1.6;
+      color: #D1D9E0;
+}
+    .slide-p1 {
+text-align: center;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at center, #151D2A 0%, #080C14 75%);
+}
+    .p1-badge {
+display: inline-block;
+      padding: 6px 18px;
+      background: rgba(255, 183, 51, 0.12);
+      border: 1px solid rgba(255, 183, 51, 0.35);
+      color: var(--accent-gold);
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      border-radius: 30px;
+      margin-bottom: 24px;
+}
+    .p1-title {
+font-size: 3.6rem;
+      font-weight: 900;
+      margin-bottom: 20px;
+      line-height: 1.2;
+      text-shadow: 0 0 30px rgba(0,0,0,0.6);
+}
+    .p1-subtitle {
+font-size: 1.5rem;
+      color: var(--text-sub);
+      margin-bottom: 50px;
+      font-weight: 400;
+}
+    .p1-meta {
+font-size: 1.1rem;
+      color: var(--text-dark);
+      letter-spacing: 1px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 20px;
+      width: 60%;
+}
+    .video-container {
+width: 100%;
+      height: 72%;
+      background: #000;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 183, 51, 0.35);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+}
+    .video-bar {
+position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 40px;
+      background: rgba(0,0,0,0.85);
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--text-sub);
+}
+    .flow-grid-4 {
+display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin: 36px 0;
+      position: relative;
+}
+    .flow-card {
+background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 12px;
+      padding: 24px 16px;
+      text-align: center;
+      position: relative;
+      transition: all 0.3s ease;
+}
+    .flow-card:hover {
+transform: translateY(-5px);
+      border-color: var(--accent-gold);
+      box-shadow: 0 10px 25px rgba(255, 183, 51, 0.2);
+}
+    .flow-num {
+font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--accent-gold);
+      margin-bottom: 10px;
+}
+    .flow-icon {
+font-size: 2.5rem;
+      margin-bottom: 10px;
+}
+    .flow-title {
+font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-main);
+}
+    .flow-arrow {
+position: absolute;
+      top: 50%;
+      right: -12px;
+      transform: translateY(-50%);
+      font-size: 1.2rem;
+      color: var(--accent-gold);
+      z-index: 2;
+}
+    .stamp-container {
+position: absolute;
+      bottom: 85px;
+      right: 80px;
+      display: flex;
+      gap: 16px;
+      transform: rotate(-6deg);
+}
+    .stamp-box {
+border: 3px double var(--signal-red);
+      color: var(--signal-red);
+      padding: 8px 16px;
+      font-family: var(--font-mono);
+      font-size: 1.05rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      background: rgba(255, 77, 79, 0.1);
+      box-shadow: 0 0 15px rgba(255, 77, 79, 0.25);
+      border-radius: 4px;
+      text-transform: uppercase;
+      animation: stampDrop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+    @keyframes stampDrop {
+0% { transform: scale(3); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+}
+    .chat-quote-card {
+background: rgba(255, 183, 51, 0.08);
+      border: 1px dashed var(--accent-gold);
+      border-radius: 12px;
+      padding: 20px 30px;
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 30px;
+}
+    .chat-avatar {
+width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--accent-gold);
+      color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 800;
+      font-size: 1.2rem;
+}
+    .chat-text {
+font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent-gold);
+}
+    .network-vis-container {
+display: flex;
+      align-items: center;
+      justify-content: space-around;
+      background: rgba(13, 18, 29, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 30px;
+      margin-top: 10px;
+}
+    .node-group {
+text-align: center;
+}
+    .node-circle {
+width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 12px auto;
+      font-weight: 800;
+      font-size: 1.3rem;
+}
+    .node-single {
+background: var(--accent-gold);
+      color: #000;
+      box-shadow: 0 0 20px var(--accent-gold-glow);
+}
+    .node-multi {
+background: var(--signal-red);
+      color: #FFF;
+      box-shadow: 0 0 20px var(--signal-red-glow);
+}
+    .alert-badge {
+display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 77, 79, 0.15);
+      border: 1px solid var(--signal-red);
+      color: var(--signal-red);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-top: 20px;
+}
+    .slide-p6 {
+background-color: var(--bg-navy);
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+}
+    .p6-text {
+font-size: 3.2rem;
+      font-weight: 900;
+      color: var(--text-main);
+      line-height: 1.4;
+}
+    .slide-p7 {
+background: var(--bg-navy);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 60px;
+      padding-left: 120px;
+}
+    .roman-num {
+font-family: var(--font-mono);
+      font-size: 10rem;
+      font-weight: 900;
+      color: var(--accent-gold);
+      line-height: 1;
+      text-shadow: 0 0 40px var(--accent-gold-glow);
+}
+    .warning-card-layout {
+display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 16px;
+      padding: 40px;
+      margin-top: 20px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+      position: relative;
+}
+    .progress-tracker-badge {
+position: absolute;
+      top: 20px;
+      right: 24px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+      background: rgba(0,0,0,0.4);
+      padding: 4px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 183, 51, 0.3);
+}
+    .warning-icon-box {
+height: 200px;
+      border-radius: 12px;
+      background: rgba(255, 183, 51, 0.08);
+      border: 1px solid rgba(255, 183, 51, 0.2);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+}
+    .warning-icon-box.red-theme {
+background: rgba(255, 77, 79, 0.08);
+      border-color: rgba(255, 77, 79, 0.3);
+}
+    .warning-num-tag {
+font-family: var(--font-mono);
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+      background: rgba(0,0,0,0.4);
+      padding: 4px 12px;
+      border-radius: 20px;
+}
+    .goals-grid-3 {
+display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 36px;
+}
+    .goal-card {
+background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 16px;
+      padding: 36px 28px;
+      text-align: center;
+      transition: all 0.3s ease;
+}
+    .goal-card.teal-accent {
+border-color: rgba(54, 207, 201, 0.45);
+      background: rgba(54, 207, 201, 0.06);
+}
+    .goal-card.teal-accent .goal-letter {
+color: var(--vibrant-teal);
+}
+    .goal-letter {
+font-family: var(--font-mono);
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--accent-gold);
+      margin-bottom: 16px;
+}
+    .goal-title {
+font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+}
+    .slide-cover {
+background: var(--bg-navy); display: flex; flex-direction: row; align-items: center; gap: 60px; padding-left: 120px;
+}
+    .network-compare {
+display: flex; align-items: center; justify-content: center; gap: 60px; margin-top: 36px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 30px 40px;
+}
+    .net-node-single {
+width: 16px; height: 16px; border-radius: 50%; background: var(--text-sub);
+}
+    .net-node-spread {
+display: grid; grid-template-columns: repeat(5, 14px); gap: 6px;
+}
+    .net-node-spread .dot {
+width: 14px; height: 14px; border-radius: 50%; background: var(--signal-red); opacity: 0.8;
+}
+    .net-node-spread .dot:first-child {
+background: var(--accent-gold); opacity: 1;
+}
+    .net-label {
+font-size: 0.95rem; color: var(--text-sub); text-align: center; margin-top: 10px;
+}
+    .split-grid {
+display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 24px;
+}
+    .split-card {
+border-radius: 16px; padding: 36px 32px; position: relative;
+}
+    .split-card.muted {
+background: var(--bg-card); border: 1px solid rgba(255,255,255,0.1);
+}
+    .split-card.glowing {
+background: rgba(255,183,51,0.06); border: 2px solid rgba(255,183,51,0.45); box-shadow: 0 0 30px rgba(255,183,51,0.12);
+}
+    .split-tag {
+display: inline-block; font-family: var(--font-mono); font-size: 0.8rem; font-weight: 800; padding: 4px 12px; border-radius: 20px; margin-bottom: 16px;
+}
+    .split-tag.muted {
+background: rgba(255,255,255,0.08); color: var(--text-sub);
+}
+    .split-tag.glow {
+background: rgba(255,183,51,0.15); color: var(--accent-gold); border: 1px solid rgba(255,183,51,0.4);
+}
+    .split-item {
+display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 1.15rem; color: var(--text-main);
+}
+    .split-item:last-child {
+border-bottom: none;
+}
+    .neon-badge {
+display: inline-block; padding: 4px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 700; margin-top: 4px;
+}
+    .neon-badge.gold {
+background: rgba(255,183,51,0.15); color: var(--accent-gold); border: 1px solid rgba(255,183,51,0.4);
+}
+    .neon-badge.red {
+background: rgba(255,77,79,0.15); color: var(--signal-red); border: 1px solid rgba(255,77,79,0.4);
+}
+    .chat-bubble {
+background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 18px 18px 18px 4px; padding: 18px 28px; max-width: 75%; font-size: 1.3rem; color: var(--text-main); margin-bottom: 20px; position: relative;
+}
+    .chat-bubble::before {
+content: '🙋 학생 신고'; position: absolute; top: -22px; left: 10px; font-size: 0.8rem; color: var(--text-sub); font-weight: 700;
+}
+    .warning-banner {
+background: rgba(255,77,79,0.1); border: 2px solid rgba(255,77,79,0.5); border-radius: 12px; padding: 28px 36px; text-align: center; margin-top: 20px;
+}
+    .strikethrough {
+text-decoration: line-through; text-decoration-color: var(--signal-red); text-decoration-thickness: 3px;
+}
+    .risk-grid-2 {
+display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 20px;
+}
+    .risk-grid-3 {
+display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px;
+}
+    .risk-card {
+background: var(--bg-card); border: 1px solid var(--bg-card-border); border-radius: 14px; padding: 28px 24px; display: flex; flex-direction: column; gap: 14px; transition: all 0.3s ease;
+}
+    .risk-type-tag {
+font-family: var(--font-mono); font-size: 0.85rem; font-weight: 800; color: var(--accent-gold);
+}
+    .risk-type-tag.red {
+color: var(--signal-red);
+}
+    .risk-icon {
+font-size: 2.8rem;
+}
+    .risk-title {
+font-size: 1.4rem; font-weight: 800;
+}
+    .risk-desc {
+font-size: 1.05rem; color: var(--text-sub); line-height: 1.5;
+}
+    .risk-case-badge {
+display: inline-flex; align-items: center; gap: 6px; background: rgba(255,183,51,0.1); border: 1px solid rgba(255,183,51,0.3); color: var(--accent-gold); padding: 6px 14px; border-radius: 6px; font-size: 0.85rem; font-weight: 700;
+}
+    .risk-case-badge.red {
+background: rgba(255,77,79,0.1); border-color: rgba(255,77,79,0.3); color: var(--signal-red);
+}
+    .danger-badge-lg {
+display: inline-flex; align-items: center; gap: 6px; background: rgba(255,77,79,0.18); border: 2px solid rgba(255,77,79,0.6); color: var(--signal-red); padding: 6px 14px; border-radius: 6px; font-size: 0.9rem; font-weight: 800; animation: pulse-red 2s infinite;
+}
+    .slide-section-cover {
+background: var(--bg-navy); text-align: center; justify-content: center; align-items: center;
+}
+    .penalty-grid {
+display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 24px;
+}
+    .penalty-card {
+background: var(--bg-card); border: 1px solid var(--bg-card-border); border-radius: 14px; padding: 24px; position: relative; overflow: hidden;
+}
+    .penalty-card.new-2024 {
+border-color: rgba(255,77,79,0.6); background: rgba(255,77,79,0.06); animation: pulse-red 3s infinite;
+}
+    .penalty-card.extreme {
+border-color: rgba(180,50,80,0.6); background: rgba(120,20,50,0.08);
+}
+    .penalty-label {
+font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 10px;
+}
+    .penalty-number {
+font-family: var(--font-mono); font-size: 2.8rem; font-weight: 900; line-height: 1.1;
+}
+    .penalty-number.gold {
+color: var(--accent-gold);
+}
+    .penalty-number.red {
+color: var(--signal-red);
+}
+    .penalty-number.extreme {
+color: #D4445C;
+}
+    .penalty-sub {
+font-size: 0.95rem; color: var(--text-sub); margin-top: 8px;
+}
+    .new-badge {
+position: absolute; top: 14px; right: 14px; background: var(--signal-red); color: #FFF; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 4px; letter-spacing: 1px;
+}
+    .quiz-question-box {
+background: rgba(255, 183, 51, 0.08);
+      border: 2px solid var(--accent-gold);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      margin-top: 20px;
+      box-shadow: 0 0 30px rgba(255, 183, 51, 0.15);
+}
+    .quiz-q-text {
+font-size: 2.2rem;
+      font-weight: 900;
+      line-height: 1.5;
+      color: #FFF;
+}
+    .quiz-answer-stamp {
+display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 3rem;
+      font-weight: 900;
+      padding: 12px 36px;
+      border-radius: 50px;
+      margin-bottom: 24px;
+}
+    .quiz-answer-stamp.wrong {
+background: rgba(255, 77, 79, 0.15);
+      border: 3px solid var(--signal-red);
+      color: var(--signal-red);
+      box-shadow: 0 0 25px rgba(255, 77, 79, 0.3);
+}
+    .quiz-answer-stamp.correct {
+background: rgba(54, 207, 201, 0.15);
+      border: 3px solid var(--vibrant-teal);
+      color: var(--vibrant-teal);
+      box-shadow: 0 0 25px rgba(54, 207, 201, 0.3);
+}
+    .explain-grid-3 {
+display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 16px;
+}
+    .explain-card {
+background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: left;
+}
+    .explain-step-tag {
+font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+      margin-bottom: 8px;
+}
+    .slide-ch-cover {
+background: var(--bg-navy);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 60px;
+      padding-left: 120px;
+}
+    .timeline-dual-grid {
+display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 24px;
+}
+    .timeline-column {
+background: var(--bg-card);
+      border-radius: 14px;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.08);
+}
+    .timeline-column.danger {
+border-color: rgba(255,77,79,0.5);
+      background: rgba(255,77,79,0.04);
+}
+    .timeline-step {
+display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.08);
+      font-size: 1.05rem;
+}
+  
+
+    /* Print & iPad Document Layout Overrides */
+    html, body {
+      background: #06090E !important;
+      color: #EAEEF3 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      font-family: 'Noto Sans KR', -apple-system, sans-serif !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    /* Global Print Action Control Bar (Visible in browser, hidden when printed) */
+    #print-control-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: rgba(13, 18, 29, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid #FFB733;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      z-index: 99999;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    .control-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #FFB733;
+    }
+
+    .control-btn {
+      background: #FFB733;
+      color: #000;
+      border: none;
+      padding: 10px 24px;
+      font-size: 1rem;
+      font-weight: 800;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .control-btn:hover {
+      background: #FFC857;
+      transform: translateY(-2px);
+    }
+
+    .document-container {
+      padding-top: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      padding-bottom: 60px;
+    }
+
+    /* A4 / Page Dimensions */
+    .print-page {
+      width: 210mm;
+      min-height: 297mm;
+      background: #0B0F19;
+      border: 1px solid rgba(255, 183, 51, 0.25);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      box-sizing: border-box;
+      padding: 14mm 14mm 14mm 14mm;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      page-break-after: always;
+      break-after: page;
+      border-radius: 8px;
+    }
+
+    /* Header Bar on Each Page */
+    .page-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 1.5px solid rgba(255, 183, 51, 0.4);
+    }
+
+    .chap-badge {
+      background: rgba(255, 183, 51, 0.15);
+      color: #FFB733;
+      border: 1px solid rgba(255, 183, 51, 0.4);
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .slide-num-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #8C9BAE;
+    }
+
+    .highlight-gold {
+      color: #FFB733;
+      font-size: 1.15rem;
+    }
+
+    /* 16:9 Slide Display Box */
+    .slide-wrapper-16-9 {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #070A10;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+    }
+
+    .slide-container-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    /* CRITICAL FIX FOR BLACK SCREEN ISSUE: Force slide visibility and flex layout */
+    .slide, .slide.active-print {
+      display: flex !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      transform: none !important;
+      pointer-events: auto !important;
+      z-index: 10 !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Force all child elements inside slide to be visible */
+    .slide * {
+      visibility: visible !important;
+    }
+
+    /* Script Note Card (Bottom Section) */
+    .script-note-card {
+      flex: 1;
+      background: #111723;
+      border: 1px solid rgba(54, 207, 201, 0.35);
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.4);
+    }
+
+    .note-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px dashed rgba(54, 207, 201, 0.25);
+      padding-bottom: 8px;
+    }
+
+    .note-icon {
+      font-size: 1.2rem;
+    }
+
+    .note-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #36CFC9;
+      letter-spacing: 0.5px;
+    }
+
+    .note-slide-tag {
+      margin-left: auto;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .note-card-body {
+      font-size: 1.12rem;
+      line-height: 1.8;
+      color: #E2E8F0;
+      font-weight: 400;
+      white-space: normal;
+      word-break: keep-all;
+    }
+
+    /* Print Stylesheet Overrides */
+    @media print {
+      #print-control-bar {
+        display: none !important;
+      }
+      .document-container {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        gap: 0 !important;
+      }
+      .print-page {
+        width: 100% !important;
+        height: 100vh !important;
+        min-height: auto !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        box-sizing: border-box !important;
+        padding: 10mm !important;
+      }
+      @page {
+        size: A4 portrait;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="print-control-bar">
+    <div class="control-info">
+      <span>📄 장애학생 디지털 성범죄 예방 (1~3챕터 38페이지 통합본)</span>
+    </div>
+    <button class="control-btn" onclick="window.print()">
+      <span>🖨️ 브라우저 인쇄 / PDF 저장 (Ctrl+P)</span>
+    </button>
+  </div>
+
+  <div class="document-container">
+    
+    <section class="print-page" id="page-1">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">오프닝 / Intro</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">01</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide slide-p1 active active-print" data-chapter="part1" data-notes="『안녕하십니까. 충남 논산시 소재의, 노성중 교사 최재석입니다. 오늘이 1정 연수 마지막주차라고 들었는데 얼마나 선생님들이 지친 상태일지 강사인 제가 걱정이 됩니다. 힘들었다고 대답하시더라구요. 제가 덜 힘들게 해드릴 순 없고, 편안하게 들으실 수 있게, 그리고 한가지라도 유익한 정보를 남길 수 있도록 최선에 다해보겠습니다.』">
+        <div class="p1-badge">1급 정교사 자격연수 · 특수교사 대상</div>
+        <h1 class="p1-title">
+          <span class="highlight-gold">더 쉽게</span> 당하고,<br>
+          <span class="highlight-gold">더 늦게</span> 발견된다
+        </h1>
+        <p class="p1-subtitle">장애학생 디지털 성범죄 예방과 교사의 역할</p>
+        <div class="p1-meta">강사 : 최재석 (노성중학교 교사)</div>
+      </div>
+
+      <!-- p2: News Video N-th Room [T7: Full Video Bridge] -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 01</span>
+        </div>
+        <div class="note-card-body" id="note-body-0">
+          『안녕하십니까. 충남 논산시 소재의, 노성중 교사 최재석입니다. 오늘이 1정 연수 마지막주차라고 들었는데 얼마나 선생님들이 지친 상태일지 강사인 제가 걱정이 됩니다. 힘들었다고 대답하시더라구요. 제가 덜 힘들게 해드릴 순 없고, 편안하게 들으실 수 있게, 그리고 한가지라도 유익한 정보를 남길 수 있도록 최선에 다해보겠습니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-2">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">오프닝 / Intro</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">02</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="part1" data-notes="재생 전 한 문장만: 『디지털 성범죄하면 떠오르는 대표적인 사건은 2019년, 대학생 둘이 파고들어 밝혀낸 N번방 사건일 겁니다. 관련 영상 먼저 보고 이야기 나누도록 하겠습니다.』">
+        <div style="margin-bottom: 16px;">
+          <span class="highlight-gold" style="font-weight: 700; font-family: var(--font-mono);">[뉴스 영상 01]</span>
+          <h2 style="font-size: 1.8rem; font-weight: 800; display: inline; margin-left: 10px;">N번방, 그 시작</h2>
+        </div>
+        <div class="video-container">
+          <video width="100%" height="100%" controls style="max-height: 100%; object-fit: contain;">
+            <source src="N번방_사건_요약.mp4" type="video/mp4">
+            브라우저가 비디오 태그를 지원하지 않습니다.
+          </video>
+          <div class="video-bar">
+            <span><b>[영상 출처]</b> YouTube (https://www.youtube.com/watch?v=VZgunHeAYvI) — N번방 사건 개요 및 수법 보도</span>
+            <a href="https://www.youtube.com/watch?v=VZgunHeAYvI" target="_blank" style="color: var(--accent-gold); text-decoration: underline;">출처 영상 원본 보기 ↗</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- p3: N-th Room 4 Steps [T4: Dynamic Timeline] -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 02</span>
+        </div>
+        <div class="note-card-body" id="note-body-1">
+          재생 전 한 문장만: 『디지털 성범죄하면 떠오르는 대표적인 사건은 2019년, 대학생 둘이 파고들어 밝혀낸 N번방 사건일 겁니다. 관련 영상 먼저 보고 이야기 나누도록 하겠습니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-3">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">오프닝 / Intro</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">03</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="part1" data-notes="『N번방에 대해서 저도 당시에는 그렇게 관심이 많지 않았고, 생경하게 생각했었습니다. 알면알수록 분노가 치미는 이 사건에 대해서 자세히 알아보겠습니다. 일탈계 이용자를 대상으로 금전적 호의를 베풀고 개인정보를 기반으로 협박, 성착취로 이어지는 악질적 행위였습니다. 폭력이 아니라 개인정보를 쥐고 흔드는 협박입니다. 문형욱 34년, 조주빈 47년 4월 형 확정 받습니다.』">
+        <h2 class="title-medium">N번방의 범죄 수법 <span class="highlight-gold">4단계</span></h2>
+        <p class="subtitle">폭력이 아닌, 개인정보를 쥐고 흔드는 <b>심리적 협박과 가스라이팅</b></p>
+        
+        <div class="flow-grid-4">
+          <div class="flow-card">
+            <div class="flow-num">STEP 01</div>
+            <div class="flow-icon">💰</div>
+            <div class="flow-title">친절한 제안</div>
+            <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 8px;">금전/선물/호의 접근</p>
+            <div class="flow-arrow">➔</div>
+          </div>
+          <div class="flow-card">
+            <div class="flow-num">STEP 02</div>
+            <div class="flow-icon">🪪</div>
+            <div class="flow-title">개인정보 확보</div>
+            <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 8px;">신분증/학교/얼굴 획득</p>
+            <div class="flow-arrow">➔</div>
+          </div>
+          <div class="flow-card">
+            <div class="flow-num">STEP 03</div>
+            <div class="flow-icon">⚠️</div>
+            <div class="flow-title">협박 & 통제</div>
+            <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 8px;">유포 협박 및 조종</p>
+            <div class="flow-arrow">➔</div>
+          </div>
+          <div class="flow-card" style="border-color: rgba(255, 77, 79, 0.5);">
+            <div class="flow-num" style="color: var(--signal-red);">STEP 04</div>
+            <div class="flow-icon">🔒</div>
+            <div class="flow-title" style="color: var(--signal-red);">성착취 강요</div>
+            <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 8px;">착취물 제작/유포</p>
+          </div>
+        </div>
+
+        <div class="caption">
+          <b>핵심 구조:</b> 폭력이 아닌 '개인정보 협박' 구조 · 피해자가 가해자로 변하는 악순환
+        </div>
+
+        <!-- Red 3D Forensic Stamp -->
+        <div class="stamp-container">
+          <div class="stamp-box">문형욱 34년 형</div>
+          <div class="stamp-box">조주빈 47년 4개월 형</div>
+        </div>
+      </div>
+
+      <!-- p4: Deepfake Video 2024 [T7: Full Video Bridge] -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 03</span>
+        </div>
+        <div class="note-card-body" id="note-body-2">
+          『N번방에 대해서 저도 당시에는 그렇게 관심이 많지 않았고, 생경하게 생각했었습니다. 알면알수록 분노가 치미는 이 사건에 대해서 자세히 알아보겠습니다. 일탈계 이용자를 대상으로 금전적 호의를 베풀고 개인정보를 기반으로 협박, 성착취로 이어지는 악질적 행위였습니다. 폭력이 아니라 개인정보를 쥐고 흔드는 협박입니다. 문형욱 34년, 조주빈 47년 4월 형 확정 받습니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-4">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">오프닝 / Intro</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">04</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="part1" data-notes="재생 전: 『그리고 5년 뒤. 또다른 디지털 성범죄가 학교를 뒤흔듭니다. 바로 ai를 활용한 딥페이크 범죄입니다. 관련 영상 한편 보도록 하겠습니다.』">
+        <div style="margin-bottom: 16px;">
+          <span class="highlight-red" style="font-weight: 700; font-family: var(--font-mono);">[뉴스 영상 02]</span>
+          <h2 style="font-size: 1.8rem; font-weight: 800; display: inline; margin-left: 10px;">2024, 딥페이크가 학교로</h2>
+        </div>
+        <div class="video-container" style="border-color: rgba(255, 77, 79, 0.4);">
+          <video width="100%" height="100%" controls style="max-height: 100%; object-fit: contain;">
+            <source src="학교_딥페이크_뉴스_요약.mp4" type="video/mp4">
+            브라우저가 비디오 태그를 지원하지 않습니다.
+          </video>
+          <div class="video-bar">
+            <span><b>[영상 출처]</b> YouTube (https://www.youtube.com/watch?v=FJU1OYdSJOY) — 2024 학교 딥페이크 실태 보도</span>
+            <a href="https://www.youtube.com/watch?v=FJU1OYdSJOY" target="_blank" style="color: var(--signal-red); text-decoration: underline;">출처 영상 원본 보기 ↗</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- p5: Deepfake Mechanism [T3: 4-Card Grid] -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 04</span>
+        </div>
+        <div class="note-card-body" id="note-body-3">
+          재생 전: 『그리고 5년 뒤. 또다른 디지털 성범죄가 학교를 뒤흔듭니다. 바로 ai를 활용한 딥페이크 범죄입니다. 관련 영상 한편 보도록 하겠습니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-5">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">오프닝 / Intro</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">05</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="part1" data-notes="『최근 우리에게 어려움을 주는 건 AI를 활용한 딥페이크 영상입니다. 몇몇 학교는 졸업앨범 교사 사진을 빼는 실정입니다. 수법은 간단합니다. "재미있으니까 한번 해봐"라며 받은 링크에 얼굴을 넣고 합성하고, 무료 회기가 끝나면 친구를 초대하게 만듭니다. 별 생각없이 사진을 넣고 음란물을 합성합니다. 장난삼아 했던 행동들이 범죄로 이어집니다.』">
+        <div class="chat-quote-card">
+          <div class="chat-avatar">💬</div>
+          <div class="chat-text">"재밌으니 한번 해봐" — 일주일 만에 7명 확산</div>
+        </div>
+
+        <div class="network-vis-container">
+          <div class="node-group">
+            <div class="node-circle node-single">1명</div>
+            <div style="font-size: 0.9rem; color: var(--text-sub);">초기 링크 수신</div>
+          </div>
+          <div style="font-size: 2rem; color: var(--accent-gold);">➔</div>
+          <div class="node-group">
+            <div class="node-circle" style="background: #333; color: #FFF; border: 1px solid var(--accent-gold);">BOT</div>
+            <div style="font-size: 0.9rem; color: var(--text-sub);">합성 텔레그램 봇</div>
+          </div>
+          <div style="font-size: 2rem; color: var(--signal-red);">➔</div>
+          <div class="node-group">
+            <div class="node-circle node-multi">7명</div>
+            <div style="font-size: 0.9rem; color: var(--signal-red); font-weight: 700;">친구 초대 강요가담</div>
+          </div>
+        </div>
+
+        <div class="alert-badge">
+          <span>⚠️ 현장 실태:</span>
+          <span>졸업앨범 교사 사진 전면 삭제 및 교사 대상 딥페이크 유포 사례 급증</span>
+        </div>
+      </div>
+
+      <!-- p6: Full Black Transition [T1: Hero Headline] -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 05</span>
+        </div>
+        <div class="note-card-body" id="note-body-4">
+          『최근 우리에게 어려움을 주는 건 AI를 활용한 딥페이크 영상입니다. 몇몇 학교는 졸업앨범 교사 사진을 빼는 실정입니다. 수법은 간단합니다. 
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-6">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">오프닝 / Intro</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">06</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide slide-p6 active-print" data-chapter="part1" data-notes="(2초 정적 후) 『뉴스 속 먼 나라 얘기가 아닙니다. 이미 우리 학교의, 그리고 교실의 문턱을 넘었습니다. 우리교과와는 아직 먼 이야기라고 생각이 드시나요? 오늘은 이런 위험에 대한 경고와 우리가 어떻게 대처해나가야 하는지를 생각해 봤으면 좋겠습니다.』">
+        <div class="p6-text">
+          디지털 성범죄,<br>
+          <span class="highlight-gold">이미 교실 안에 있다</span>
+        </div>
+      </div>
+
+      <!-- p7: Chapter I Cover [T1: Hero Headline] -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 06</span>
+        </div>
+        <div class="note-card-body" id="note-body-5">
+          (2초 정적 후) 『뉴스 속 먼 나라 얘기가 아닙니다. 이미 우리 학교의, 그리고 교실의 문턱을 넘었습니다. 우리교과와는 아직 먼 이야기라고 생각이 드시나요? 오늘은 이런 위험에 대한 경고와 우리가 어떻게 대처해나가야 하는지를 생각해 봤으면 좋겠습니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-7">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅰ · 특수교육과 디지털 성범죄</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">07</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide slide-p7 active-print" data-chapter="chap1" data-notes="『방금 두 사건이, 특수교육 현장에 던지는 신호를 네 가지로 정리해보았습니다.』">
+        <div class="roman-num">Ⅰ</div>
+        <div>
+          <div style="font-family: var(--font-mono); color: var(--accent-gold); font-size: 1.2rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 8px;">CHAPTER Ⅰ</div>
+          <h2 class="title-large" style="margin-bottom: 0;">특수교육에 던지는<br><span class="highlight-gold">네 가지 경고</span></h2>
+        </div>
+      </div>
+
+      <!-- p8: Warning 1 [T3: 4-Card Grid Sequence - 1/4] -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 07</span>
+        </div>
+        <div class="note-card-body" id="note-body-6">
+          『방금 두 사건이, 특수교육 현장에 던지는 신호를 네 가지로 정리해보았습니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-8">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅰ · 특수교육과 디지털 성범죄</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">08</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap1" data-notes="『가해자들의 친절한 접근·가스라이팅에 가장 취약한 게 우리 아이들일 수 있습니다. 인지적, 정서적 취약점을 파고드는 디지털 성범죄에 피해자가 언제든 될 수 있습니다.』">
+        <div style="font-family: var(--font-mono); color: var(--accent-gold); font-weight: 800;">WARNING 01</div>
+        <h2 class="title-medium">① 우리 학생도 <span class="highlight-gold">피해자</span>가 될 수 있다</h2>
+        
+        <div class="warning-card-layout">
+          <div class="progress-tracker-badge">PROGRESS 1 / 4</div>
+          <div class="warning-icon-box">
+            <div style="font-size: 4rem;">🎯</div>
+            <div class="warning-num-tag">취약성 표적</div>
+          </div>
+          <div>
+            <h3 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 16px; color: var(--accent-gold);">인지적·정서적 취약점 집중 공략</h3>
+            <p style="font-size: 1.2rem; line-height: 1.7; color: var(--text-sub);">
+              온라인에서의 친절한 접근과 거짓 호의, 가스라이팅 수법에 장애학생은 쉽게 경계심을 허물게 됩니다. <b>"나를 인정해주는 유일한 친구"</b>라는 착각을 유도하여 피해로 이끕니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p9: Warning 2 [T3: 4-Card Grid Sequence - 2/4] -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 08</span>
+        </div>
+        <div class="note-card-body" id="note-body-7">
+          『가해자들의 친절한 접근·가스라이팅에 가장 취약한 게 우리 아이들일 수 있습니다. 인지적, 정서적 취약점을 파고드는 디지털 성범죄에 피해자가 언제든 될 수 있습니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-9">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅰ · 특수교육과 디지털 성범죄</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">09</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap1" data-notes="『AI가 입힌 '놀이의 탈' — 가해의 인식 없이 가담하게 되는. 나도 모르게 가해자가 될 위험이 있습니다.』">
+        <div style="font-family: var(--font-mono); color: var(--accent-gold); font-weight: 800;">WARNING 02</div>
+        <h2 class="title-medium">② 우리 학생도 <span class="highlight-gold">가해자</span>가 될 수 있다</h2>
+        
+        <div class="warning-card-layout">
+          <div class="progress-tracker-badge">PROGRESS 2 / 4</div>
+          <div class="warning-icon-box">
+            <div style="font-size: 4rem;">🎭</div>
+            <div class="warning-num-tag">놀이의 탈</div>
+          </div>
+          <div>
+            <h3 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 16px; color: var(--accent-gold);">인식 없는 가담과 범죄의 장난화</h3>
+            <p style="font-size: 1.2rem; line-height: 1.7; color: var(--text-sub);">
+              AI 딥페이크 봇이나 합성 게임은 아이들에게 단순한 <b>'재미있는 놀이'</b>처럼 다가갑니다. 이것이 심각한 성범죄이자 형사 처벌 대상임을 인지하지 못한 채 가담자로 전락합니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p10: Warning 3 [T3: 4-Card Grid Sequence - 3/4] -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 09</span>
+        </div>
+        <div class="note-card-body" id="note-body-8">
+          『AI가 입힌 '놀이의 탈' — 가해의 인식 없이 가담하게 되는. 나도 모르게 가해자가 될 위험이 있습니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-10">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅰ · 특수교육과 디지털 성범죄</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">10</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap1" data-notes="『여기서부턴 남 얘기가 아닙니다. 우리 모두 피해자가 될 수 있습니다. 일상·교육활동 사진이 노출되기 쉬운 특수교사 본인이 표적이 될 수 있습니다.』">
+        <div style="font-family: var(--font-mono); color: var(--signal-red); font-weight: 800;">WARNING 03</div>
+        <h2 class="title-medium">③ <span class="highlight-red">교사도 예외는 아니다</span></h2>
+        
+        <div class="warning-card-layout" style="border-color: rgba(255, 77, 79, 0.45);">
+          <div class="progress-tracker-badge" style="color: var(--signal-red); border-color: rgba(255, 77, 79, 0.4);">PROGRESS 3 / 4</div>
+          <div class="warning-icon-box red-theme">
+            <div style="font-size: 4rem;">📸</div>
+            <div class="warning-num-tag" style="color: var(--signal-red);">특수교사 표적</div>
+          </div>
+          <div>
+            <h3 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 16px; color: var(--signal-red);">교육활동 사진 노출과 딥페이크 위협</h3>
+            <p style="font-size: 1.2rem; line-height: 1.7; color: var(--text-sub);">
+              학교 홈페이지, SNS, 졸업앨범 등에 사진이 자주 공개되는 교사 역시 딥페이크 범죄의 대상이 되고 있습니다. 더 이상 <b>교사 안전 지대는 존재하지 않습니다.</b>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p11: Warning 4 [T3: 4-Card Grid Sequence - 4/4] -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 10</span>
+        </div>
+        <div class="note-card-body" id="note-body-9">
+          『여기서부턴 남 얘기가 아닙니다. 우리 모두 피해자가 될 수 있습니다. 일상·교육활동 사진이 노출되기 쉬운 특수교사 본인이 표적이 될 수 있습니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-11">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅰ · 특수교육과 디지털 성범죄</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">11</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap1" data-notes="『비장애 중심 매뉴얼·사후 처리는 장애학생에게, 그리고 특수교육에 안 맞는 경향이 있습니다. 그렇기에 이런 성범죄 발생시 특수교육적 환경에 맞는 가이드라인이 필요합니다.』">
+        <div style="font-family: var(--font-mono); color: var(--accent-gold); font-weight: 800;">WARNING 04</div>
+        <h2 class="title-medium">④ <span class="highlight-gold">맞춤형 가이드</span>가 필요하다</h2>
+        
+        <div class="warning-card-layout">
+          <div class="progress-tracker-badge">PROGRESS 4 / 4</div>
+          <div class="warning-icon-box">
+            <div style="font-size: 4rem;">🧭</div>
+            <div class="warning-num-tag">특수교육 맞춤</div>
+          </div>
+          <div>
+            <h3 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 16px; color: var(--accent-gold);">비장애 중심 대응 매뉴얼의 한계</h3>
+            <p style="font-size: 1.2rem; line-height: 1.7; color: var(--text-sub);">
+              복잡한 서면 진술 중심의 기존 매뉴얼은 표현이 어려운 장애학생에게 한계가 명확합니다. 장애 특성과 특수교육적 환경을 고려한 <b>현장 중심 대응 가이드</b>가 절실합니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p12: 3 Goals [T3: 3-Card Layout] -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 11</span>
+        </div>
+        <div class="note-card-body" id="note-body-10">
+          『비장애 중심 매뉴얼·사후 처리는 장애학생에게, 그리고 특수교육에 안 맞는 경향이 있습니다. 그렇기에 이런 성범죄 발생시 특수교육적 환경에 맞는 가이드라인이 필요합니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-12">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅰ · 특수교육과 디지털 성범죄</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">12</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap1" data-notes="『오늘 이렇게 세 가지 큰 주제를 목표로 삼아보았습니다. 위협을 알고, 발견·대응하고, 우리 아이 눈높이로 가르치기 위해 필요한 것들을 안내드리려고 합니다.』">
+        <h2 class="title-medium" style="text-align: center;">오늘, <span class="highlight-gold">세 가지 목표</span></h2>
+        <p class="subtitle" style="text-align: center;">120분 동안 함께 다룰 핵심 학습 여정</p>
+
+        <div class="goals-grid-3">
+          <div class="goal-card">
+            <div class="goal-letter">GOAL A</div>
+            <div class="goal-title">위협을 이해한다</div>
+            <p style="color: var(--text-sub); font-size: 0.95rem; line-height: 1.6;">
+              디지털 성범죄의 본질과<br>장애학생 취약성 4구조 파악
+            </p>
+          </div>
+
+          <div class="goal-card">
+            <div class="goal-letter">GOAL B</div>
+            <div class="goal-title">발견 · 대응한다</div>
+            <p style="color: var(--text-sub); font-size: 0.95rem; line-height: 1.6;">
+              4가지 조기 발견 신호와<br>실무 중심 4-Track 대응 작동
+            </p>
+          </div>
+
+          <div class="goal-card teal-accent">
+            <div class="goal-letter">GOAL C</div>
+            <div class="goal-title" style="color: var(--vibrant-teal);">가르친다</div>
+            <p style="color: var(--text-sub); font-size: 0.95rem; line-height: 1.6;">
+              장애학생 눈높이에 맞춘<br>경계·동의 및 예방 교육 적용
+            </p>
+          </div>
+        </div>
+      </div>
+
+<!-- p13: Chapter II Cover -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 12</span>
+        </div>
+        <div class="note-card-body" id="note-body-11">
+          『오늘 이렇게 세 가지 큰 주제를 목표로 삼아보았습니다. 위협을 알고, 발견·대응하고, 우리 아이 눈높이로 가르치기 위해 필요한 것들을 안내드리려고 합니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-13">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅱ · 디지털 성범죄 실태와 위험성</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">13</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide slide-cover active-print" data-chapter="chap2" data-notes="(소챕터 전환)">
+        <div class="roman-num">Ⅱ</div>
+        <div>
+          <div style="font-family: var(--font-mono); color: var(--accent-gold); font-size: 1.2rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 8px;">CHAPTER Ⅱ</div>
+          <h2 class="title-large" style="margin-bottom: 0;">디지털 성범죄란<br><span class="highlight-gold">무엇인가</span></h2>
+        </div>
+      </div>
+
+      <!-- p14: Hero Headline + Network Infographic -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 13</span>
+        </div>
+        <div class="note-card-body" id="note-body-12">
+          (소챕터 전환)
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-14">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅱ · 디지털 성범죄 실태와 위험성</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">14</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap2" data-notes="『옛날 성범죄가 &quot;한 번, 한 장소&quot;에서 발생하는 것이 특징이라면, 디지털 성범죄는 시공간을 넘어 영구적으로 반복됩니다. 한 번 퍼지면 모두 지워내기가 무척 어렵습니다. 피해자들은 이런 지속적인 고통에 삶이 망가지고, 스스로 목숨을 끊는 경우도 많았습니다.』">
+        <h2 class="title-medium">시공간을 넘어, <span class="highlight-gold">영구적으로 반복</span>되는 범죄</h2>
+        <p class="subtitle">온라인 네트워크를 통한 무한 복제 및 재유포 — 피해의 영속성</p>
+        <div class="network-compare">
+          <div style="text-align: center;">
+            <div style="font-size: 1.1rem; font-weight: 800; color: var(--text-sub); margin-bottom: 16px;">전통적 범죄</div>
+            <div style="display: flex; justify-content: center;"><div class="net-node-single"></div></div>
+            <div class="net-label">한 번, 한 장소<br>사건 시점 종료</div>
+          </div>
+          <div style="font-size: 2.5rem; color: var(--accent-gold);">⟶</div>
+          <div style="text-align: center;">
+            <div style="font-size: 1.1rem; font-weight: 800; color: var(--signal-red); margin-bottom: 16px;">디지털 성범죄</div>
+            <div class="net-node-spread">
+              <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+              <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+              <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            </div>
+            <div class="net-label" style="color: var(--signal-red);">무한 복제 · 영구 재유포<br>삭제 불가능</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- p15: Split Contrast -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 14</span>
+        </div>
+        <div class="note-card-body" id="note-body-13">
+          『옛날 성범죄가 &quot;한 번, 한 장소&quot;에서 발생하는 것이 특징이라면, 디지털 성범죄는 시공간을 넘어 영구적으로 반복됩니다. 한 번 퍼지면 모두 지워내기가 무척 어렵습니다. 피해자들은 이런 지속적인 고통에 삶이 망가지고, 스스로 목숨을 끊는 경우도 많았습니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-15">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅱ · 디지털 성범죄 실태와 위험성</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">15</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap2" data-notes="『전통적인 성범죄와의 차이는 핵심 매개체의 차이입니다. 물리적 공간과 온라인 네트워크 매체 차이가 있습니다. 또한 지속성의 특징이 있습니다. 온라인 상에서 무한 복제와 재유포가 가능합니다. 익명의 불특정 다수가 가해자이자 소비자가 됩니다. 마지막으로 단순한 재미와 실수, 장난이라는 인식의 안일함 문제가 있습니다.』">
+        <h2 class="title-medium">전통적 vs <span class="highlight-gold">디지털</span> 성범죄</h2>
+        <div class="split-grid">
+          <div class="split-card muted">
+            <div class="split-tag muted">전통적 성범죄</div>
+            <div style="font-size: 2rem; font-weight: 900; color: var(--text-sub); margin-bottom: 16px;">"한 번, 한 장소"</div>
+            <div class="split-item"><span>🔹</span> 신체 접촉 중심</div>
+            <div class="split-item"><span>🔹</span> 사건 시점에 종료</div>
+            <div class="split-item"><span>🔹</span> 가해자 특정 가능</div>
+            <div class="split-item"><span>🔹</span> 물리적 공간 한정</div>
+          </div>
+          <div class="split-card glowing">
+            <div class="split-tag glow">디지털 성범죄</div>
+            <div style="font-size: 2rem; font-weight: 900; color: var(--accent-gold); margin-bottom: 16px;">"영구적 · 무한 복제"</div>
+            <div class="split-item"><span>⚡</span> <span class="neon-badge gold">AI · 온라인 매개</span></div>
+            <div class="split-item"><span>⚡</span> <span class="neon-badge red">영구 재유포</span></div>
+            <div class="split-item"><span>⚡</span> <span class="neon-badge red">소비자 = 가해자</span></div>
+            <div class="split-item"><span>⚡</span> <span class="neon-badge gold">장난 인식 오류</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- p16: Chat + Misconception Warning -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 15</span>
+        </div>
+        <div class="note-card-body" id="note-body-14">
+          『전통적인 성범죄와의 차이는 핵심 매개체의 차이입니다. 물리적 공간과 온라인 네트워크 매체 차이가 있습니다. 또한 지속성의 특징이 있습니다. 온라인 상에서 무한 복제와 재유포가 가능합니다. 익명의 불특정 다수가 가해자이자 소비자가 됩니다. 마지막으로 단순한 재미와 실수, 장난이라는 인식의 안일함 문제가 있습니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-16">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅱ · 디지털 성범죄 실태와 위험성</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">16</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap2" data-notes="『학생들의 신고로 접할 때, &quot;선생님 얘가 제 사진 가지고 이상하게 만들어요&quot;라고 신고하면 성범죄라는 인식이 바로 떠오르진 않는다. 강제 추행이나 몰카는 예상하지만 사진 이용 범죄는 생각지 못하기 때문이다. 우리는 이런 착각을 조심해야 합니다.』">
+        <h2 class="title-medium" style="margin-bottom: 28px;">교실에서 마주하는 신호</h2>
+        <div class="chat-bubble">
+          "선생님, 얘가 <b>제 사진 가지고 이상하게 만들어요</b>"
+        </div>
+        <div class="chat-bubble" style="border-radius: 18px 18px 18px 4px; margin-left: 60px;">
+          "선생님, <b>단톡방에 이상한 합성 사진</b>이 돌아요"
+        </div>
+        <div class="warning-banner">
+          <div style="font-size: 2rem; font-weight: 900; margin-bottom: 12px;">
+            <span class="strikethrough" style="color: var(--text-sub);">"신체 접촉이 없으니 괜찮다"</span>는 <span class="highlight-red">착각</span>
+          </div>
+          <p style="font-size: 1.15rem; color: var(--text-sub);">사진 이용 범죄도 <b style="color: var(--signal-red);">엄연한 성범죄</b>입니다 — 강제 추행·몰카만 성범죄가 아닙니다</p>
+        </div>
+      </div>
+
+      <!-- p17: 5 Types (1) — 2 Risk Cards -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 16</span>
+        </div>
+        <div class="note-card-body" id="note-body-15">
+          『학생들의 신고로 접할 때, &quot;선생님 얘가 제 사진 가지고 이상하게 만들어요&quot;라고 신고하면 성범죄라는 인식이 바로 떠오르진 않는다. 강제 추행이나 몰카는 예상하지만 사진 이용 범죄는 생각지 못하기 때문이다. 우리는 이런 착각을 조심해야 합니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-17">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅱ · 디지털 성범죄 실태와 위험성</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">17</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap2" data-notes="『첫 번째는 불법촬영 및 유포입니다. 교탁 밑 공기계 촬영, 연수원 몰카 등 촬영 후 무단 배포 사례입니다. 두 번째는 통신매체이용음란(통매음)입니다. SNS·채팅으로 성적 수치심을 주는 글과 사진을 보내는 행위입니다. 세종시 교원평가 서술형 성희롱 글 학생 퇴학 사례가 대표적입니다.』">
+        <h2 class="title-medium">알아야 할 디지털 성범죄 <span class="highlight-gold">5가지 유형</span> <span style="font-size: 1.2rem; color: var(--text-sub);">(1/2)</span></h2>
+        <div class="risk-grid-2">
+          <div class="risk-card">
+            <div class="risk-type-tag">유형 1</div>
+            <div class="risk-icon">📸</div>
+            <div class="risk-title">불법촬영 및 유포</div>
+            <div class="risk-desc">동의 없는 신체 촬영 후 무단 배포</div>
+            <div>
+              <div class="risk-case-badge">📋 교탁 밑 공기계 촬영 사례</div>
+              <div class="risk-case-badge" style="margin-top: 8px;">📋 연수원 몰카 설치 사례</div>
+            </div>
+          </div>
+          <div class="risk-card">
+            <div class="risk-type-tag">유형 2</div>
+            <div class="risk-icon">💬</div>
+            <div class="risk-title">통신매체이용음란 (통매음)</div>
+            <div class="risk-desc">SNS·채팅으로 성적 수치심 유발하는 글·사진 전송</div>
+            <div>
+              <div class="risk-case-badge red">📋 세종시 교원평가 서술형 성희롱 → 퇴학</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- p18: 5 Types (2) — 3 Risk Cards -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 17</span>
+        </div>
+        <div class="note-card-body" id="note-body-16">
+          『첫 번째는 불법촬영 및 유포입니다. 교탁 밑 공기계 촬영, 연수원 몰카 등 촬영 후 무단 배포 사례입니다. 두 번째는 통신매체이용음란(통매음)입니다. SNS·채팅으로 성적 수치심을 주는 글과 사진을 보내는 행위입니다. 세종시 교원평가 서술형 성희롱 글 학생 퇴학 사례가 대표적입니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-18">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅱ · 디지털 성범죄 실태와 위험성</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">18</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap2" data-notes="『세 번째와 네 번째는 온라인 그루밍과 성착취, 몸캠 협박입니다. 장애학생이 가장 조심해야 하는 영역입니다. 게임 아이템·상품권으로 환심을 산 뒤 음란 사진을 요구하고 협박합니다. 다섯 번째는 딥페이크 허위영상물 편집 유포입니다. 텔레그램 봇으로 동급생·교사 얼굴을 합성 유포하는 지인능욕 문화입니다.』">
+        <h2 class="title-medium">알아야 할 디지털 성범죄 <span class="highlight-gold">5가지 유형</span> <span style="font-size: 1.2rem; color: var(--text-sub);">(2/2)</span></h2>
+        <div class="risk-grid-3">
+          <div class="risk-card danger">
+            <div class="risk-type-tag red">유형 3</div>
+            <div class="risk-icon">🎣</div>
+            <div class="risk-title">온라인 그루밍</div>
+            <div class="risk-desc">친밀감 형성 후 성적 길들이기</div>
+          </div>
+          <div class="risk-card danger">
+            <div class="risk-type-tag red">유형 4</div>
+            <div class="risk-icon">📱</div>
+            <div class="risk-title">성착취 · 몸캠 협박</div>
+            <div class="risk-desc">게임 아이템·상품권 유혹 → 음란사진 요구 → 협박</div>
+            <div class="danger-badge-lg">⚠️ 장애학생 최고 위험</div>
+          </div>
+          <div class="risk-card danger">
+            <div class="risk-type-tag red">유형 5</div>
+            <div class="risk-icon">🤖</div>
+            <div class="risk-title">딥페이크 (허위영상물)</div>
+            <div class="risk-desc">텔레그램 봇으로 동급생·교사 얼굴 합성 유포 — '지인능욕'</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- p19: Section Cover — 법 처벌 -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 18</span>
+        </div>
+        <div class="note-card-body" id="note-body-17">
+          『세 번째와 네 번째는 온라인 그루밍과 성착취, 몸캠 협박입니다. 장애학생이 가장 조심해야 하는 영역입니다. 게임 아이템·상품권으로 환심을 산 뒤 음란 사진을 요구하고 협박합니다. 다섯 번째는 딥페이크 허위영상물 편집 유포입니다. 텔레그램 봇으로 동급생·교사 얼굴을 합성 유포하는 지인능욕 문화입니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-19">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅱ · 디지털 성범죄 실태와 위험성</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">19</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide slide-section-cover active-print" data-chapter="chap2" data-notes="(소챕터 전환)">
+        <div style="font-family: var(--font-mono); color: var(--accent-gold); font-size: 1.2rem; font-weight: 800; letter-spacing: 3px; margin-bottom: 12px;">CHAPTER Ⅱ · SECTION B</div>
+        <h2 class="title-large" style="margin-bottom: 0;">법은 어떻게<br><span class="highlight-gold">처벌하는가</span></h2>
+      </div>
+
+      <!-- p20: Penalty Infographic Table -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 19</span>
+        </div>
+        <div class="note-card-body" id="note-body-18">
+          (소챕터 전환)
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-20">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅱ · 디지털 성범죄 실태와 위험성</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">20</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap2" data-notes="『처벌 기준 안내입니다. 불법촬영 및 유포는 7년 이하 징역, 5천만원 이하 벌금입니다. 딥페이크는 24년 개정되어 7년 이하 징역으로 상향되었습니다. 또한 딥페이크 소지, 저장, 심지어 시청한 학생도 3년 이하 징역 또는 3천만원 이하 벌금에 처하는 신설 조항이 시행되었습니다. 통매음 2년/2천만원, 아청물 제작 무기 또는 5년 이상 중형 처벌됩니다. 단순 장난이었다는 변명은 통하지 않습니다.』">
+        <h2 class="title-medium"><span class="highlight-gold">⚖️</span> 주요 법적 근거와 처벌</h2>
+        <div class="penalty-grid">
+          <div class="penalty-card">
+            <div class="penalty-label">불법촬영 & 딥페이크 유포</div>
+            <div class="penalty-number gold">7년 이하 징역<br><span style="font-size: 1.8rem;">5,000만원 이하 벌금</span></div>
+            <div class="penalty-sub">성폭력처벌법 제14조</div>
+          </div>
+          <div class="penalty-card new-2024">
+            <div class="new-badge">NEW 2024 신설</div>
+            <div class="penalty-label">딥페이크 소지 · 저장 · 시청</div>
+            <div class="penalty-number red">3년 이하 징역<br><span style="font-size: 1.8rem;">3,000만원 이하 벌금</span></div>
+            <div class="penalty-sub" style="color: var(--signal-red); font-weight: 700;">⚠️ 시청만 해도 처벌 — 알면서 본 경우 적용</div>
+          </div>
+          <div class="penalty-card">
+            <div class="penalty-label">통신매체이용음란 (통매음)</div>
+            <div class="penalty-number gold">2년 이하 징역<br><span style="font-size: 1.8rem;">2,000만원 이하 벌금</span></div>
+            <div class="penalty-sub">성폭력처벌법 제13조</div>
+          </div>
+          <div class="penalty-card extreme">
+            <div class="penalty-label">아동·청소년 성착취물 제작</div>
+            <div class="penalty-number extreme">무기징역 또는<br>5년 이상 징역</div>
+            <div class="penalty-sub" style="color: #D4445C; font-weight: 700;">아청법 제11조 · 단순 장난 변명 불가</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- p21: [활동 1] 사례로 보는 OX 퀴즈 【활동 표지】 -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 20</span>
+        </div>
+        <div class="note-card-body" id="note-body-19">
+          『처벌 기준 안내입니다. 불법촬영 및 유포는 7년 이하 징역, 5천만원 이하 벌금입니다. 딥페이크는 24년 개정되어 7년 이하 징역으로 상향되었습니다. 또한 딥페이크 소지, 저장, 심지어 시청한 학생도 3년 이하 징역 또는 3천만원 이하 벌금에 처하는 신설 조항이 시행되었습니다. 통매음 2년/2천만원, 아청물 제작 무기 또는 5년 이상 중형 처벌됩니다. 단순 장난이었다는 변명은 통하지 않습니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-21">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅱ · 디지털 성범죄 실태와 위험성</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">21</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide slide-section-cover active-print" data-chapter="chap2" data-notes="▶ 한번 같이 풀어봅시다:) 지금까지의 내용을 OX퀴즈로 풀어보도록 하겠습니다. 손들거나 하는거 아니고 한번 문제 읽고 같이 속으로 한번 풀어볼게요~ (※ 강사 메모: OX퀴즈 진행하며 연수 참여 교사 중 디지털 성범죄 발생 사례가 있는지 공유 요청 질문 병행)">
+        <div style="display: inline-block; background: rgba(255,183,51,0.15); border: 1px solid var(--accent-gold); color: var(--accent-gold); font-family: var(--font-mono); font-size: 0.9rem; font-weight: 800; padding: 6px 18px; border-radius: 30px; margin-bottom: 20px;">
+          ACTIVITY 1
+        </div>
+        <h2 class="title-large" style="margin-bottom: 16px;">사례로 보는 <span class="highlight-gold">OX 퀴즈</span></h2>
+        <p class="subtitle" style="font-size: 1.5rem; color: var(--text-sub);">한번 같이 풀어봅시다 :)</p>
+      </div>
+
+      <!-- p22-Q: OX 퀴즈 1번 문항 [문제 제시] -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 21</span>
+        </div>
+        <div class="note-card-body" id="note-body-20">
+          ▶ 한번 같이 풀어봅시다:) 지금까지의 내용을 OX퀴즈로 풀어보도록 하겠습니다. 손들거나 하는거 아니고 한번 문제 읽고 같이 속으로 한번 풀어볼게요~ (※ 강사 메모: OX퀴즈 진행하며 연수 참여 교사 중 디지털 성범죄 발생 사례가 있는지 공유 요청 질문 병행)
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-22">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅱ · 디지털 성범죄 실태와 위험성</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">22</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap2" style="text-align: center; align-items: center;" data-notes="▶ 1번 문항: &quot;학급 단체채팅방에 딥페이크 영상이 올라왔다. 나는 사진이 올라와서 재생을 누르고 깜짝 놀라 끄기는 했지만, 댓글을 달거나 공유를 하지는 않았다. 딥페이크 영상 시청에 대한 처벌 대상이 될까?&quot; 👉 속으로 O / X를 생각한 후 '다음' 버튼을 누르세요">
+        <div style="font-family: var(--font-mono); font-size: 1.2rem; font-weight: 800; color: var(--accent-gold); letter-spacing: 2px; margin-bottom: 12px;">
+          OX QUIZ · QUESTION 01
+        </div>
+        <div class="quiz-question-box" style="max-width: 950px;">
+          <p class="quiz-q-text">
+            "학급 단체채팅방에 딥페이크 영상이 올라왔다. 나는 영상이 올라와서 재생을 누르고 깜짝 놀라 끄기는 했지만, 댓글을 달거나 공유를 하지는 않았다.<br><br>
+            <span class="highlight-gold">딥페이크 영상 시청에 대한 처벌 대상이 될까?</span>"
+          </p>
+        </div>
+      </div>
+
+      <!-- p22-A: OX 퀴즈 1번 문항 [정답 및 3단계 해설] -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 22</span>
+        </div>
+        <div class="note-card-body" id="note-body-21">
+          ▶ 1번 문항: &quot;학급 단체채팅방에 딥페이크 영상이 올라왔다. 나는 사진이 올라와서 재생을 누르고 깜짝 놀라 끄기는 했지만, 댓글을 달거나 공유를 하지는 않았다. 딥페이크 영상 시청에 대한 처벌 대상이 될까?&quot; 👉 속으로 O / X를 생각한 후 '다음' 버튼을 누르세요
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-23">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅱ · 디지털 성범죄 실태와 위험성</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">23</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap2" data-notes="정답: X (처벌 대상이 아닙니다.) (단, 교육 시 '알고도 본 경우'와의 차이를 반드시 강조해야 합니다.) 🔍 1단계: '고의성' 유무 판단 (실수로 누르고 끔). 2단계: '시청 및 소지 처벌법' 신설 (2024.9 개정, 3년 이하 징역/3천만원 이하 벌금 - 알고도 본 경우 처벌). 3단계: 유포 및 방조를 하지 않은 올바른 대처.">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h2 class="title-medium" style="margin-bottom: 0;">OX 퀴즈 1번 문항 해설</h2>
+          <div class="quiz-answer-stamp wrong" style="margin-bottom: 0; padding: 6px 28px; font-size: 2rem;">
+            정답: ❌ (처벌 대상 아님)
+          </div>
+        </div>
+        <p class="subtitle" style="font-size: 1.1rem; margin-bottom: 16px;">* 단, 교육 시 '알고도 본 경우'와의 차이를 반드시 강조해야 합니다.</p>
+        
+        <div class="explain-grid-3">
+          <div class="explain-card">
+            <div class="explain-step-tag">1단계 : 고의성 유무 판단</div>
+            <h4 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; color: var(--text-main);">'일부러 보려는 의도' 부재</h4>
+            <p style="font-size: 0.95rem; color: var(--text-sub); line-height: 1.5;">
+              불법 영상인 줄 모르고 눌렀으며 인지한 즉시 멈추었으므로 '고의성'이 인정되지 않아 처벌 대상이 아닙니다.
+            </p>
+          </div>
+          <div class="explain-card" style="border-color: rgba(255, 77, 79, 0.5); background: rgba(255, 77, 79, 0.05);">
+            <div class="explain-step-tag" style="color: var(--signal-red);">2단계 : ★ 2024 처벌법 신설</div>
+            <h4 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; color: var(--signal-red);">'알면서 본 경우' 처벌</h4>
+            <p style="font-size: 0.95rem; color: var(--text-main); line-height: 1.5;">
+              2024.9 개정법: 딥페이크 성착취물임을 <b>'알면서도' 시청/소지/저장</b> 시 3년 이하 징역 또는 3천만원 이하 벌금!
+            </p>
+          </div>
+          <div class="explain-card">
+            <div class="explain-step-tag">3단계 : 올바른 대처 방식</div>
+            <h4 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; color: var(--text-main);">유포·동조 안 한 훌륭한 대처</h4>
+            <p style="font-size: 0.95rem; color: var(--text-sub); line-height: 1.5;">
+              댓글 동조나 타인 전달을 하지 않음. 무심코 전달했다면 단순 시청이 아닌 '유포죄' 중형 처벌을 받습니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p23-Q: OX 퀴즈 2번 문항 [문제 제시] -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 23</span>
+        </div>
+        <div class="note-card-body" id="note-body-22">
+          정답: X (처벌 대상이 아닙니다.) (단, 교육 시 '알고도 본 경우'와의 차이를 반드시 강조해야 합니다.) 🔍 1단계: '고의성' 유무 판단 (실수로 누르고 끔). 2단계: '시청 및 소지 처벌법' 신설 (2024.9 개정, 3년 이하 징역/3천만원 이하 벌금 - 알고도 본 경우 처벌). 3단계: 유포 및 방조를 하지 않은 올바른 대처.
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-24">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅱ · 디지털 성범죄 실태와 위험성</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">24</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap2" style="text-align: center; align-items: center;" data-notes="▶ 2번 문항 : &quot;온라인상 만난 사람과 관계가 깊어지면서 자신의 신체 사진을 전송한 뒤, 그 사진을 빌미로 협박을 받고 다른 사진을 요구하는 행위를 '통신매체이용음란죄'라고 한다. 맞을까, 틀릴까?&quot; 👉 속으로 O / X를 생각한 후 '다음' 버튼을 누르세요">
+        <div style="font-family: var(--font-mono); font-size: 1.2rem; font-weight: 800; color: var(--accent-gold); letter-spacing: 2px; margin-bottom: 12px;">
+          OX QUIZ · QUESTION 02
+        </div>
+        <div class="quiz-question-box" style="max-width: 950px;">
+          <p class="quiz-q-text">
+            "온라인상 만난 사람과 관계가 깊어지면서 자신의 신체 사진을 전송한 뒤, 그 사진을 빌미로 협박을 받고 다른 사진을 요구하는 행위를<br><br>
+            <span class="highlight-gold">'통신매체이용음란죄'라고 한다. 맞을까, 틀릴까?</span>"
+          </p>
+        </div>
+      </div>
+
+      <!-- p23-A: OX 퀴즈 2번 문항 [정답 및 2단계 해설] -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 24</span>
+        </div>
+        <div class="note-card-body" id="note-body-23">
+          ▶ 2번 문항 : &quot;온라인상 만난 사람과 관계가 깊어지면서 자신의 신체 사진을 전송한 뒤, 그 사진을 빌미로 협박을 받고 다른 사진을 요구하는 행위를 '통신매체이용음란죄'라고 한다. 맞을까, 틀릴까?&quot; 👉 속으로 O / X를 생각한 후 '다음' 버튼을 누르세요
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-25">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅱ · 디지털 성범죄 실태와 위험성</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">25</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap2" data-notes="정답: X (통신매체이용음란죄가 아니라, 훨씬 무거운 '촬영물 등 이용 협박·강요죄'입니다.) (핵심 포인트: 사진을 유포하겠다고 겁을 주어 다른 행동을 강요하는 것은 매우 심각한 중범죄임을 인식시키는 것입니다.) 🔍 1단계: 통매음의 정당한 의미. 2단계: 촬영물 이용 협박·강요죄 (성폭력처벌법 제14조의3 중범죄).">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h2 class="title-medium" style="margin-bottom: 0;">OX 퀴즈 2번 문항 해설</h2>
+          <div class="quiz-answer-stamp wrong" style="margin-bottom: 0; padding: 6px 28px; font-size: 1.8rem;">
+            정답: ❌ (통매음 아닌 '협박·강요죄')
+          </div>
+        </div>
+        <p class="subtitle" style="font-size: 1.1rem; margin-bottom: 16px;">* 사진을 빌미로 다른 행동을 강요하는 것은 무거운 중범죄입니다.</p>
+
+        <div class="split-grid" style="margin-top: 16px;">
+          <div class="split-card muted">
+            <div class="split-tag muted">1단계 : 통신매체이용음란죄 (통매음)</div>
+            <div style="font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-bottom: 10px;">성적 수치심 유발 글·사진 전송</div>
+            <p style="color: var(--text-sub); line-height: 1.6;">
+              성적 욕망을 채울 목적으로 스마트폰/게임 채팅창 등에서 상대방에게 일방적으로 야한 말이나 사진을 전송하는 범죄
+            </p>
+          </div>
+          <div class="split-card glowing" style="border-color: var(--signal-red); background: rgba(255, 77, 79, 0.08);">
+            <div class="split-tag red">2단계 : ★ 촬영물 등 이용 협박·강요죄</div>
+            <div style="font-size: 1.4rem; font-weight: 800; color: var(--signal-red); margin-bottom: 10px;">성폭력처벌법 제14조의3 (중범죄)</div>
+            <p style="color: var(--text-main); line-height: 1.6;">
+              사진 유포를 빌미로 겁을 주고(협박) 추가 사진을 요구(강요)하는 행위는 통매음이 아니라 <b>중형에 처해지는 심각한 성폭력 중범죄</b>입니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p24-Q: OX 퀴즈 3번 문항 [문제 제시] -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 25</span>
+        </div>
+        <div class="note-card-body" id="note-body-24">
+          정답: X (통신매체이용음란죄가 아니라, 훨씬 무거운 '촬영물 등 이용 협박·강요죄'입니다.) (핵심 포인트: 사진을 유포하겠다고 겁을 주어 다른 행동을 강요하는 것은 매우 심각한 중범죄임을 인식시키는 것입니다.) 🔍 1단계: 통매음의 정당한 의미. 2단계: 촬영물 이용 협박·강요죄 (성폭력처벌법 제14조의3 중범죄).
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-26">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅱ · 디지털 성범죄 실태와 위험성</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">26</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap2" style="text-align: center; align-items: center;" data-notes="▶ 3번 문항: &quot;우리 반 장애학생이 친구의 부추김으로 딥페이크 합성 사진을 단톡방에 올렸다면, 범죄 의도가 없었더라도 처벌대상이 된다. (O / X)&quot; 👉 속으로 O / X를 생각한 후 '다음' 버튼을 누르세요">
+        <div style="font-family: var(--font-mono); font-size: 1.2rem; font-weight: 800; color: var(--accent-gold); letter-spacing: 2px; margin-bottom: 12px;">
+          OX QUIZ · QUESTION 03
+        </div>
+        <div class="quiz-question-box" style="max-width: 950px;">
+          <p class="quiz-q-text">
+            "우리 반 장애학생이 친구의 부추김으로 딥페이크 합성 사진을 단톡방에 올렸다면,<br><br>
+            <span class="highlight-gold">범죄 의도가 없었더라도 처벌 대상이 된다. (O / X)</span>"
+          </p>
+        </div>
+      </div>
+
+      <!-- p24-A: OX 퀴즈 3번 문항 [정답 및 선도 해설] -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 26</span>
+        </div>
+        <div class="note-card-body" id="note-body-25">
+          ▶ 3번 문항: &quot;우리 반 장애학생이 친구의 부추김으로 딥페이크 합성 사진을 단톡방에 올렸다면, 범죄 의도가 없었더라도 처벌대상이 된다. (O / X)&quot; 👉 속으로 O / X를 생각한 후 '다음' 버튼을 누르세요
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-27">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅱ · 디지털 성범죄 실태와 위험성</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">27</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap2" data-notes="▶ 3번 문항 정답: O. 해설/멘트: &quot;범죄에 대한 인식이나 악의적 의도가 없었더라도('인식 없는 가해'), 타인의 허위영상물 유포는 성폭력처벌법 상 처벌 대상이며 학교폭력 절차도 동일하게 가동됩니다. 다만, 교사는 이 아이를 단순 단죄할 것이 아니라 '무엇이 왜 범죄인지' 가르치는 교육적 개입과 선도를 병행해야 합니다.&quot;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h2 class="title-medium" style="margin-bottom: 0;">OX 퀴즈 3번 문항 해설</h2>
+          <div class="quiz-answer-stamp correct" style="margin-bottom: 0; padding: 6px 28px; font-size: 2rem;">
+            정답: ⭕ (처벌 대상입니다)
+          </div>
+        </div>
+        <p class="subtitle" style="font-size: 1.1rem; margin-bottom: 16px;">* 인식 없는 가해도 처벌 대상이 되며, 교육적 선도가 병행되어야 합니다.</p>
+
+        <div class="split-grid" style="margin-top: 16px;">
+          <div class="split-card muted" style="border-color: rgba(255, 77, 79, 0.4);">
+            <div class="split-tag red">⚠️ '인식 없는 가해'의 위험</div>
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--signal-red); margin-bottom: 10px;">성폭력처벌법 처벌 & 학폭 가동</div>
+            <p style="color: var(--text-sub); line-height: 1.6;">
+              범죄 의도나 악의가 없었더라도, 타인의 딥페이크 합성물을 단톡방에 올린 유포 행위는 법적 처벌 및 학폭위 조치 대상이 됩니다.
+            </p>
+          </div>
+          <div class="split-card glowing">
+            <div class="split-tag glow">💡 특수교사의 핵심 역할</div>
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--accent-gold); margin-bottom: 10px;">단죄를 넘어선 '교육적 개입'</div>
+            <p style="color: var(--text-main); line-height: 1.6;">
+              이 아이를 단순히 '나쁜 아이'로 단죄할 것이 아니라, <b>'무엇이 왜 범죄이고 어떤 고통을 주는지'</b> 이해시키고 선도하는 교육적 접근을 병행해야 합니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
+<!-- p26 · CHAPTER Ⅲ Cover -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 27</span>
+        </div>
+        <div class="note-card-body" id="note-body-26">
+          ▶ 3번 문항 정답: O. 해설/멘트: &quot;범죄에 대한 인식이나 악의적 의도가 없었더라도('인식 없는 가해'), 타인의 허위영상물 유포는 성폭력처벌법 상 처벌 대상이며 학교폭력 절차도 동일하게 가동됩니다. 다만, 교사는 이 아이를 단순 단죄할 것이 아니라 '무엇이 왜 범죄인지' 가르치는 교육적 개입과 선도를 병행해야 합니다.&quot;
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-28">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅲ · 장애학생 취약 구조 및 접근법</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">28</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide slide-ch-cover active-print" data-chapter="chap3" data-notes="『(톤 낮추고 진지하게) 이제 범죄 피해 혹은 가해자로 장애학생이 왜 더 취약할 수 밖에 없는가에 대해서 알아보려고 합니다.』">
+        <div class="roman-num">Ⅲ</div>
+        <div>
+          <div style="font-family: var(--font-mono); color: var(--accent-gold); font-size: 1.2rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 8px;">CHAPTER Ⅲ</div>
+          <h2 class="title-large" style="margin-bottom: 0;">장애학생이 왜<br><span class="highlight-gold">더 취약한가</span></h2>
+        </div>
+      </div>
+
+      <!-- p27 · 개인의 결함이 아니라, 악용되는 '구조'에 초점 -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 28</span>
+        </div>
+        <div class="note-card-body" id="note-body-27">
+          『(톤 낮추고 진지하게) 이제 범죄 피해 혹은 가해자로 장애학생이 왜 더 취약할 수 밖에 없는가에 대해서 알아보려고 합니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-29">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅲ · 장애학생 취약 구조 및 접근법</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">29</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap3" data-notes="『장애학생이 범죄 피해·가해자가 되었을 때 장애 때문이라고 속단하면 구조적 해결책을 제안하기 어렵습니다. 개인 결함이 아니라 가해자가 파고드는 4가지 구조적 빈틈에 초점을 맞추겠습니다.』">
+        <h2 class="title-medium">개인의 결함이 아니라, <span class="highlight-gold">악용되는 '구조'</span>에 초점</h2>
+        <p class="subtitle">'장애 때문' 속단 탈피 ⟶ 가해자가 파고드는 4가지 구조적 빈틈 분석</p>
+        <div class="split-grid">
+          <div class="split-card muted">
+            <div class="split-tag muted">❌ 개인 결함 프레임</div>
+            <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-sub); margin-bottom: 12px;">"장애학생 특성 때문이다"</div>
+            <p style="color: var(--text-dark); line-height: 1.6;">판단력 부족, 경계심 부족 등 개인의 탓으로 돌려 낙인과 원망만 남기고 구조적 해결책을 제시하지 못함</p>
+          </div>
+          <div class="split-card glowing">
+            <div class="split-tag glow">⭕ 취약성 구조 프레임</div>
+            <div style="font-size: 1.6rem; font-weight: 800; color: var(--accent-gold); margin-bottom: 12px;">"취약한 환경 구조가 악용된다"</div>
+            <p style="color: var(--text-main); line-height: 1.6;">사회적 고립, 경계부재, 위계순응, 일상의 의존성이라는 4가지 구조적 빈틈을 교사와 학교가 메워주어야 함</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p28 · 취약성 ① 사회적 고립과 관계 욕구 -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 29</span>
+        </div>
+        <div class="note-card-body" id="note-body-28">
+          『장애학생이 범죄 피해·가해자가 되었을 때 장애 때문이라고 속단하면 구조적 해결책을 제안하기 어렵습니다. 개인 결함이 아니라 가해자가 파고드는 4가지 구조적 빈틈에 초점을 맞추겠습니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-30">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅲ · 장애학생 취약 구조 및 접근법</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">30</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap3" data-notes="『관계의 고립입니다. 또래 관계가 좁고 고립될수록 온라인의 얄팍한 호의에 목마르게 됩니다. 가해자는 외로움이라는 구조를 파고듭니다.』">
+        <h2 class="title-medium">취약성 ① <span class="highlight-gold">사회적 고립과 관계 욕구</span></h2>
+        <div class="warning-card-layout">
+          <div class="progress-tracker-badge">취약성 1 / 4</div>
+          <div class="warning-icon-box">
+            <div style="font-size: 4rem;">🤝</div>
+            <div style="font-weight: 800; color: var(--accent-gold);">관계의 빈틈</div>
+          </div>
+          <div>
+            <h3 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 16px;">현실 또래 관계의 고립</h3>
+            <p style="font-size: 1.3rem; color: var(--text-sub); line-height: 1.7;">
+              학교 현장에서 친구 관계가 좁고 외로움에 노출된 장애학생일수록<br>
+              온라인 공간에서 접근하는 가해자의 <b style="color: var(--accent-gold);">얄팍한 호의와 친밀함</b>에 쉽게 마음을 열고 무너집니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p29 · 취약성 ② 동의·경계 개념의 부재 -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 30</span>
+        </div>
+        <div class="note-card-body" id="note-body-29">
+          『관계의 고립입니다. 또래 관계가 좁고 고립될수록 온라인의 얄팍한 호의에 목마르게 됩니다. 가해자는 외로움이라는 구조를 파고듭니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-31">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅲ · 장애학생 취약 구조 및 접근법</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">31</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap3" data-notes="『경계 교육의 부재입니다. "싫다"고 명확히 거절할 기회와 경계 설정 경험이 없어 무리한 요구 앞에서도 멈출 선을 찾지 못합니다.』">
+        <h2 class="title-medium">취약성 ② <span class="highlight-gold">동의·경계 개념의 부재</span></h2>
+        <div class="warning-card-layout">
+          <div class="progress-tracker-badge">취약성 2 / 4</div>
+          <div class="warning-icon-box">
+            <div style="font-size: 4rem;">🛑</div>
+            <div style="font-weight: 800; color: var(--accent-gold);">경계의 부재</div>
+          </div>
+          <div>
+            <h3 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 16px;">"싫다"고 거절해 본 경험의 결여</h3>
+            <p style="font-size: 1.3rem; color: var(--text-sub); line-height: 1.7;">
+              자신의 몸과 사진에 대해 스스로 <b style="color: var(--accent-gold);">'어디까지 허용할 것인가'</b>에 대한 경계 교육 부족으로<br>
+              가해자의 성적 침해 요구에도 거절하지 못하고 무비판적으로 수용하게 됩니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p30 · 취약성 ③ 위계·위력에 대한 취약성 -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 31</span>
+        </div>
+        <div class="note-card-body" id="note-body-30">
+          『경계 교육의 부재입니다. 
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-32">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅲ · 장애학생 취약 구조 및 접근법</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">32</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap3" data-notes="『순응을 강요받아 온 역사입니다. 늘 지시에 따르던 아이는 권력을 쥔 가해자의 강압적 요구를 거절하지 못합니다. 순응이라는 생존 방식이 악용됩니다.』">
+        <h2 class="title-medium">취약성 ③ <span class="highlight-gold">위계·위력에 대한 취약성</span></h2>
+        <div class="warning-card-layout">
+          <div class="progress-tracker-badge">취약성 3 / 4</div>
+          <div class="warning-icon-box">
+            <div style="font-size: 4rem;">⚠️</div>
+            <div style="font-weight: 800; color: var(--signal-red);">순응의 악용</div>
+          </div>
+          <div>
+            <h3 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 16px;">늘 지시에 맞춰온 '순응'의 생존 방식</h3>
+            <p style="font-size: 1.3rem; color: var(--text-sub); line-height: 1.7;">
+              주변 어른이나 선배, 권력자에게 무조건 따라야 했던 생활 습관이 착종되어<br>
+              권력을 쥔 가해자의 강압적이거나 조종적인 요구를 <b style="color: var(--signal-red);">거절할 엄두를 내지 못합니다.</b>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p31 · 취약성 ④ 일상적 의존성 -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 32</span>
+        </div>
+        <div class="note-card-body" id="note-body-31">
+          『순응을 강요받아 온 역사입니다. 늘 지시에 따르던 아이는 권력을 쥔 가해자의 강압적 요구를 거절하지 못합니다. 순응이라는 생존 방식이 악용됩니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-33">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅲ · 장애학생 취약 구조 및 접근법</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">33</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap3" data-notes="『일상적 의존성입니다. 도움에 기대어야 하는 환경에서 가해자가 '도와줄 유일한 구원자'로 위장할 때 방어벽이 무너집니다.』">
+        <h2 class="title-medium">취약성 ④ <span class="highlight-gold">일상적 의존성</span></h2>
+        <div class="warning-card-layout">
+          <div class="progress-tracker-badge">취약성 4 / 4</div>
+          <div class="warning-icon-box">
+            <div style="font-size: 4rem;">🛡️</div>
+            <div style="font-weight: 800; color: var(--accent-gold);">의존의 허점</div>
+          </div>
+          <div>
+            <h3 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 16px;">도움을 주는 유일한 보호자로 위장</h3>
+            <p style="font-size: 1.3rem; color: var(--text-sub); line-height: 1.7;">
+              일상생활에서 누군가의 도움에 의존해야 하는 특성을 악용하여<br>
+              가해자가 친절한 <b style="color: var(--accent-gold);">'구원자' 또는 '조력자'</b>의 가면을 쓰고 접근할 때 방어막이 완전히 무너집니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p32 · 피해 후 대처, 무엇이 다른가 -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 33</span>
+        </div>
+        <div class="note-card-body" id="note-body-32">
+          『일상적 의존성입니다. 도움에 기대어야 하는 환경에서 가해자가 '도와줄 유일한 구원자'로 위장할 때 방어벽이 무너집니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-34">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅲ · 장애학생 취약 구조 및 접근법</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">34</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap3" data-notes="『비장애 학생은 직관적으로 범죄임을 알고 계정을 잠그고 신고합니다. 장애학생은 무슨 일이 일어났는지조차 모릅니다. 그래서 피해가 더 늦게 발견됩니다.』">
+        <h2 class="title-medium">피해 후 대처, <span class="highlight-gold">무엇이 다른가</span></h2>
+        <p class="subtitle">비장애 학생 vs 장애 학생의 피해 인지 및 신고 대응 타임라인 대조</p>
+        <div class="timeline-dual-grid">
+          <div class="timeline-column">
+            <div style="font-size: 1.2rem; font-weight: 800; color: var(--vibrant-teal); margin-bottom: 16px;">비장애 학생 (빠른 차단)</div>
+            <div class="timeline-step"><span>1️⃣</span> <b>즉시 범죄 인지</b> — "이상하다, 신고해야지"</div>
+            <div class="timeline-step"><span>2️⃣</span> <b>계정 차단 및 캡처</b> — 증거 확보 및 대화방 이탈</div>
+            <div class="timeline-step"><span>3️⃣</span> <b>부모·교사 알림</b> — 적극적인 구제 요청</div>
+            <div class="timeline-step"><span>4️⃣</span> <b>초기 단기 수사 착수</b> — 빠른 피해 최소화</div>
+          </div>
+          <div class="timeline-column danger">
+            <div style="font-size: 1.2rem; font-weight: 800; color: var(--signal-red); margin-bottom: 16px;">장애 학생 (발견 지연 ⚠️)</div>
+            <div class="timeline-step"><span>1️⃣</span> <b>심각성 미인지</b> — 칭찬이나 장난으로 오해</div>
+            <div class="timeline-step"><span>2️⃣</span> <b>휴대폰 집착 및 불안</b> — 알림에 극심한 행동 변화</div>
+            <div class="timeline-step"><span>3️⃣</span> <b>피해 진술의 한계</b> — 정황 표현에 어려움</div>
+            <div class="timeline-step"><span>4️⃣</span> <b>장기간 은밀한 누적</b> — 심각한 상태에서 뒤늦게 발견</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- p33 · 발견 가능성은 곁에 있는 우리의 관심과 도움 -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 34</span>
+        </div>
+        <div class="note-card-body" id="note-body-33">
+          『비장애 학생은 직관적으로 범죄임을 알고 계정을 잠그고 신고합니다. 장애학생은 무슨 일이 일어났는지조차 모릅니다. 그래서 피해가 더 늦게 발견됩니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-35">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅲ · 장애학생 취약 구조 및 접근법</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">35</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap3" style="text-align: center; align-items: center;" data-notes="『스스로 못 지키면, 그 신호를 읽어내야 하는 것은 곁에 있는 우리의 도움 뿐입니다.』">
+        <div style="background: rgba(255, 183, 51, 0.1); border: 1px solid var(--accent-gold); padding: 8px 24px; border-radius: 30px; color: var(--accent-gold); font-weight: 800; margin-bottom: 24px;">
+          KEY LESSON FOR TEACHERS
+        </div>
+        <h2 style="font-size: 3.2rem; font-weight: 900; line-height: 1.35; margin-bottom: 24px;">
+          스스로 못 지키면 ⟶ <br>
+          <span class="highlight-gold">곁에 있는 우리의 도움만이 유일하다</span>
+        </h2>
+        <p style="font-size: 1.4rem; color: var(--text-sub); max-width: 800px; line-height: 1.6;">
+          학생에게 스스로 자기 보호 책임을 묻는 것은 한계가 있습니다.<br>
+          교사가 미세한 변화와 구조 요청 신호를 읽어내는 안목을 가져야 합니다.
+        </p>
+      </div>
+
+      <!-- p34 · '인식 없는 가해'의 늪 -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 35</span>
+        </div>
+        <div class="note-card-body" id="note-body-34">
+          『스스로 못 지키면, 그 신호를 읽어내야 하는 것은 곁에 있는 우리의 도움 뿐입니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-36">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅲ · 장애학생 취약 구조 및 접근법</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">36</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap3" data-notes="『뚜렷한 인식 없이 가해자가 되기도 합니다. "재밌는 사진이니 올려보라"는 부추김에 응하거나, 친구 놀이라는 제안에 가족 사진을 딥페이크 재료로 공유하는 등 인식 없는 가해자로 빠져듭니다.』">
+        <h2 class="title-medium"><span class="highlight-red">'인식 없는 가해'</span>의 늪</h2>
+        <p class="subtitle">범죄 의도 없이 또래 부추김이나 놀이로 오인하여 공범이 되는 위험 구조</p>
+        <div class="split-grid" style="margin-top: 28px;">
+          <div class="split-card muted" style="border-color: rgba(255, 77, 79, 0.4);">
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--signal-red); margin-bottom: 12px;">⚠️ 사례 A. 부추김에 의한 유포</div>
+            <p style="font-size: 1.15rem; color: var(--text-main); line-height: 1.6;">
+              "재밌는 사진이니 톡방에 올리면 선물을 줄게"라는 또래의 부추김과 미끼에 속아 합성 사진을 무심코 단톡방에 게시
+            </p>
+          </div>
+          <div class="split-card muted" style="border-color: rgba(255, 77, 79, 0.4);">
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--signal-red); margin-bottom: 12px;">⚠️ 사례 B. 사진 제공 및 공유</div>
+            <p style="font-size: 1.15rem; color: var(--text-main); line-height: 1.6;">
+              범죄 딥페이크 재료인 줄 모르고 '친구 놀이'라는 말에 가족이나 지인의 사진을 타인에게 전송하여 공범으로 전환
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p35 · 단죄가 아니라 '교육적 개입'이 필요 -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 36</span>
+        </div>
+        <div class="note-card-body" id="note-body-35">
+          『뚜렷한 인식 없이 가해자가 되기도 합니다. 
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-37">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅲ · 장애학생 취약 구조 및 접근법</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">37</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap3" data-notes="『가해자를 '나쁜 놈'이라고만 보면 처벌밖에 답이 없습니다. 인식 없는 가해를 고려한다면 무엇이 왜 범죄인지 이해시키고 고통을 알려주는 교육적 개입이 필요합니다.』">
+        <h2 class="title-medium">단죄와 처벌을 넘어 ⟶ <span class="highlight-gold">교육적 개입</span></h2>
+        <div class="split-grid">
+          <div class="split-card muted">
+            <div class="split-tag muted">❌ 단순 낙인과 처벌</div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-sub); margin-bottom: 12px;">"나쁜 아이이니 처벌하자"</div>
+            <p style="color: var(--text-dark); line-height: 1.6;">왜 잘못되었는지 깨닫지 못한 채 처벌만 받을 경우, 또 다른 범죄 표적이 되거나 재발 위험성이 높음</p>
+          </div>
+          <div class="split-card glowing">
+            <div class="split-tag glow">⭕ 이해와 선도 중심 교육</div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent-gold); margin-bottom: 12px;">"무엇이 왜 범죄인지 알려주자"</div>
+            <p style="color: var(--text-main); line-height: 1.6;">상대방이 겪는 고통을 이해시키고, 디지털 경계와 올바른 행동 방식을 가르치는 교육적 접근 병행</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p36 · 피해와 가해가 한 사람 안에 겹친다 -->
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 37</span>
+        </div>
+        <div class="note-card-body" id="note-body-36">
+          『가해자를 '나쁜 놈'이라고만 보면 처벌밖에 답이 없습니다. 인식 없는 가해를 고려한다면 무엇이 왜 범죄인지 이해시키고 고통을 알려주는 교육적 개입이 필요합니다.』
+        </div>
+      </div>
+    </section>
+    
+
+    <section class="print-page" id="page-38">
+      <div class="page-header-bar">
+        <div class="page-title-badge">
+          <span class="chap-badge">CHAPTER Ⅲ · 장애학생 취약 구조 및 접근법</span>
+        </div>
+        <div class="slide-num-badge">
+          SLIDE <span class="highlight-gold">38</span> / 38
+        </div>
+      </div>
+
+      <div class="slide-wrapper-16-9">
+        <div class="corner-bracket bracket-tl"></div>
+        <div class="corner-bracket bracket-tr"></div>
+        <div class="corner-bracket bracket-bl"></div>
+        <div class="corner-bracket bracket-br"></div>
+        <div class="slide-container-inner">
+          <div class="slide active-print" data-chapter="chap3" data-notes="『피해자였다가 가해자로 변하는 경우도 있습니다. 약점 잡힌 피해자였다가 "사진 유포를 막으려면 다른 친구 신상이나 사진을 가져오라"는 협박에 굴복해 겹지인방 가해자로 전환되기도 합니다.』">
+        <h2 class="title-medium">피해와 가해가 <span class="highlight-red">한 사람 안에 겹친다</span></h2>
+        <p class="subtitle">협박에 굴복하여 피해자에서 가해자로 전환되는 복합적 구조</p>
+        <div style="background: var(--bg-card); border: 1px solid var(--bg-card-border); border-radius: 16px; padding: 36px; margin-top: 24px; display: flex; align-items: center; justify-content: space-around;">
+          <div style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 8px;">🛡️</div>
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--accent-gold);">1. 약점 잡힌 피해자</div>
+            <div style="font-size: 0.95rem; color: var(--text-sub); margin-top: 6px;">음란사진 요구에 응함</div>
+          </div>
+          <div style="font-size: 2.5rem; color: var(--signal-red);">⟶</div>
+          <div style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 8px;">💥</div>
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--signal-red);">2. 추가 유포 협박</div>
+            <div style="font-size: 0.95rem; color: var(--text-sub); margin-top: 6px;">"다른 친구 사진 가져와"</div>
+          </div>
+          <div style="font-size: 2.5rem; color: var(--signal-red);">⟶</div>
+          <div style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 8px;">⚠️</div>
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--signal-red);">3. 가해자로 전환</div>
+            <div style="font-size: 0.95rem; color: var(--text-sub); margin-top: 6px;">'겹지인방' 공범 복제</div>
+          </div>
+        </div>
+      </div>
+        </div>
+      </div>
+
+      <div class="script-note-card">
+        <div class="note-card-header">
+          <span class="note-icon">🎙️</span>
+          <span class="note-title">강의 발표 스크립트 노트</span>
+          <span class="note-slide-tag">SLIDE 38</span>
+        </div>
+        <div class="note-card-body" id="note-body-37">
+          『피해자였다가 가해자로 변하는 경우도 있습니다. 약점 잡힌 피해자였다가 
+        </div>
+      </div>
+    </section>
+    
+  </div>
+
+  <script>
+    // Auto-sync user's latest localStorage script notes if available in browser
+    window.addEventListener('DOMContentLoaded', function() {
+      for (var i = 0; i < 38; i++) {
+        var savedNote = localStorage.getItem('script_notes_merged_1_3_slide_' + i);
+        if (savedNote && savedNote.trim() !== '') {
+          var el = document.getElementById('note-body-' + i);
+          if (el) {
+            el.innerHTML = savedNote.replace(/\n/g, '<br>');
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
