@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>디지털 추리 · 통합 진행</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
   :root{
     --ink:#0A0E14; --ink2:#121821; --panel:#141B26; --amber:#F2B544; --red:#E5484D;
@@ -233,6 +234,7 @@ var QR_DATAURI = "";                      // (옵션) QR 이미지 base64
 
   /* ---- 참여 QR 오버레이 ---- */
   function joinURL(){ return VOTE_URL ? (VOTE_URL + (VOTE_URL.indexOf('?')<0?'?':'&') + 'room=' + encodeURIComponent(ROOM)) : ''; }
+  var qrObj = null;
   function initQR(){
     document.getElementById('qrRoom').textContent = ROOM;
     var box=document.getElementById('qrbox'),
@@ -240,10 +242,27 @@ var QR_DATAURI = "";                      // (옵션) QR 이미지 base64
     var url=joinURL();
     urlEl.textContent = url || '';
     if(QR_DATAURI){
-      box.innerHTML='<img alt="참여 QR" src="'+QR_DATAURI+'">'; warn.textContent='';
+      box.innerHTML='<img alt="참여 QR" src="'+QR_DATAURI+'" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;">';
+      warn.textContent='';
     } else if(url){
+      box.innerHTML = '';
+      if(typeof QRCode !== 'undefined'){
+        try {
+          qrObj = new QRCode(box, {
+            text: url,
+            width: 250,
+            height: 250,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+          });
+          warn.textContent='';
+          return;
+        } catch(e){}
+      }
       var qrApiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=" + encodeURIComponent(url);
-      box.innerHTML='<img alt="참여 QR" src="' + qrApiUrl + '" style="width:100%;height:100%;object-fit:contain;border-radius:6px;">';
+      var fallbackUrl = "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=" + encodeURIComponent(url);
+      box.innerHTML='<img alt="참여 QR" src="' + qrApiUrl + '" onerror="this.onerror=null;this.src=\'' + fallbackUrl + '\';" style="width:100%;height:100%;object-fit:contain;border-radius:6px;">';
       warn.textContent='';
     } else {
       box.innerHTML='<div class="ph" id="qrph">배포 후 URL을<br>설정하면 QR이<br>여기 표시됩니다</div>';
