@@ -368,8 +368,8 @@
   var acts={behav:document.getElementById('actBehav'),money:document.getElementById('actMoney'),threat:document.getElementById('actThreat'),meta:document.getElementById('actMeta')};
 
   // ===== 실시간 투표 연동 설정 (사건 A와 동일한 값 사용) =====
-  var VOTE_API = "";       // ← Apps Script 웹앱 /exec URL (비우면 데모 모드)
-  var ROOM     = "NOSUNG"; // ← 사건 A와 같은 세션 코드
+  var VOTE_URL = "https://misfreedly-lang.github.io/2026-special-edu-digital-crime/투표앱_모바일.html";
+  var ROOM     = window.ROOM || "CLASS_01"; // ← 강의 세션 코드(기본 1반)
   var LIVE = !!VOTE_API;
   var liveQ=null, tallyTimer=null, _seq=0, cdTimer=null, moneyRAF=null;
 
@@ -497,8 +497,15 @@
   }
 
   function setupQR(panel){
+    var targetRoom = window.ROOM || ROOM || "CLASS_01";
+    var joinUrl = VOTE_URL ? (VOTE_URL + (VOTE_URL.indexOf('?')<0?'?':'&') + 'room=' + encodeURIComponent(targetRoom)) : '';
+    var qrBox = panel.querySelector('.qr');
+    if(qrBox && joinUrl){
+      var qrImgUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=6&data=" + encodeURIComponent(joinUrl);
+      qrBox.innerHTML = '<img src="' + qrImgUrl + '" alt="QR" style="width:100%;height:100%;object-fit:contain;border-radius:6px;background:#fff;padding:2px;">';
+    }
     var txt = panel.querySelector('.qr-txt');
-    if(txt){ txt.innerHTML = '<b>휴대폰 QR 스캔 참여</b><br>세션: <b>' + ROOM + '</b>'; }
+    if(txt){ txt.innerHTML = '<b>휴대폰 QR 스캔 참여</b><br>세션: <b>' + targetRoom + '</b>'; }
     var demo = panel.querySelector('.demo-btn');
     if(demo) demo.style.display = 'none';
   }

@@ -327,11 +327,8 @@
   var bubbles=Array.prototype.slice.call(document.querySelectorAll('.b'));
   var ecards=Array.prototype.slice.call(document.querySelectorAll('.ecard'));
 
-  // ===== 실시간 투표 연동 설정 (여기 두 줄만 채우면 라이브) =====
-  var VOTE_API = "";      // ← Apps Script 웹앱 /exec URL 붙여넣기 (비우면 데모 모드 유지)
-  var ROOM     = "NOSUNG"; // ← 강의 세션 코드(원하는 값으로)
-  var LIVE = !!VOTE_API;
-  var liveQ=null, tallyTimer=null, _seq=0;
+  var VOTE_URL = "https://misfreedly-lang.github.io/2026-special-edu-digital-crime/투표앱_모바일.html";
+  var ROOM     = window.ROOM || "CLASS_01"; // ← 강의 세션 코드(기본 1반)
 
   var ACT=['','1막 · 첫인상','1막 · 첫인상','2막 · 한 겹 벗기기','2막 · 한 겹 벗기기','3막 · 정체','3막 · 정체','4막 · 진짜 함정','디브리핑'];
   var CAP=['',
@@ -415,7 +412,7 @@
     
     // 현재 활성화된 질문이 닫혀야 하는 경우
     if(liveQ && (!panel || panel.dataset.q!==liveQ.q)){
-      db.ref('rooms/' + ROOM + '/active').set({ q: liveQ.q, opts: '', open: false });
+      db.ref('rooms/' + (window.ROOM || ROOM) + '/active').set({ q: liveQ.q, opts: '', open: false });
       if(currentTallyRef){ currentTallyRef.off(); currentTallyRef = null; }
       liveQ = null;
     }
@@ -426,15 +423,22 @@
       liveQ = { q: q };
       
       // 파이어베이스에 활성 질문 등록 (휴대폰 폰 화면 0.1초 실시간 전환)
-      db.ref('rooms/' + ROOM + '/active').set({ q: q, opts: opts, open: true });
+      db.ref('rooms/' + (window.ROOM || ROOM) + '/active').set({ q: q, opts: opts, open: true });
       setupQR(panel);
       listenTally(panel, q, opts.split('|'));
     }
   }
 
   function setupQR(panel){
+    var targetRoom = window.ROOM || ROOM || "CLASS_01";
+    var joinUrl = VOTE_URL ? (VOTE_URL + (VOTE_URL.indexOf('?')<0?'?':'&') + 'room=' + encodeURIComponent(targetRoom)) : '';
+    var qrBox = panel.querySelector('.qr');
+    if(qrBox && joinUrl){
+      var qrImgUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=6&data=" + encodeURIComponent(joinUrl);
+      qrBox.innerHTML = '<img src="' + qrImgUrl + '" alt="QR" style="width:100%;height:100%;object-fit:contain;border-radius:6px;background:#fff;padding:2px;">';
+    }
     var txt = panel.querySelector('.qr-txt');
-    if(txt){ txt.innerHTML = '<b>휴대폰 QR 스캔 참여</b><br>세션: <b>' + ROOM + '</b>'; }
+    if(txt){ txt.innerHTML = '<b>휴대폰 QR 스캔 참여</b><br>세션: <b>' + targetRoom + '</b>'; }
     var demo = panel.querySelector('.demo-btn');
     if(demo) demo.style.display = 'none';
   }
