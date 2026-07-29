@@ -234,7 +234,6 @@ var QR_DATAURI = "";                      // (옵션) QR 이미지 base64
 
   /* ---- 참여 QR 오버레이 ---- */
   function joinURL(){ return VOTE_URL ? (VOTE_URL + (VOTE_URL.indexOf('?')<0?'?':'&') + 'room=' + encodeURIComponent(ROOM)) : ''; }
-  var qrObj = null;
   function initQR(){
     document.getElementById('qrRoom').textContent = ROOM;
     var box=document.getElementById('qrbox'),
@@ -246,24 +245,42 @@ var QR_DATAURI = "";                      // (옵션) QR 이미지 base64
       warn.textContent='';
     } else if(url){
       box.innerHTML = '';
+      var encodedUrl = encodeURIComponent(url);
+      var api1 = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=" + encodedUrl;
+      var api2 = "https://quickchart.io/qr?size=300&text=" + encodedUrl;
+      var api3 = "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=" + encodedUrl;
+      
+      var img = document.createElement('img');
+      img.alt = "참여 QR";
+      img.style.cssText = "width:100%;height:100%;object-fit:contain;border-radius:6px;display:block;";
+      img.onerror = function() {
+        if(this.src === api1) { this.src = api2; }
+        else if(this.src === api2) { this.src = api3; }
+        else { warn.textContent = '※ QR 이미지 로드 대기 중 (위 세션코드·주소로 안내 가능)'; }
+      };
+      img.src = api1;
+      box.appendChild(img);
+
+      // file:// 보안 제약 우회를 위해 Canvas 객체를 DOM에 직접 삽입
       if(typeof QRCode !== 'undefined'){
         try {
-          qrObj = new QRCode(box, {
-            text: url,
-            width: 250,
-            height: 250,
-            colorDark : "#000000",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
+          var hiddenDiv = document.createElement('div');
+          new QRCode(hiddenDiv, {
+            text: url, width: 260, height: 260,
+            colorDark: "#000000", colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.M
           });
-          warn.textContent='';
-          return;
+          setTimeout(function(){
+            var cvs = hiddenDiv.querySelector('canvas');
+            if(cvs){
+              cvs.style.cssText = "width:100%;height:100%;object-fit:contain;border-radius:6px;display:block;";
+              box.innerHTML = '';
+              box.appendChild(cvs);
+            }
+          }, 40);
         } catch(e){}
       }
-      var qrApiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=" + encodeURIComponent(url);
-      var fallbackUrl = "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=" + encodeURIComponent(url);
-      box.innerHTML='<img alt="참여 QR" src="' + qrApiUrl + '" onerror="this.onerror=null;this.src=\'' + fallbackUrl + '\';" style="width:100%;height:100%;object-fit:contain;border-radius:6px;">';
-      warn.textContent='';
+      warn.textContent = '';
     } else {
       box.innerHTML='<div class="ph" id="qrph">배포 후 URL을<br>설정하면 QR이<br>여기 표시됩니다</div>';
       warn.textContent='※ VOTE_URL 미설정 (투표연동_설치가이드.md 참고)';
