@@ -149,10 +149,10 @@
   .results{margin-top:.1em}
   .rbar{display:flex;align-items:center;gap:.6em;margin:.28em 0;font-size:clamp(11px,1.3vw,14px)}
   .rbar .rl{width:clamp(64px,8vw,108px);color:var(--text);font-weight:700;flex:none;text-align:right;line-height:1.2}
-  .rtrack{flex:1;height:clamp(12px,1.6vh,18px);background:#0E141C;border-radius:6px;overflow:hidden}
-  .rfill{height:100%;width:0;background:var(--amber);border-radius:6px;transition:width .9s cubic-bezier(.2,.8,.2,1)}
-  .rfill.red{background:var(--red)} .rfill.cold{background:var(--cold)}
-  .rbar .rv{width:2.8em;color:var(--muted);flex:none}
+  .rtrack{flex:1;height:clamp(12px,1.6vh,18px);background:#0E141C;border-radius:6px;overflow:hidden;position:relative}
+  .rfill{display:block;height:100%;width:0;background:var(--amber);border-radius:6px;transition:width .9s cubic-bezier(.2,.8,.2,1);min-width:0}
+  .rfill.red{background:var(--red)} .rfill.cold{background:var(--cold)} .rfill.teal{background:var(--teal)}
+  .rbar .rv{width:auto;min-width:6.5em;color:var(--muted);flex:none;text-align:right;font-family:var(--mono);font-size:0.9em}
   .vnote{font-size:clamp(10px,1.15vw,12.5px);color:#6A7480;margin-top:.45em;font-style:italic}
   .demo-btn{cursor:pointer;font-family:var(--mono);font-size:clamp(10px,1.2vw,12.5px);letter-spacing:.06em;color:var(--muted);background:rgba(14,20,28,.7);border:1px solid var(--line);padding:.4em .8em;border-radius:7px;margin-top:.45em;transition:.15s}
   .demo-btn:hover{color:var(--amber);border-color:var(--amber)}
@@ -290,14 +290,14 @@
         <div class="vopts"><span class="vopt">사춘기</span><span class="vopt">우울</span><span class="vopt">문제행동</span></div>
       </div>
       <div class="vright">
-        <div class="qr-row"><div class="qr">QR<br>투표 링크<br>연동 자리</div><div class="qr-txt"><b>폰으로 참여</b><br>참여코드: <b>____</b></div></div>
+        <div class="qr-row"><div class="qr"></div><div class="qr-txt"></div></div>
         <div class="results" id="res1">
           <div class="rbar"><span class="rl">사춘기</span><span class="rtrack"><span class="rfill" data-v="54"></span></span><span class="rv" data-v="54">·</span></div>
           <div class="rbar"><span class="rl">우울</span><span class="rtrack"><span class="rfill cold" data-v="30"></span></span><span class="rv" data-v="30">·</span></div>
           <div class="rbar"><span class="rl">문제행동</span><span class="rtrack"><span class="rfill" data-v="16"></span></span><span class="rv" data-v="16">·</span></div>
         </div>
         <div class="demo-btn" data-target="res1">데모 결과 보기 ▸</div>
-        <div class="vnote">※ 실제 강의 시 익명 투표 결과가 여기 실시간 표시됩니다 (연동 예정).</div>
+        <div class="vnote"></div>
       </div>
     </div>
 
@@ -309,14 +309,14 @@
         <div class="vopts"><span class="vopt">갈취(삥뜯김)</span><span class="vopt">중독·낭비</span><span class="vopt">협박 피해</span></div>
       </div>
       <div class="vright">
-        <div class="qr-row"><div class="qr">QR<br>투표 링크<br>연동 자리</div><div class="qr-txt"><b>폰으로 참여</b><br>참여코드: <b>____</b></div></div>
+        <div class="qr-row"><div class="qr"></div><div class="qr-txt"></div></div>
         <div class="results" id="res2">
           <div class="rbar"><span class="rl">갈취</span><span class="rtrack"><span class="rfill" data-v="48"></span></span><span class="rv" data-v="48">·</span></div>
           <div class="rbar"><span class="rl">중독·낭비</span><span class="rtrack"><span class="rfill cold" data-v="22"></span></span><span class="rv" data-v="22">·</span></div>
           <div class="rbar"><span class="rl">협박 피해</span><span class="rtrack"><span class="rfill red" data-v="30"></span></span><span class="rv" data-v="30">·</span></div>
         </div>
         <div class="demo-btn" data-target="res2">데모 결과 보기 ▸</div>
-        <div class="vnote">※ 실제 강의 시 익명 투표 결과가 여기 실시간 표시됩니다 (연동 예정).</div>
+        <div class="vnote"></div>
       </div>
     </div>
 
@@ -328,14 +328,14 @@
         <div class="vopts"><span class="vopt">그래도 피해자</span><span class="vopt">본인 책임도</span><span class="vopt">피해자 아님</span></div>
       </div>
       <div class="vright">
-        <div class="qr-row"><div class="qr">QR<br>투표 링크<br>연동 자리</div><div class="qr-txt"><b>폰으로 참여</b><br>참여코드: <b>____</b></div></div>
+        <div class="qr-row"><div class="qr"></div><div class="qr-txt"></div></div>
         <div class="results" id="res3">
           <div class="rbar"><span class="rl">피해자</span><span class="rtrack"><span class="rfill teal" data-v="61" style="background:#43C6A0"></span></span><span class="rv" data-v="61">·</span></div>
           <div class="rbar"><span class="rl">본인 책임도</span><span class="rtrack"><span class="rfill" data-v="28"></span></span><span class="rv" data-v="28">·</span></div>
           <div class="rbar"><span class="rl">피해자 아님</span><span class="rtrack"><span class="rfill red" data-v="11"></span></span><span class="rv" data-v="11">·</span></div>
         </div>
         <div class="demo-btn" data-target="res3">데모 결과 보기 ▸</div>
-        <div class="vnote">※ 실제 강의 시 익명 투표 결과가 여기 실시간 표시됩니다 (연동 예정).</div>
+        <div class="vnote"></div>
       </div>
     </div>
   </div>
@@ -378,7 +378,6 @@
       if(typeof syncVote === 'function') syncVote();
     }
   });
-  var LIVE = !!VOTE_API;
   var liveQ=null, tallyTimer=null, _seq=0, cdTimer=null, moneyRAF=null;
 
   var ACT=['','1막 · 익숙한 그림','1막 · 익숙한 그림','2막 · 사라지는 돈','2막 · 사라지는 돈','3막 · 한 줄','4막 · 마지막 반전','4막 · 마지막 반전','디브리핑'];
