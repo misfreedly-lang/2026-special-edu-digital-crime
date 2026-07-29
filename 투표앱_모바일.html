@@ -53,13 +53,13 @@
 </div>
 
 <div class="footer">
-  <span class="live-dot"></span>ROOM: <span id="roomDisplay">NOSUNG</span> · 100% 익명 처리 (개인정보 미수집)
+  <span class="live-dot"></span>ROOM: <span id="roomDisplay">CLASS_01</span> · 100% 익명 처리 (개인정보 미수집)
 </div>
 
 <script>
   // URL 쿼리 파라미터에서 room 추출 (기본값: NOSUNG)
   const urlParams = new URLSearchParams(window.location.search);
-  const ROOM = urlParams.get('room') || 'NOSUNG';
+  const ROOM = urlParams.get('room') || 'CLASS_01';
   document.getElementById('roomDisplay').textContent = ROOM;
 
   // 익명 사용자 식별 토큰 (브라우저별 1개 부여)
