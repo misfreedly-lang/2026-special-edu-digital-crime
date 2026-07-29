@@ -260,15 +260,15 @@
       </div>
       <div class="vright">
         <div class="qr-row">
-          <div class="qr">QR<br>투표 링크<br>연동 자리</div>
-          <div class="qr-txt"><b>폰으로 참여</b><br>참여코드: <b>____</b></div>
+          <div class="qr"></div>
+          <div class="qr-txt"></div>
         </div>
         <div class="results" id="res1">
           <div class="rbar"><span class="rl">있다</span><span class="rtrack"><span class="rfill" data-v="38"></span></span><span class="rv" data-v="38">·</span></div>
           <div class="rbar"><span class="rl">없다</span><span class="rtrack"><span class="rfill red" data-v="62"></span></span><span class="rv" data-v="62">·</span></div>
         </div>
         <div class="demo-btn" data-target="res1">데모 결과 보기 ▸</div>
-        <div class="vnote">※ 실제 강의 시 익명 투표 결과가 여기 실시간 표시됩니다 (연동 예정).</div>
+        <div class="vnote"></div>
       </div>
     </div>
 
@@ -281,8 +281,8 @@
       </div>
       <div class="vright">
         <div class="qr-row">
-          <div class="qr">QR<br>투표 링크<br>연동 자리</div>
-          <div class="qr-txt"><b>폰으로 참여</b><br>참여코드: <b>____</b></div>
+          <div class="qr"></div>
+          <div class="qr-txt"></div>
         </div>
         <div class="results" id="res2">
           <div class="rbar"><span class="rl">멘토</span><span class="rtrack"><span class="rfill" data-v="12"></span></span><span class="rv" data-v="12">·</span></div>
@@ -290,7 +290,7 @@
           <div class="rbar"><span class="rl">가해자</span><span class="rtrack"><span class="rfill red" data-v="57"></span></span><span class="rv" data-v="57">·</span></div>
         </div>
         <div class="demo-btn" data-target="res2">데모 결과 보기 ▸</div>
-        <div class="vnote">※ 실제 강의 시 익명 투표 결과가 여기 실시간 표시됩니다 (연동 예정).</div>
+        <div class="vnote"></div>
       </div>
     </div>
   </div>
@@ -414,6 +414,7 @@
   if(!firebase.apps.length){ firebase.initializeApp(firebaseConfig); }
   var db = firebase.database();
   var currentTallyRef = null;
+  var liveQ = null;
 
   function syncVote(){
     var panel = step===2? vote1 : step===6? vote2 : null;
