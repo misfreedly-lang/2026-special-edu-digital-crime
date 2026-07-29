@@ -92,10 +92,14 @@
   #hint.fade{opacity:0}
 
   /* 참여 QR 버튼(상단바) */
-  .nbtn.qr{background:rgba(67,198,160,.12);border-color:#2f6a5a;color:var(--teal)}
-  .nbtn.qr:hover{border-color:var(--teal);color:var(--teal)}
-  .nbtn.qr.pulse{animation:qrpulse 1.6s ease-in-out infinite}
-  @keyframes qrpulse{0%,100%{box-shadow:0 0 0 0 rgba(67,198,160,.0)}50%{box-shadow:0 0 0 4px rgba(67,198,160,.28)}}
+  .nbtn.qr{background:linear-gradient(135deg,var(--teal),#2fa07f);color:#0A0E14;font-weight:900}
+  @keyframes pulse-glow{0%,100%{box-shadow:0 0 6px var(--teal)}50%{box-shadow:0 0 22px var(--teal),0 0 40px rgba(67,198,160,.35)}}
+  .nbtn.qr.pulse{animation:pulse-glow 1.8s infinite}
+  .nbtn.session-start{background:linear-gradient(135deg,#43C6A0,#2fa07f);color:#0A0E14;font-weight:900;font-size:12px;padding:4px 10px}
+  .nbtn.session-end{background:linear-gradient(135deg,#E5484D,#C03030);color:#fff;font-weight:900;font-size:12px;padding:4px 10px}
+  #roomSelect:disabled{opacity:.45;cursor:not-allowed}
+  .session-badge{display:none;font-family:var(--mono);font-size:11px;color:#43C6A0;font-weight:700;letter-spacing:.06em;padding:2px 8px;border:1px solid #43C6A0;border-radius:4px;animation:blink-live 1.4s infinite}
+  @keyframes blink-live{50%{opacity:.5}}
 
   /* 참여 QR 오버레이 */
   #qrpanel{position:absolute;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;
@@ -150,6 +154,8 @@
         <option value="TEST_03">🧪 사전테스트 3 (TEST_03)</option>
       </optgroup>
     </select>
+    <button class="nbtn session-start" id="sessionBtn" title="선택한 학급으로 활동을 시작합니다">▶ 활동시작</button>
+    <span class="session-badge" id="sessionBadge">● LIVE</span>
     <button class="nbtn qr" id="qrToggle" title="교사 참여 QR 띄우기 (Q)">📱 참여 QR</button>
     <button class="nbtn" id="prev">◂ 이전</button>
     <button class="nbtn primary" id="next">다음 사건 ▸</button>
@@ -297,22 +303,58 @@ var QR_DATAURI = "";                      // (옵션) QR 이미지 base64
     return encodeURI(src) + sep + 'room=' + encodeURIComponent(ROOM);
   }
 
+  // ===== 세션 잠금 (활동시작 / 강제종료) =====
+  var sessionLocked = false;
   var roomSelect = document.getElementById('roomSelect');
+  var sessionBtn = document.getElementById('sessionBtn');
+  var sessionBadge = document.getElementById('sessionBadge');
+
+  function startSession(){
+    sessionLocked = true;
+    ROOM = roomSelect.value;
+    roomSelect.disabled = true;
+    sessionBtn.textContent = '⏹ 강제종료';
+    sessionBtn.className = 'nbtn session-end';
+    sessionBtn.title = '현재 활동을 강제로 종료합니다 (학급 변경 가능)';
+    sessionBadge.style.display = 'inline-block';
+    initQR();
+    // iframe에 ROOM 전달 및 리로드
+    try {
+      if(frame && frame.contentWindow){
+        frame.contentWindow.postMessage({ type: 'CHANGE_ROOM', room: ROOM }, '*');
+      }
+    } catch(e){}
+    var s = STAGES[idx];
+    if(s && s.type === 'frame'){
+      var targetKey = s.src + '?room=' + ROOM;
+      frame.setAttribute('data-srckey', targetKey);
+      frame.src = getFrameTargetUrl(s.src);
+    }
+  }
+
+  function endSession(){
+    if(!confirm('정말 활동을 종료하시겠습니까?\n종료 후 학급을 변경할 수 있습니다.')) return;
+    sessionLocked = false;
+    roomSelect.disabled = false;
+    sessionBtn.textContent = '▶ 활동시작';
+    sessionBtn.className = 'nbtn session-start';
+    sessionBtn.title = '선택한 학급으로 활동을 시작합니다';
+    sessionBadge.style.display = 'none';
+  }
+
+  sessionBtn.addEventListener('click', function(){
+    if(sessionLocked){ endSession(); } else { startSession(); }
+  });
+
   if(roomSelect){
     roomSelect.addEventListener('change', function(){
+      if(sessionLocked){
+        // 잠금 상태에서는 변경 차단 (select가 disabled여서 여기 올 일은 없지만 안전장치)
+        this.value = ROOM;
+        return;
+      }
       ROOM = this.value;
       initQR();
-      try {
-        if(frame && frame.contentWindow){
-          frame.contentWindow.postMessage({ type: 'CHANGE_ROOM', room: ROOM }, '*');
-        }
-      } catch(e){}
-      var s = STAGES[idx];
-      if(s && s.type === 'frame'){
-        var targetKey = s.src + '?room=' + ROOM;
-        frame.setAttribute('data-srckey', targetKey);
-        frame.src = getFrameTargetUrl(s.src);
-      }
     });
   }
 
