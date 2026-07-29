@@ -251,6 +251,11 @@ var QR_DATAURI = "";                      // (옵션) QR 이미지 base64
   qrToggle.addEventListener('click', function(){ toggleQR(); });
   qrClose.addEventListener('click', function(){ toggleQR(false); });
 
+  function getFrameTargetUrl(src) {
+    var sep = src.indexOf('?') < 0 ? '?' : '&';
+    return encodeURI(src) + sep + 'room=' + encodeURIComponent(ROOM);
+  }
+
   var roomSelect = document.getElementById('roomSelect');
   if(roomSelect){
     roomSelect.addEventListener('change', function(){
@@ -258,12 +263,15 @@ var QR_DATAURI = "";                      // (옵션) QR 이미지 base64
       initQR();
       try {
         if(frame && frame.contentWindow){
-          frame.contentWindow.ROOM = ROOM;
-          if(typeof frame.contentWindow.syncVote === 'function'){
-            frame.contentWindow.syncVote();
-          }
+          frame.contentWindow.postMessage({ type: 'CHANGE_ROOM', room: ROOM }, '*');
         }
       } catch(e){}
+      var s = STAGES[idx];
+      if(s && s.type === 'frame'){
+        var targetKey = s.src + '?room=' + ROOM;
+        frame.setAttribute('data-srckey', targetKey);
+        frame.src = getFrameTargetUrl(s.src);
+      }
     });
   }
 
@@ -294,11 +302,11 @@ var QR_DATAURI = "";                      // (옵션) QR 이미지 base64
     // stage content
     if(s.type==='frame'){
       meta.classList.remove('show'); frame.classList.remove('hide');
-      // 같은 소스면 다시 로드하지 않음(진행 상태 보존), 다르면 로드
-      var target = encodeURI(s.src);
-      if(frame.getAttribute('data-src')!==s.src){
-        frame.setAttribute('data-src', s.src);
-        frame.src = target;
+      // 같은 소스+같은 룸이면 다시 로드하지 않음(진행 상태 보존), 다르면 로드
+      var targetKey = s.src + '?room=' + ROOM;
+      if(frame.getAttribute('data-srckey')!==targetKey){
+        frame.setAttribute('data-srckey', targetKey);
+        frame.src = getFrameTargetUrl(s.src);
       }
       setTimeout(focusFrame, 60);
     } else { // meta

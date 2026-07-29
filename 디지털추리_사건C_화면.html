@@ -369,7 +369,15 @@
 
   // ===== 실시간 투표 연동 설정 (사건 A와 동일한 값 사용) =====
   var VOTE_URL = "https://misfreedly-lang.github.io/2026-special-edu-digital-crime/투표앱_모바일.html";
-  var ROOM     = window.ROOM || "CLASS_01"; // ← 강의 세션 코드(기본 1반)
+  var urlParams = new URLSearchParams(window.location.search);
+  var ROOM     = urlParams.get('room') || window.ROOM || "CLASS_01"; // ← 강의 세션 코드(기본 1반)
+
+  window.addEventListener('message', function(e){
+    if(e.data && e.data.type === 'CHANGE_ROOM' && e.data.room){
+      ROOM = e.data.room;
+      if(typeof syncVote === 'function') syncVote();
+    }
+  });
   var LIVE = !!VOTE_API;
   var liveQ=null, tallyTimer=null, _seq=0, cdTimer=null, moneyRAF=null;
 

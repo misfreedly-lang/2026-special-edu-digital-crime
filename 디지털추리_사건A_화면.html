@@ -328,7 +328,15 @@
   var ecards=Array.prototype.slice.call(document.querySelectorAll('.ecard'));
 
   var VOTE_URL = "https://misfreedly-lang.github.io/2026-special-edu-digital-crime/투표앱_모바일.html";
-  var ROOM     = window.ROOM || "CLASS_01"; // ← 강의 세션 코드(기본 1반)
+  var urlParams = new URLSearchParams(window.location.search);
+  var ROOM     = urlParams.get('room') || window.ROOM || "CLASS_01"; // ← 강의 세션 코드(기본 1반)
+
+  window.addEventListener('message', function(e){
+    if(e.data && e.data.type === 'CHANGE_ROOM' && e.data.room){
+      ROOM = e.data.room;
+      if(typeof syncVote === 'function') syncVote();
+    }
+  });
 
   var ACT=['','1막 · 첫인상','1막 · 첫인상','2막 · 한 겹 벗기기','2막 · 한 겹 벗기기','3막 · 정체','3막 · 정체','4막 · 진짜 함정','디브리핑'];
   var CAP=['',
