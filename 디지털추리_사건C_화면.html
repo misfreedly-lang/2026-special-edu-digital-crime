@@ -456,15 +456,22 @@
     debrief.classList.toggle('show', step===8);
     syncVote();
     prevBtn.disabled=step<=1; steplabel.textContent='STEP '+step+' / '+MAX;
-    nextBtn.textContent= step>=MAX? '처음으로 ↺':'다음 ▸';
+    nextBtn.textContent= step>=MAX? '다음 사건으로 ▸':'다음 ▸';
+  }
+  function goNextCase(){
+    try {
+      if(window.parent && window.parent !== window){
+        window.parent.postMessage({ type: 'NEXT_CASE' }, '*');
+      } else { go(1); }
+    } catch(e){ go(1); }
   }
   function go(s){ step=Math.max(1,Math.min(MAX,s)); render(); }
   document.getElementById('cover').addEventListener('click', function(){ this.style.display='none'; go(1); });
-  nextBtn.addEventListener('click', function(){ if(step>=MAX)go(1); else go(step+1); });
+  nextBtn.addEventListener('click', function(){ if(step>=MAX)goNextCase(); else go(step+1); });
   prevBtn.addEventListener('click', function(){ go(step-1); });
   document.addEventListener('keydown', function(e){
     if(document.getElementById('cover').style.display==='none'){
-      if(e.key==='ArrowRight'||e.code==='Space'){ e.preventDefault(); if(step>=MAX)go(1); else go(step+1); }
+      if(e.key==='ArrowRight'||e.code==='Space'){ e.preventDefault(); if(step>=MAX)goNextCase(); else go(step+1); }
       if(e.key==='ArrowLeft'){ e.preventDefault(); go(step-1); }
     } else if(e.code==='Space'||e.code==='Enter'){ e.preventDefault(); document.getElementById('cover').style.display='none'; go(1); }
   });

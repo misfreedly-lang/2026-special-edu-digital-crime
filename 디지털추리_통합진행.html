@@ -358,6 +358,13 @@ var QR_DATAURI = "";                      // (옵션) QR 이미지 base64
     });
   }
 
+  // 자식 사건 iframe에서 디브리핑 완료 후 'NEXT_CASE' 호출 시 다음 사건으로 자동 이동
+  window.addEventListener('message', function(e){
+    if(e.data && e.data.type === 'NEXT_CASE'){
+      go(idx + 1);
+    }
+  });
+
   // build chips
   STAGES.forEach(function(s,i){
     if(i>0){ var ar=document.createElement('span'); ar.className='arrow'; ar.textContent='›'; chips.appendChild(ar); }
