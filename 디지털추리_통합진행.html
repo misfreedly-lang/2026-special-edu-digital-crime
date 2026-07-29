@@ -243,48 +243,48 @@ var QR_DATAURI = "";                      // (옵션) QR 이미지 base64
     if(QR_DATAURI){
       box.innerHTML='<img alt="참여 QR" src="'+QR_DATAURI+'" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;">';
       warn.textContent='';
-    } else if(url){
-      box.innerHTML = '';
+      return;
+    }
+    if(!url){
+      box.innerHTML='<div class="ph" id="qrph">배포 후 URL을<br>설정하면 QR이<br>여기 표시됩니다</div>';
+      warn.textContent='※ VOTE_URL 미설정 (투표연동_설치가이드.md 참고)';
+      return;
+    }
+
+    // [0.001초 초고속 동기식 인라인 렌더링] 외부 네트워크 통신 없이 순수 JS로 즉시 생성
+    box.innerHTML = '';
+    var rendered = false;
+
+    if(typeof QRCode !== 'undefined'){
+      try {
+        new QRCode(box, {
+          text: url, width: 260, height: 260,
+          colorDark: "#000000", colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M
+        });
+        var cvs = box.querySelector('canvas');
+        if(cvs){
+          cvs.style.cssText = "width:100%;height:100%;object-fit:contain;border-radius:6px;display:block;";
+          var imgEl = box.querySelector('img');
+          if(imgEl) imgEl.style.display = 'none';
+          rendered = true;
+        }
+      } catch(e){}
+    }
+
+    // 실패 시에만 네트워크 이미지 백업 사용
+    if(!rendered){
       var encodedUrl = encodeURIComponent(url);
       var api1 = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=" + encodedUrl;
       var api2 = "https://quickchart.io/qr?size=300&text=" + encodedUrl;
-      var api3 = "https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=" + encodedUrl;
-      
       var img = document.createElement('img');
       img.alt = "참여 QR";
       img.style.cssText = "width:100%;height:100%;object-fit:contain;border-radius:6px;display:block;";
-      img.onerror = function() {
-        if(this.src === api1) { this.src = api2; }
-        else if(this.src === api2) { this.src = api3; }
-        else { warn.textContent = '※ QR 이미지 로드 대기 중 (위 세션코드·주소로 안내 가능)'; }
-      };
+      img.onerror = function() { this.onerror=null; this.src = api2; };
       img.src = api1;
       box.appendChild(img);
-
-      // file:// 보안 제약 우회를 위해 Canvas 객체를 DOM에 직접 삽입
-      if(typeof QRCode !== 'undefined'){
-        try {
-          var hiddenDiv = document.createElement('div');
-          new QRCode(hiddenDiv, {
-            text: url, width: 260, height: 260,
-            colorDark: "#000000", colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.M
-          });
-          setTimeout(function(){
-            var cvs = hiddenDiv.querySelector('canvas');
-            if(cvs){
-              cvs.style.cssText = "width:100%;height:100%;object-fit:contain;border-radius:6px;display:block;";
-              box.innerHTML = '';
-              box.appendChild(cvs);
-            }
-          }, 40);
-        } catch(e){}
-      }
-      warn.textContent = '';
-    } else {
-      box.innerHTML='<div class="ph" id="qrph">배포 후 URL을<br>설정하면 QR이<br>여기 표시됩니다</div>';
-      warn.textContent='※ VOTE_URL 미설정 (투표연동_설치가이드.md 참고)';
     }
+    warn.textContent = '';
   }
   function toggleQR(force){
     var willShow = (typeof force==='boolean') ? force : !qrpanel.classList.contains('show');
