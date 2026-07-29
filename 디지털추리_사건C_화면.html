@@ -459,7 +459,7 @@
     nextBtn.textContent= step>=MAX? '처음으로 ↺':'다음 ▸';
   }
   function go(s){ step=Math.max(1,Math.min(MAX,s)); render(); }
-  document.getElementById('startBtn').addEventListener('click', function(){ document.getElementById('cover').style.display='none'; go(1); });
+  document.getElementById('cover').addEventListener('click', function(){ this.style.display='none'; go(1); });
   nextBtn.addEventListener('click', function(){ if(step>=MAX)go(1); else go(step+1); });
   prevBtn.addEventListener('click', function(){ go(step-1); });
   document.addEventListener('keydown', function(e){
