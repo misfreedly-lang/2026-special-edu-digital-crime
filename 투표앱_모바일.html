@@ -84,12 +84,13 @@
   const QUESTION_TEXTS = {
     "A1": "여기까지 — 위험 신호가 있습니까?",
     "A2": "이 ‘상담 선생님’의 정체는?",
-    "C1": "준호의 상태, 한 단어로?",
-    "C2": "이제 무엇으로 보입니까?",
-    "C3": "스스로 보냈는데, 피해자일까요?",
-    "D1": "지금 누구를 보호하고 싶나요?",
+    "C1": "준호의 상태, 한 단어로 고른다면?",
+    "C2": "돈까지 사라졌습니다. 이제 무엇으로 보입니까?",
+    "C3": "영상을 ‘스스로’ 보냈습니다. 그래도 피해자일까요?",
+    "D1": "지금, 가장 먼저 해야할 일이 무엇이라고 생각하나요?",
     "D2": "민수를 어떻게 해야 할까요?",
-    "D3": "민수는 가해자? 피해자? 둘 다?"
+    "D3": "민수는 가해자일까요? 피해자일까요?",
+    "D4": "사안이 접수되고, 다음 날 아침. 피해학생과 민수는 같은 교실에 있습니다. 선생님이라면 어떻게 하시겠습니까?"
   };
 
   function escapeHtml(str) {
@@ -118,6 +119,26 @@
     const qCode = active.q;
     const qTitle = QUESTION_TEXTS[qCode] || active.q;
     const opts = (active.opts || "").split("|").filter(Boolean);
+    
+    // D4 또는 선택지가 없는 경격: 서술형(주관식) 모드
+    if (qCode === 'D4' || opts.length === 0) {
+      const myAnswer = localStorage.getItem(`dd_subj_${ROOM}_${qCode}`) || "";
+      let html = `
+        <div class="q-text" style="font-size:18px;line-height:1.45;">${escapeHtml(qTitle)}</div>
+        <div style="margin-top:16px;">
+          <textarea id="subjText" placeholder="선생님의 생각이나 현장 대응 방안을 자유롭게 입력해 주세요..." style="width:100%;height:110px;background:#0E141C;border:2px solid #2A323D;border-radius:12px;padding:12px;color:#FFF;font-size:15px;font-family:inherit;resize:none;outline:none;margin-bottom:12px;">${escapeHtml(myAnswer)}</textarea>
+          <button class="opt-btn sel" style="justify-content:center;background:#F2B544;color:#0A0E14;border-color:#F2B544;font-size:18px;" onclick="submitSubjective()">
+            <span>의견 제출하기 💬</span>
+          </button>
+        </div>
+        <div class="status-msg" id="statusMsg" style="margin-top:14px;">
+          ${myAnswer ? '✔ 제출 완료 (수정 후 다시 제출 가능)' : '한 줄/두 줄로 자유롭게 의견을 적어주세요'}
+        </div>`;
+      mainCard.innerHTML = html;
+      return;
+    }
+
+    // 객관식 선택형 모드
     const myChoice = localStorage.getItem(`dd_v_${ROOM}_${qCode}`) || "";
 
     let html = `<div class="q-text">${escapeHtml(qTitle)}</div><div class="opts-container">`;
@@ -137,7 +158,36 @@
     mainCard.innerHTML = html;
   }
 
-  // 투표 제출 함수 (Firebase에 즉시 저장)
+  // 주관식 서술형 제출 함수
+  window.submitSubjective = function() {
+    if (!currentActive || !currentActive.q || isSubmitting) return;
+    const txtArea = document.getElementById('subjText');
+    const answer = txtArea ? txtArea.value.trim() : '';
+    if (!answer) {
+      alert('내용을 입력해 주세요.');
+      return;
+    }
+    isSubmitting = true;
+    const qCode = currentActive.q;
+    const statusMsg = document.getElementById('statusMsg');
+    if (statusMsg) statusMsg.textContent = "의견 전송 중…";
+
+    localStorage.setItem(`dd_subj_${ROOM}_${qCode}`, answer);
+
+    db.ref(`rooms/${ROOM}/subjective/${qCode}/${userToken}`).set({
+      answer: answer,
+      timestamp: firebase.database.ServerValue.TIMESTAMP
+    }).then(() => {
+      isSubmitting = false;
+      if (statusMsg) statusMsg.textContent = "✔ 제출 완료 (수정 후 다시 제출 가능)";
+    }).catch((err) => {
+      isSubmitting = false;
+      console.error(err);
+      if (statusMsg) statusMsg.textContent = "⚠ 전송 실패. 다시 시도해 주세요.";
+    });
+  };
+
+  // 객관식 투표 제출 함수 (Firebase에 즉시 저장)
   window.submitVote = function(choice) {
     if (!currentActive || !currentActive.q || isSubmitting) return;
     isSubmitting = true;
