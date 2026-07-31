@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>디지털 추리 · CASE C — 사라진 용돈</title>
+<!-- Firebase JS SDK (Compat Mode) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+  :root{
+    --ink:#0B0F16; --ink2:#121821; --panel:#161D28; --amber:#F2B544; --red:#E5484D;
+    --cold:#6FA8D6; --text:#EAEEF3; --muted:#8B97A4; --card:#F5F7FA; --line:#2A323D; --teal:#43C6A0;
+    --sans:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+    --mono:ui-monospace,"SF Mono","Roboto Mono",Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;background:#000}
+  body{font-family:var(--sans);color:var(--text)}
+  #stage{position:fixed;inset:0;display:flex;flex-direction:column;
+    background:radial-gradient(120% 90% at 35% 40%, #141B26 0%, var(--ink) 58%, #05080C 100%);transition:background 1s ease}
+  #stage.cold{background:radial-gradient(120% 95% at 40% 42%, #0D1722 0%, #05090F 60%, #02040A 100%)}
+  #stage::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:48;
+    background:repeating-linear-gradient(to bottom, rgba(255,255,255,.02) 0 1px, transparent 1px 3px);mix-blend-mode:overlay;opacity:.5}
+
+  .hud{height:8.5vh;min-height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,3.4vw,46px);position:relative;z-index:20}
+  .hud-l{font-family:var(--mono);font-size:clamp(11px,1.4vw,15px);letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+  .hud-l b{color:var(--amber);font-weight:800}
+  .acttag{font-family:var(--mono);font-size:clamp(11px,1.4vw,15px);letter-spacing:.12em;color:var(--text);font-weight:700}
+  .dots{display:flex;gap:.5em;align-items:center}
+  .dot{width:.62em;height:.62em;border-radius:50%;background:#333D49;transition:.3s}
+  .dot.on{background:var(--amber);transform:scale(1.3)}
+  .br{position:absolute;width:32px;height:32px;border-color:var(--amber);opacity:.4;z-index:21}
+  .br.tl{top:12px;left:12px;border-top:2px solid;border-left:2px solid}
+  .br.tr{top:12px;right:12px;border-top:2px solid;border-right:2px solid}
+  .br.bl{bottom:12px;left:12px;border-bottom:2px solid;border-left:2px solid}
+  .br.brr{bottom:12px;right:12px;border-bottom:2px solid;border-right:2px solid}
+
+  /* hypothesis tracker */
+  .hypbar{height:5.5vh;min-height:36px;display:flex;align-items:center;gap:.8em;padding:0 clamp(20px,3.4vw,46px);
+    z-index:18;font-size:clamp(12px,1.5vw,17px);white-space:nowrap;overflow:hidden}
+  .hypbar .hl{font-family:var(--mono);font-size:clamp(10px,1.2vw,13px);letter-spacing:.14em;color:var(--muted);text-transform:uppercase;flex:none}
+  .hyp{display:flex;align-items:center;gap:.55em;flex-wrap:nowrap}
+  .hchip{font-weight:700;padding:.18em .7em;border-radius:999px;border:1.5px solid #333D49;color:var(--muted)}
+  .hchip.dead{text-decoration:line-through;opacity:.5;border-style:dashed}
+  .hchip.act{color:#1A1205;background:var(--amber);border-color:var(--amber)}
+  .hchip.truth{color:#fff;background:var(--red);border-color:var(--red);box-shadow:0 0 16px rgba(229,72,77,.5)}
+  .harrow{color:#4A5562;font-weight:700}
+
+  .main{flex:1;position:relative;display:flex;align-items:stretch;gap:clamp(16px,2.6vw,40px);padding:clamp(6px,1.4vh,16px) clamp(20px,3.4vw,46px) clamp(4px,1vh,10px)}
+  .scene{flex:1.5;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .glow{position:absolute;width:58%;height:58%;border-radius:50%;filter:blur(60px);z-index:1;
+    background:radial-gradient(circle, rgba(242,181,68,.22), transparent 70%);animation:pulse 3.4s ease-in-out infinite;transition:background 1s}
+  #stage.cold .glow{background:radial-gradient(circle, rgba(111,168,214,.24), transparent 70%)}
+  @keyframes pulse{50%{opacity:.6;transform:scale(1.05)}}
+
+  /* scene container */
+  .act{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;z-index:3}
+  .act.show{display:flex;animation:actIn .5s ease}
+  @keyframes actIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  /* ACT1 behavior */
+  .silho{position:absolute;left:6%;bottom:0;height:70%;z-index:1;opacity:.45}
+  .silho path{fill:#1B2430}
+  .behav{position:relative;z-index:3;display:flex;flex-direction:column;gap:clamp(9px,1.4vh,14px);align-items:flex-start}
+  .blog-h{font-family:var(--mono);font-size:clamp(12px,1.4vw,16px);color:var(--cold);letter-spacing:.16em;margin-bottom:.3em}
+  .bchip{background:#161D28;border:1px solid #2A323D;border-left:3px solid var(--cold);border-radius:10px;
+    padding:clamp(10px,1.5vh,15px) clamp(14px,1.8vw,20px);font-size:clamp(15px,1.9vw,21px);font-weight:700;color:#D4DBE3;
+    opacity:0;transform:translateX(-12px);box-shadow:0 6px 18px rgba(0,0,0,.35)}
+  .bchip .bx{color:var(--muted);font-weight:500;font-size:.74em;margin-left:.5em}
+  .act.show .bchip:nth-child(2){animation:chipIn .5s .15s both}
+  .act.show .bchip:nth-child(3){animation:chipIn .5s .5s both}
+  .act.show .bchip:nth-child(4){animation:chipIn .5s .85s both}
+  .act.show .bchip:nth-child(5){animation:chipIn .5s 1.2s both}
+  @keyframes chipIn{to{opacity:1;transform:none}}
+
+  /* ACT2 money */
+  .money{position:relative;z-index:3;width:clamp(300px,40vw,460px);display:flex;flex-direction:column;gap:clamp(12px,1.8vh,18px)}
+  .bank{background:var(--card);border-radius:16px;padding:clamp(16px,2.2vh,22px);box-shadow:0 12px 34px rgba(0,0,0,.4)}
+  .bank-h{display:flex;justify-content:space-between;align-items:center;color:#46505E;font-size:clamp(12px,1.4vw,15px);font-weight:700;margin-bottom:.4em}
+  .bank-h .pill{background:#E9EDF2;color:#6A7480;font-family:var(--mono);font-size:.82em;padding:.15em .6em;border-radius:6px}
+  .bal{font-family:var(--mono);font-size:clamp(30px,4.6vw,52px);font-weight:800;color:#1A2230;letter-spacing:-.01em}
+  .bal-track{height:clamp(10px,1.4vh,15px);background:#E2E7EC;border-radius:7px;overflow:hidden;margin-top:.5em}
+  .bal-fill{height:100%;width:100%;background:linear-gradient(90deg,#F2B544,#E5484D);border-radius:7px;transition:width 1.5s cubic-bezier(.3,.8,.3,1)}
+  .bal-note{margin-top:.45em;color:var(--red);font-size:clamp(12px,1.4vw,15px);font-weight:700}
+  .resale{background:#161D28;border:1px dashed #4A5562;border-radius:12px;padding:clamp(12px,1.7vh,16px);display:flex;gap:.8em;align-items:center}
+  .resale .ri{font-size:clamp(24px,3vw,34px)}
+  .resale .rt{font-weight:800;color:#D4DBE3;font-size:clamp(14px,1.7vw,18px)}
+  .resale .rd{color:var(--muted);font-size:clamp(12px,1.4vw,15px);margin-top:.1em}
+
+  /* ACT3 threat phone + countdown */
+  .phone{position:relative;z-index:3;width:clamp(260px,25vw,360px);background:#0D141C;border:1px solid #2A323D;border-radius:28px;
+    padding:clamp(12px,1.6vh,16px);box-shadow:0 24px 64px rgba(0,0,0,.55), inset 0 0 0 4px #05080C;animation:float 4.5s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(-.5deg)}50%{transform:translateY(-8px) rotate(.5deg)}}
+  .ph-head{display:flex;align-items:center;gap:.5em;padding-bottom:.55em;border-bottom:1px solid #1E2630;margin-bottom:.6em}
+  .ph-av{width:clamp(28px,2.7vw,36px);height:clamp(28px,2.7vw,36px);border-radius:50%;flex:none;background:linear-gradient(135deg,#5a2d30,#3a2023);display:flex;align-items:center;justify-content:center;color:#F2C7C9;font-size:clamp(15px,1.7vw,19px)}
+  .ph-name{font-weight:800;font-size:clamp(15px,1.7vw,19px)}.ph-name small{display:block;color:#E58A8E;font-weight:600;font-size:.66em}
+  .cd-banner{display:flex;align-items:center;justify-content:center;gap:.5em;background:rgba(229,72,77,.14);border:1px solid var(--red);
+    border-radius:10px;padding:.5em;margin-bottom:.6em;color:#F2C7C9;font-weight:700;font-size:clamp(13px,1.5vw,16px)}
+  .cd-banner .cd{font-family:var(--mono);font-size:clamp(18px,2.2vw,26px);font-weight:800;color:var(--red);letter-spacing:.04em}
+  .chat{display:flex;flex-direction:column;gap:clamp(7px,1vh,11px)}
+  .b{max-width:88%;font-size:clamp(15px,1.95vw,21px);line-height:1.36;padding:.5em .82em;border-radius:14px;
+    background:#2A1416;color:#F4CFD1;border:1px solid var(--red);align-self:flex-start;border-bottom-left-radius:4px}
+
+  /* ACT4 metadata reveal */
+  .meta{position:relative;z-index:3;width:clamp(320px,42vw,520px);background:#0E1722;border:1.5px solid #2C4256;border-radius:16px;
+    padding:clamp(18px,2.4vh,26px);box-shadow:0 16px 50px rgba(0,0,0,.5);overflow:hidden}
+  .meta-h{display:flex;align-items:center;gap:.5em;font-family:var(--mono);color:var(--cold);letter-spacing:.12em;font-size:clamp(12px,1.4vw,15px);margin-bottom:.9em}
+  .mrow{display:flex;justify-content:space-between;gap:1em;padding:clamp(9px,1.3vh,13px) 0;border-bottom:1px solid #1B2A38;font-size:clamp(14px,1.7vw,18px)}
+  .mrow:last-child{border-bottom:none}
+  .mrow .mk{color:var(--muted);font-weight:600;flex:none}
+  .mrow .mv{color:#D4DBE3;font-weight:700;text-align:right}
+  .mrow .mv.hot{color:var(--red)}
+  .stamp{position:absolute;top:clamp(12px,2vh,20px);right:clamp(-6px,-.5vw,-2px);transform:rotate(11deg);
+    border:3px solid var(--red);color:var(--red);font-weight:900;font-size:clamp(13px,1.6vw,18px);letter-spacing:.05em;
+    padding:.3em .7em;border-radius:8px;opacity:.92}
+
+  .caption{position:absolute;bottom:clamp(4px,1vh,12px);left:0;right:0;text-align:center;z-index:6;
+    font-size:clamp(14px,1.85vw,22px);font-weight:600;color:var(--text);line-height:1.4;padding:0 4%;transition:opacity .4s}
+  .caption b{color:var(--amber)} .caption .r{color:var(--red)}
+
+  /* evidence rail */
+  .rail{width:clamp(290px,32vw,420px);display:flex;flex-direction:column;z-index:10;overflow-y:auto}
+  .rail-h{font-family:var(--mono);font-size:clamp(13px,1.5vw,16px);letter-spacing:.18em;color:var(--amber);text-transform:uppercase;margin-bottom:.7em;flex:none}
+  .rail-h .n{font-size:.85em;color:var(--muted)}
+  .ecard{background:var(--card);border-radius:12px;padding:clamp(12px,1.6vh,16px);margin-bottom:clamp(8px,1.2vh,12px);
+    box-shadow:0 8px 22px rgba(0,0,0,.3);opacity:0;transform:translateX(16px);transition:opacity .5s ease, transform .5s ease;flex:none}
+  .ecard.on{opacity:1;transform:none}
+  .ecard .tag{display:inline-block;background:#1A2230;color:#fff;font-size:clamp(11px,1.25vw,14px);font-weight:800;padding:.2em .6em;border-radius:6px;margin-bottom:.45em}
+  .ecard.crit .tag{background:var(--red)}
+  .ecard .et{font-weight:800;color:#1A2230;font-size:clamp(16px,1.85vw,21px);margin-bottom:.2em}
+  .ecard .ed{color:#46505E;font-size:clamp(13.5px,1.5vw,17px);line-height:1.4}
+  .rail-empty{color:var(--muted);font-size:clamp(12px,1.4vw,15px);font-style:italic;margin-top:.6em;opacity:.7}
+
+  /* vote panel */
+  .vote{position:absolute;left:clamp(20px,3.4vw,46px);right:clamp(20px,3.4vw,46px);bottom:clamp(8px,1.6vh,18px);
+    background:var(--panel);border:1px solid var(--line);border-radius:16px;z-index:30;padding:clamp(13px,1.9vh,20px) clamp(18px,2.4vw,28px);
+    box-shadow:0 -10px 50px rgba(0,0,0,.5);display:none;grid-template-columns:1.3fr 1fr;gap:clamp(16px,2.4vw,32px);align-items:center}
+  .vote.show{display:grid;animation:slideUp .4s ease}
+  @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+  .vote .vlabel{font-family:var(--mono);font-size:clamp(10px,1.2vw,13px);letter-spacing:.18em;color:var(--amber);margin-bottom:.45em}
+  .vote .vq{font-size:clamp(16px,2vw,24px);font-weight:800;line-height:1.3;margin-bottom:.6em}
+  .vopts{display:flex;flex-wrap:wrap;gap:.5em}
+  .vopt{font-weight:800;font-size:clamp(13px,1.5vw,17px);padding:.42em 1em;border:2px solid var(--amber);color:var(--amber);border-radius:999px}
+  .vright{border-left:1px solid var(--line);padding-left:clamp(16px,2vw,28px)}
+  .qr-row{display:flex;align-items:center;gap:.9em;margin-bottom:.6em}
+  .qr{width:clamp(56px,7vw,82px);height:clamp(56px,7vw,82px);border:2px dashed #4A5562;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--mono);font-size:clamp(9px,1vw,11px);color:#6A7480;line-height:1.2}
+  .qr-txt{font-size:clamp(11px,1.3vw,14px);color:var(--muted);line-height:1.4}.qr-txt b{color:var(--text)}
+  .results{margin-top:.1em}
+  .rbar{display:flex;align-items:center;gap:.6em;margin:.28em 0;font-size:clamp(11px,1.3vw,14px)}
+  .rbar .rl{width:clamp(64px,8vw,108px);color:var(--text);font-weight:700;flex:none;text-align:right;line-height:1.2}
+  .rtrack{flex:1;height:clamp(12px,1.6vh,18px);background:#0E141C;border-radius:6px;overflow:hidden;position:relative}
+  .rfill{display:block;height:100%;width:0;background:var(--amber);border-radius:6px;transition:width .9s cubic-bezier(.2,.8,.2,1);min-width:0}
+  .rfill.red{background:var(--red)} .rfill.cold{background:var(--cold)} .rfill.teal{background:var(--teal)}
+  .rbar .rv{width:auto;min-width:6.5em;color:var(--muted);flex:none;text-align:right;font-family:var(--mono);font-size:0.9em}
+  .vnote{font-size:clamp(10px,1.15vw,12.5px);color:#6A7480;margin-top:.45em;font-style:italic}
+  .demo-btn{cursor:pointer;font-family:var(--mono);font-size:clamp(10px,1.2vw,12.5px);letter-spacing:.06em;color:var(--muted);background:rgba(14,20,28,.7);border:1px solid var(--line);padding:.4em .8em;border-radius:7px;margin-top:.45em;transition:.15s}
+  .demo-btn:hover{color:var(--amber);border-color:var(--amber)}
+
+  /* debrief */
+  .debrief{position:absolute;inset:0;z-index:36;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(18px,3.5vh,46px) 5vw;background:radial-gradient(120% 100% at 50% 40%, #131A24, #05080E 90%)}
+  .debrief.show{display:flex;animation:fadeIn .5s ease}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .reveal-tag{display:inline-flex;align-items:center;gap:.5em;background:var(--red);color:#fff;font-weight:900;font-size:clamp(16px,2.4vw,28px);padding:.45em 1.2em;border-radius:999px;margin-bottom:.8em;box-shadow:0 10px 36px rgba(229,72,77,.4)}
+  .dh{font-size:clamp(20px,3vw,34px);font-weight:900;color:var(--text);margin-bottom:.9em;line-height:1.3}
+  .dcards{display:flex;gap:clamp(12px,1.8vw,22px);flex-wrap:wrap;justify-content:center;max-width:1120px}
+  .dcard{background:var(--card);border-radius:14px;padding:clamp(14px,2vh,20px);width:clamp(225px,26vw,320px);box-shadow:0 10px 30px rgba(0,0,0,.35);text-align:left}
+  .dcard .dn{width:1.7em;height:1.7em;border-radius:50%;background:var(--amber);color:#1A1205;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:clamp(13px,1.5vw,17px);margin-bottom:.5em}
+  .dcard.urgent .dn{background:var(--red);color:#fff}
+  .dcard .dt{font-weight:800;color:#1A2230;font-size:clamp(15px,1.7vw,20px);margin-bottom:.28em;line-height:1.3}
+  .dcard .dd{color:#46505E;font-size:clamp(13px,1.5vw,16px);line-height:1.42}
+
+  .nav{height:8.5vh;min-height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,3.4vw,46px);position:relative;z-index:40}
+  .navbtn{cursor:pointer;font-family:var(--sans);font-weight:800;font-size:clamp(13px,1.6vw,18px);padding:.5em 1.5em;border-radius:999px;border:1.5px solid var(--line);color:var(--text);background:rgba(18,24,33,.6);transition:.15s}
+  .navbtn:hover{border-color:var(--amber);color:var(--amber)}
+  .navbtn.primary{background:var(--amber);color:#1A1205;border-color:var(--amber)}
+  .navbtn:disabled{opacity:.3;cursor:default;border-color:var(--line);color:var(--muted)}
+  .steplabel{font-family:var(--mono);font-size:clamp(11px,1.3vw,14px);color:var(--muted);letter-spacing:.1em}
+
+  #cover{position:absolute;inset:0;z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1em;background:radial-gradient(120% 90% at 50% 42%,#141B26,#05080E);text-align:center;padding:0 8vw}
+  #cover .cc{font-family:var(--mono);color:var(--amber);letter-spacing:.34em;font-size:clamp(12px,1.6vw,16px)}
+  #cover h1{font-size:clamp(46px,10vw,130px);font-weight:900;letter-spacing:-.02em;line-height:1}
+  #cover .ctag{color:var(--muted);font-style:italic;font-weight:600;font-size:clamp(15px,2.6vw,28px)}
+  #cover .chint{color:#6A7480;font-family:var(--mono);font-size:clamp(11px,1.5vw,14px);letter-spacing:.05em;margin-top:.4em}
+  .startbtn{cursor:pointer;border:none;background:var(--amber);color:#1A1205;font-family:var(--sans);font-weight:800;font-size:clamp(16px,2.3vw,23px);padding:.65em 1.9em;border-radius:999px;transition:.15s;margin-top:.4em}
+  .startbtn:hover{transform:translateY(-1px);box-shadow:0 10px 30px rgba(242,181,68,.4)}
+  @media (prefers-reduced-motion: reduce){ *{animation:none!important} .phone{animation:none} }
+  @media (max-width:860px){ .rail{display:none} .vote{grid-template-columns:1fr} .vright{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:.7em} }
+</style>
+</head>
+<body>
+<div id="stage">
+  <span class="br tl"></span><span class="br tr"></span><span class="br bl"></span><span class="br brr"></span>
+
+  <div class="hud">
+    <div class="hud-l">CASE FILE C · <b>사라진 용돈</b></div>
+    <div class="acttag" id="acttag">1막 · 익숙한 그림</div>
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <div class="hypbar">
+    <span class="hl">수사 가설</span>
+    <div class="hyp" id="hyp"></div>
+  </div>
+
+  <div class="main">
+    <div class="scene">
+      <div class="glow"></div>
+
+      <!-- ACT 1 : behavior -->
+      <div class="act" id="actBehav">
+        <svg class="silho" viewBox="0 0 200 260" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><path d="M100 40 a44 44 0 1 1 -.1 0 z M20 260 q0-90 80-90 t80 90 z"/></svg>
+        <div class="behav">
+          <div class="blog-h">관찰 일지 · 최근 2주</div>
+          <div class="bchip">급식을 거부함 <span class="bx">3일 연속</span></div>
+          <div class="bchip">등교를 거부함 <span class="bx">아침마다</span></div>
+          <div class="bchip">방문을 잠그고 나오지 않음</div>
+          <div class="bchip">멍하게 있고, 사소한 일에 짜증</div>
+        </div>
+      </div>
+
+      <!-- ACT 2 : money -->
+      <div class="act" id="actMoney">
+        <div class="money">
+          <div class="bank">
+            <div class="bank-h"><span>준호 · 입출금 통장</span><span class="pill">최근 2주</span></div>
+            <div class="bal" id="balNum">₩84,000</div>
+            <div class="bal-track"><div class="bal-fill" id="balFill"></div></div>
+            <div class="bal-note" id="balNote">잔액이 빠르게 줄고 있습니다</div>
+          </div>
+          <div class="resale">
+            <div class="ri">🎮</div>
+            <div><div class="rt">[중고거래] 게임기 팝니다 · 급처</div><div class="rd">시세보다 싸게 · “오늘 안에 거래 원해요”</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACT 3 : threat -->
+      <div class="act" id="actThreat">
+        <div class="phone">
+          <div class="ph-head"><div class="ph-av">!</div><div class="ph-name">모르는 번호<small>● 차단된 발신</small></div></div>
+          <div class="cd-banner">⏱ 송금까지 <span class="cd" id="cd">05:00</span></div>
+          <div class="chat">
+            <div class="b">돈 안 보내면 네 그 영상, 단톡방에 다 뿌린다.</div>
+            <div class="b">5분 줄게. 빨리.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACT 4 : metadata reveal -->
+      <div class="act" id="actMeta">
+        <div class="meta">
+          <div class="stamp">본인 전송 확인</div>
+          <div class="meta-h">🔬 디지털 포렌식 · 파일 정보</div>
+          <div class="mrow"><span class="mk">파일 출처</span><span class="mv">본인 휴대폰에서 촬영</span></div>
+          <div class="mrow"><span class="mk">최초 전송자</span><span class="mv hot">준호 (본인)</span></div>
+          <div class="mrow"><span class="mk">유도 정황</span><span class="mv">“너만 보여줄게. 우리 친구잖아.”</span></div>
+          <div class="mrow"><span class="mk">현재 상태</span><span class="mv hot">협박에 이용됨</span></div>
+        </div>
+      </div>
+
+      <div class="caption" id="caption"></div>
+
+      <!-- debrief -->
+      <div class="debrief" id="debrief">
+        <div class="reveal-tag">▶ 정체 : 성착취 협박 (섹스토션)</div>
+        <div class="dh">‘스스로 보냈다’는 — 동의가 아니다</div>
+        <div class="dcards">
+          <div class="dcard"><div class="dn">1</div><div class="dt">빠른 해석이 눈가리개</div><div class="dd">사춘기로, 갈취로 봤다. 두 번 빗나가는 사이 진실은 가려졌다.</div></div>
+          <div class="dcard"><div class="dn">2</div><div class="dt">속아서 보낸 것</div><div class="dd">“친구 하자, 너만 보여줄게”에 길들여졌다. “왜 보냈어?”가 곧 2차 가해.</div></div>
+          <div class="dcard urgent"><div class="dn">3</div><div class="dt">지금, 즉시</div><div class="dd">112·117 신고, 송금 중단. 첫 마디는 “말해줘서 고마워, 네 잘못이 아니야.”</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rail">
+      <div class="rail-h">증거 보드 <span class="n" id="ecount">0 / 4</span></div>
+      <div id="railEmpty" class="rail-empty">아직 수집된 단서가 없습니다.</div>
+      <div class="ecard" data-s="1"><span class="tag">단서 #1</span><div class="et">행동 급변</div><div class="ed">급식·등교 거부, 방문 잠금. 2주째 지속.</div></div>
+      <div class="ecard" data-s="3"><span class="tag">단서 #2</span><div class="et">사라지는 돈</div><div class="ed">친구에게 빌리고 게임기 급처분. 통장 잔액 급감.</div></div>
+      <div class="ecard" data-s="5"><span class="tag">단서 #3</span><div class="et">협박 + 시간 압박</div><div class="ed">“돈 안 보내면 영상 뿌린다. 5분 줄게.” 금전 요구.</div></div>
+      <div class="ecard crit" data-s="6"><span class="tag">단서 #4</span><div class="et">‘본인 전송’ 메타데이터</div><div class="ed">유도 문구에 속아 직접 촬영·전송. 협박에 이용됨.</div></div>
+    </div>
+
+    <!-- VOTE 1 (C1) -->
+    <div class="vote" id="vote1" data-q="C1" data-opts="사춘기|우울|문제행동">
+      <div class="vleft">
+        <div class="vlabel">📱 익명 투표 · 개인 휴대폰</div>
+        <div class="vq">준호의 상태, 한 단어로 고른다면?</div>
+        <div class="vopts"><span class="vopt">사춘기</span><span class="vopt">우울</span><span class="vopt">문제행동</span></div>
+      </div>
+      <div class="vright">
+        <div class="qr-row"><div class="qr"></div><div class="qr-txt"></div></div>
+        <div class="results" id="res1">
+          <div class="rbar"><span class="rl">사춘기</span><span class="rtrack"><span class="rfill" data-v="54"></span></span><span class="rv" data-v="54">·</span></div>
+          <div class="rbar"><span class="rl">우울</span><span class="rtrack"><span class="rfill cold" data-v="30"></span></span><span class="rv" data-v="30">·</span></div>
+          <div class="rbar"><span class="rl">문제행동</span><span class="rtrack"><span class="rfill" data-v="16"></span></span><span class="rv" data-v="16">·</span></div>
+        </div>
+        <div class="demo-btn" data-target="res1">데모 결과 보기 ▸</div>
+        <div class="vnote"></div>
+      </div>
+    </div>
+
+    <!-- VOTE 2 (C2) -->
+    <div class="vote" id="vote2" data-q="C2" data-opts="갈취(삥뜯김)|중독·낭비|협박 피해">
+      <div class="vleft">
+        <div class="vlabel">📱 익명 투표 · 개인 휴대폰</div>
+        <div class="vq">돈까지 사라졌습니다. 이제 무엇으로 보입니까?</div>
+        <div class="vopts"><span class="vopt">갈취(삥뜯김)</span><span class="vopt">중독·낭비</span><span class="vopt">협박 피해</span></div>
+      </div>
+      <div class="vright">
+        <div class="qr-row"><div class="qr"></div><div class="qr-txt"></div></div>
+        <div class="results" id="res2">
+          <div class="rbar"><span class="rl">갈취</span><span class="rtrack"><span class="rfill" data-v="48"></span></span><span class="rv" data-v="48">·</span></div>
+          <div class="rbar"><span class="rl">중독·낭비</span><span class="rtrack"><span class="rfill cold" data-v="22"></span></span><span class="rv" data-v="22">·</span></div>
+          <div class="rbar"><span class="rl">협박 피해</span><span class="rtrack"><span class="rfill red" data-v="30"></span></span><span class="rv" data-v="30">·</span></div>
+        </div>
+        <div class="demo-btn" data-target="res2">데모 결과 보기 ▸</div>
+        <div class="vnote"></div>
+      </div>
+    </div>
+
+    <!-- VOTE 3 (C3) -->
+    <div class="vote" id="vote3" data-q="C3" data-opts="그래도 피해자|본인 책임도|피해자 아님">
+      <div class="vleft">
+        <div class="vlabel">📱 익명 투표 · 개인 휴대폰</div>
+        <div class="vq">영상을 ‘스스로’ 보냈습니다. 그래도 피해자일까요?</div>
+        <div class="vopts"><span class="vopt">그래도 피해자</span><span class="vopt">본인 책임도</span><span class="vopt">피해자 아님</span></div>
+      </div>
+      <div class="vright">
+        <div class="qr-row"><div class="qr"></div><div class="qr-txt"></div></div>
+        <div class="results" id="res3">
+          <div class="rbar"><span class="rl">피해자</span><span class="rtrack"><span class="rfill teal" data-v="61" style="background:#43C6A0"></span></span><span class="rv" data-v="61">·</span></div>
+          <div class="rbar"><span class="rl">본인 책임도</span><span class="rtrack"><span class="rfill" data-v="28"></span></span><span class="rv" data-v="28">·</span></div>
+          <div class="rbar"><span class="rl">피해자 아님</span><span class="rtrack"><span class="rfill red" data-v="11"></span></span><span class="rv" data-v="11">·</span></div>
+        </div>
+        <div class="demo-btn" data-target="res3">데모 결과 보기 ▸</div>
+        <div class="vnote"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="navbtn" id="prev">◂ 이전</button>
+    <div class="steplabel" id="steplabel"></div>
+    <button class="navbtn primary" id="next">다음 ▸</button>
+  </div>
+
+  <div id="cover">
+    <div class="cc">DIGITAL DETECTIVE · CASE C</div>
+    <h1>사라진 용돈</h1>
+    <div class="ctag">2주 동안, 나는 두 번 틀렸다</div>
+    <button class="startbtn" id="startBtn">▶ 사건 열기</button>
+    <div class="chint">강사가 ‘다음’으로 진행 · 방향키 ←/→ 가능</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function(){
+  var stage=document.getElementById('stage'), MAX=8, step=0;
+  var caption=document.getElementById('caption'), acttag=document.getElementById('acttag'),
+      ecount=document.getElementById('ecount'), railEmpty=document.getElementById('railEmpty'),
+      debrief=document.getElementById('debrief'), steplabel=document.getElementById('steplabel'),
+      prevBtn=document.getElementById('prev'), nextBtn=document.getElementById('next'), hypBox=document.getElementById('hyp');
+  var ecards=Array.prototype.slice.call(document.querySelectorAll('.ecard'));
+  var vote1=document.getElementById('vote1'), vote2=document.getElementById('vote2'), vote3=document.getElementById('vote3');
+  var acts={behav:document.getElementById('actBehav'),money:document.getElementById('actMoney'),threat:document.getElementById('actThreat'),meta:document.getElementById('actMeta')};
+
+  // ===== 실시간 투표 연동 설정 (사건 A와 동일한 값 사용) =====
+  var VOTE_URL = "https://misfreedly-lang.github.io/2026-special-edu-digital-crime/투표앱_모바일.html";
+  var urlParams = new URLSearchParams(window.location.search);
+  var ROOM     = urlParams.get('room') || window.ROOM || "CLASS_01"; // ← 강의 세션 코드(기본 1반)
+
+  window.addEventListener('message', function(e){
+    if(e.data && e.data.type === 'CHANGE_ROOM' && e.data.room){
+      ROOM = e.data.room;
+      if(typeof syncVote === 'function') syncVote();
+    }
+  });
+  var liveQ=null, tallyTimer=null, _seq=0, cdTimer=null, moneyRAF=null;
+
+  var ACT=['','1막 · 익숙한 그림','1막 · 익숙한 그림','2막 · 사라지는 돈','2막 · 사라지는 돈','3막 · 한 줄','4막 · 마지막 반전','4막 · 마지막 반전','디브리핑'];
+  var SCENE=['','behav','behav','money','money','threat','meta','meta',''];
+  var CAP=['',
+    '밝던 준호가 2주째 이상합니다. 멍하고, 짜증 내고, 방문을 잠급니다.',
+    '준호의 상태 — <b>한 단어로</b> 고른다면? 폰으로 투표해 주세요.',
+    '친구에게 돈을 빌리고, 게임기를 팝니다. 통장에서도 돈이 빠져나갑니다.',
+    '돈까지 사라졌습니다. 이제 — <b>무엇으로 보입니까?</b>',
+    '그때, 한 줄이 왔습니다. 그 ‘<span class="r">영상</span>’은… 무엇일까요?',
+    '그 영상은 — 준호가 <span class="r">‘직접’ 찍어 보낸 것</span>이었습니다.',
+    '스스로 보냈는데 — <b>그래도 피해자일까요?</b>',
+    ''];
+  // hypothesis chips per step  (a=active, d=dead, r=truth)
+  var HYP={
+    1:[['사춘기?','a']], 2:[['사춘기?','a']],
+    3:[['사춘기','d'],['돈 뜯김(갈취)?','a']], 4:[['사춘기','d'],['돈 뜯김(갈취)?','a']],
+    5:[['사춘기','d'],['갈취','d'],['협박 피해?','a']],
+    6:[['사춘기','d'],['갈취','d'],['협박 피해','d'],['성착취 협박!','r']],
+    7:[['사춘기','d'],['갈취','d'],['협박 피해','d'],['성착취 협박!','r']],
+    8:[['성착취 협박 (섹스토션) · 확정','r']]
+  };
+
+  var dotsBox=document.getElementById('dots');
+  for(var i=0;i<5;i++){ var d=document.createElement('span'); d.className='dot'; dotsBox.appendChild(d); }
+  var dotEls=Array.prototype.slice.call(dotsBox.children);
+  function actIndex(s){ return s<=2?0 : s<=4?1 : s===5?2 : s<=7?3 : 4; }
+
+  function renderHyp(s){
+    var arr=HYP[s]||[]; var html='';
+    arr.forEach(function(c,i){
+      if(i) html+='<span class="harrow">→</span>';
+      var cls=c[1]==='d'?'dead':c[1]==='r'?'truth':'act';
+      html+='<span class="hchip '+cls+'">'+c[0]+'</span>';
+    });
+    hypBox.innerHTML=html;
+  }
+  function showScene(name){ for(var k in acts){ acts[k].classList.toggle('show', k===name); } }
+
+  function animMoney(){
+    stopMoney();
+    var from=84000,to=8000,dur=1600,t0=performance.now();
+    var num=document.getElementById('balNum'),bar=document.getElementById('balFill');
+    if(bar) bar.style.width='100%';
+    function f(now){ var k=Math.min(1,(now-t0)/dur); var v=Math.round(from+(to-from)*k);
+      if(num)num.textContent='₩'+v.toLocaleString(); if(bar)bar.style.width=(10+(v/from)*90)+'%';
+      if(k<1){ moneyRAF=requestAnimationFrame(f);} }
+    moneyRAF=requestAnimationFrame(f);
+  }
+  function stopMoney(){ if(moneyRAF){cancelAnimationFrame(moneyRAF);moneyRAF=null;} }
+  function startCD(){
+    stopCD(); var t=300, el=document.getElementById('cd');
+    function tick(){ var m=Math.floor(t/60),s=t%60; if(el)el.textContent=('0'+m).slice(-2)+':'+('0'+s).slice(-2); if(t<=0){stopCD();return;} t--; }
+    tick(); cdTimer=setInterval(tick,1000);
+  }
+  function stopCD(){ if(cdTimer){clearInterval(cdTimer);cdTimer=null;} }
+
+  function render(){
+    stopMoney(); stopCD();
+    // evidence
+    var cnt=0; ecards.forEach(function(c){ var on=step>=+c.dataset.s; c.classList.toggle('on',on); if(on)cnt++; });
+    ecount.textContent=cnt+' / 4'; railEmpty.style.display=cnt?'none':'block';
+    // scene + mood
+    showScene(SCENE[step]||'');
+    stage.classList.toggle('cold', step>=6);
+    if(step===3) animMoney();
+    if(step===5) startCD();
+    // caption / acttag / hyp / dots
+    caption.innerHTML=CAP[step]||''; caption.style.opacity=(CAP[step])?'1':'0';
+    acttag.textContent=ACT[step]||''; renderHyp(step);
+    var ai=actIndex(step); dotEls.forEach(function(d,idx){ d.classList.toggle('on',idx===ai); });
+    // overlays
+    vote1.classList.toggle('show', step===2);
+    vote2.classList.toggle('show', step===4);
+    vote3.classList.toggle('show', step===7);
+    debrief.classList.toggle('show', step===8);
+    syncVote();
+    prevBtn.disabled=step<=1; steplabel.textContent='STEP '+step+' / '+MAX;
+    nextBtn.textContent= step>=MAX? '다음 사건으로 ▸':'다음 ▸';
+  }
+  function goNextCase(){
+    try {
+      if(window.parent && window.parent !== window){
+        window.parent.postMessage({ type: 'NEXT_CASE' }, '*');
+      } else { go(1); }
+    } catch(e){ go(1); }
+  }
+  function go(s){ step=Math.max(1,Math.min(MAX,s)); render(); }
+  document.getElementById('cover').addEventListener('click', function(){ this.style.display='none'; go(1); });
+  nextBtn.addEventListener('click', function(){ if(step>=MAX)goNextCase(); else go(step+1); });
+  prevBtn.addEventListener('click', function(){ go(step-1); });
+  document.addEventListener('keydown', function(e){
+    if(document.getElementById('cover').style.display==='none'){
+      if(e.key==='ArrowRight'||e.code==='Space'){ e.preventDefault(); if(step>=MAX)goNextCase(); else go(step+1); }
+      if(e.key==='ArrowLeft'){ e.preventDefault(); go(step-1); }
+    } else if(e.code==='Space'||e.code==='Enter'){ e.preventDefault(); document.getElementById('cover').style.display='none'; go(1); }
+  });
+  document.querySelectorAll('.demo-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var box=document.getElementById(btn.dataset.target);
+      box.querySelectorAll('.rfill').forEach(function(f){ f.style.width=f.dataset.v+'%'; });
+      box.querySelectorAll('.rv').forEach(function(v){ v.textContent=v.dataset.v+'%'; });
+      btn.style.display='none';
+    });
+  });
+
+  // ===== 파이어베이스 실시간 연동 (Firebase Realtime Database 0.1초 소켓 연동) =====
+  var firebaseConfig = {
+    databaseURL: "https://special-edu-teather-class-default-rtdb.asia-southeast1.firebasedatabase.app"
+  };
+  if(!firebase.apps.length){ firebase.initializeApp(firebaseConfig); }
+  var db = firebase.database();
+  var currentTallyRef = null;
+
+  function syncVote(){
+    var panel = step===2? vote1 : step===4? vote2 : step===7? vote3 : null;
+    
+    if(liveQ && (!panel || panel.dataset.q!==liveQ.q)){
+      db.ref('rooms/' + ROOM + '/active').set({ q: liveQ.q, opts: '', open: false });
+      if(currentTallyRef){ currentTallyRef.off(); currentTallyRef = null; }
+      liveQ = null;
+    }
+    
+    if(panel && (!liveQ || liveQ.q!==panel.dataset.q)){
+      var q = panel.dataset.q, opts = panel.dataset.opts;
+      liveQ = { q: q };
+      db.ref('rooms/' + ROOM + '/active').set({ q: q, opts: opts, open: true });
+      setupQR(panel);
+      listenTally(panel, q, opts.split('|'));
+    }
+  }
+
+  function setupQR(panel){
+    var targetRoom = window.ROOM || ROOM || "CLASS_01";
+    var joinUrl = VOTE_URL ? (VOTE_URL + (VOTE_URL.indexOf('?')<0?'?':'&') + 'room=' + encodeURIComponent(targetRoom)) : '';
+    var qrBox = panel.querySelector('.qr');
+    if(qrBox && joinUrl){
+      qrBox.innerHTML = '';
+      var rendered = false;
+      if(typeof QRCode !== 'undefined'){
+        try {
+          var wrap = document.createElement('div');
+          new QRCode(wrap, {
+            text: joinUrl, width: 140, height: 140,
+            colorDark: "#000000", colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.M
+          });
+          var cvs = wrap.querySelector('canvas');
+          if(cvs){
+            cvs.style.cssText = "width:100%;height:100%;object-fit:contain;border-radius:6px;display:block;background:#fff;padding:2px;";
+            qrBox.appendChild(cvs);
+            rendered = true;
+          }
+        } catch(e){}
+      }
+      if(!rendered){
+        var qrImgUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=6&data=" + encodeURIComponent(joinUrl);
+        qrBox.innerHTML = '<img src="' + qrImgUrl + '" alt="QR" style="width:100%;height:100%;object-fit:contain;border-radius:6px;background:#fff;padding:2px;">';
+      }
+    }
+    var txt = panel.querySelector('.qr-txt');
+    if(txt){ txt.innerHTML = '<b>휴대폰 QR 스캔 참여</b><br>세션: <b>' + targetRoom + '</b>'; }
+    var demo = panel.querySelector('.demo-btn');
+    if(demo) demo.style.display = 'none';
+  }
+
+  function listenTally(panel, q, opts){
+    if(currentTallyRef){ currentTallyRef.off(); }
+    currentTallyRef = db.ref('rooms/' + ROOM + '/votes/' + q);
+    
+    currentTallyRef.on('value', function(snapshot){
+      var data = snapshot.val() || {};
+      var counts = {}, total = 0;
+      
+      Object.keys(data).forEach(function(userTok){
+        var item = data[userTok];
+        if(item && item.choice){
+          counts[item.choice] = (counts[item.choice] || 0) + 1;
+          total++;
+        }
+      });
+      
+      var box = panel.querySelector('.results'), html = '';
+      opts.forEach(function(o, i){
+        var n = counts[o] || 0;
+        var pct = total ? Math.round(n / total * 100) : 0;
+        var cls = (i === opts.length - 1) ? 'red' : (i === 1 ? 'cold' : '');
+        html += '<div class="rbar"><span class="rl">' + o + '</span><span class="rtrack"><span class="rfill ' + cls + '" style="width:' + pct + '%"></span></span><span class="rv">' + pct + '% (' + n + '명)</span></div>';
+      });
+      
+      if(box) box.innerHTML = html;
+      var note = panel.querySelector('.vnote');
+      if(note){
+        note.innerHTML = '● Firebase LIVE · 참여 ' + total + '명 ' +
+          '<button onclick="downloadVoteData(\''+q+'\')" style="margin-left:12px;background:#2A323D;color:#F2B544;border:1px solid #F2B544;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;">📥 CSV 저장</button>' +
+          '<button onclick="resetSessionVotes(\''+q+'\')" style="margin-left:6px;background:#2A323D;color:#E5484D;border:1px solid #E5484D;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;">🧹 투표 리셋</button>';
+        note.style.color = '#43C6A0';
+        note.style.fontStyle = 'normal';
+      }
+    });
+  }
+
+  // 강사용 원클릭 데이터 저장 (CSV 다운로드) & 현 세션 DB 초기화 기능
+  window.downloadVoteData = function(qCode){
+    db.ref('rooms/' + ROOM + '/votes/' + (qCode || '')).once('value', function(snapshot){
+      var data = snapshot.val() || {};
+      var csv = "Timestamp,Session,Question,Choice,UserToken\n";
+      Object.keys(data).forEach(function(tok){
+        var d = data[tok];
+        var time = d.timestamp ? new Date(d.timestamp).toLocaleString('ko-KR') : '';
+        csv += '"' + time + '","' + ROOM + '","' + qCode + '","' + (d.choice||'') + '","' + tok + '"\n';
+      });
+      var blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+      var link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "투표결과_" + ROOM + "_" + qCode + "_" + Date.now() + ".csv";
+      link.click();
+    });
+  };
+
+  window.resetSessionVotes = function(qCode){
+    if(confirm("정말로 [" + ROOM + " 세션 - " + qCode + "] 질문의 투표 데이터를 초기화(리셋)하시겠습니까?")){
+      db.ref('rooms/' + ROOM + '/votes/' + qCode).remove().then(function(){
+        alert("투표 데이터가 깨끗하게 초기화되었습니다.");
+      });
+    }
+  };
+})();
+</script>
+</body>
+</html>

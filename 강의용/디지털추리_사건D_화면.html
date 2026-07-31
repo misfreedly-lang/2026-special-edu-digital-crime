@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>디지털 추리 · CASE D — 우리 반의 가해자</title>
+<!-- Firebase JS SDK (Compat Mode) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+  :root{
+    --ink:#0B0F16; --ink2:#121821; --panel:#161D28; --amber:#F2B544; --red:#E5484D;
+    --cold:#6FA8D6; --text:#EAEEF3; --muted:#8B97A4; --card:#F5F7FA; --line:#2A323D; --teal:#43C6A0;
+    --sans:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+    --mono:ui-monospace,"SF Mono","Roboto Mono",Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;background:#000}
+  body{font-family:var(--sans);color:var(--text)}
+  #stage{position:fixed;inset:0;display:flex;flex-direction:column;
+    background:radial-gradient(120% 90% at 35% 40%, #141B26 0%, var(--ink) 58%, #05080C 100%);transition:background 1s ease}
+  #stage.cold{background:radial-gradient(120% 95% at 40% 42%, #0D1722 0%, #05090F 60%, #02040A 100%)}
+  #stage.anger{background:radial-gradient(120% 92% at 40% 40%, #201118 0%, #0A0608 62%, #05080C 100%)}
+  #stage::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:48;
+    background:repeating-linear-gradient(to bottom, rgba(255,255,255,.02) 0 1px, transparent 1px 3px);mix-blend-mode:overlay;opacity:.5}
+
+  .hud{height:8.5vh;min-height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,3.4vw,46px);position:relative;z-index:20}
+  .hud-l{font-family:var(--mono);font-size:clamp(11px,1.4vw,15px);letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+  .hud-l b{color:var(--amber);font-weight:800}
+  .acttag{font-family:var(--mono);font-size:clamp(11px,1.4vw,15px);letter-spacing:.12em;color:var(--text);font-weight:700}
+  .dots{display:flex;gap:.5em;align-items:center}
+  .dot{width:.62em;height:.62em;border-radius:50%;background:#333D49;transition:.3s}
+  .dot.on{background:var(--amber);transform:scale(1.3)}
+  .br{position:absolute;width:32px;height:32px;border-color:var(--amber);opacity:.4;z-index:21}
+  .br.tl{top:12px;left:12px;border-top:2px solid;border-left:2px solid}
+  .br.tr{top:12px;right:12px;border-top:2px solid;border-right:2px solid}
+  .br.bl{bottom:12px;left:12px;border-bottom:2px solid;border-left:2px solid}
+  .br.brr{bottom:12px;right:12px;border-bottom:2px solid;border-right:2px solid}
+
+  /* stance tracker */
+  .hypbar{height:5.5vh;min-height:36px;display:flex;align-items:center;gap:.8em;padding:0 clamp(20px,3.4vw,46px);
+    z-index:18;font-size:clamp(12px,1.5vw,17px);white-space:nowrap;overflow:hidden}
+  .hypbar .hl{font-family:var(--mono);font-size:clamp(10px,1.2vw,13px);letter-spacing:.14em;color:var(--muted);text-transform:uppercase;flex:none}
+  .hyp{display:flex;align-items:center;gap:.55em;flex-wrap:nowrap;overflow:hidden}
+  .hchip{font-weight:700;padding:.18em .7em;border-radius:999px;border:1.5px solid #333D49;color:var(--muted);flex:none}
+  .hchip.past{opacity:.42;border-style:dashed}
+  .hchip.a{color:#1A1205;background:var(--amber);border-color:var(--amber)}
+  .hchip.r{color:#fff;background:var(--red);border-color:var(--red)}
+  .hchip.c{color:#0B0F16;background:var(--cold);border-color:var(--cold)}
+  .hchip.t{color:#08120E;background:var(--teal);border-color:var(--teal);box-shadow:0 0 16px rgba(67,198,160,.45)}
+  .harrow{color:#4A5562;font-weight:700}
+
+  .main{flex:1;position:relative;display:flex;align-items:stretch;gap:clamp(16px,2.6vw,40px);padding:clamp(6px,1.4vh,16px) clamp(20px,3.4vw,46px) clamp(4px,1vh,10px)}
+  .scene{flex:1.5;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .glow{position:absolute;width:58%;height:58%;border-radius:50%;filter:blur(60px);z-index:1;
+    background:radial-gradient(circle, rgba(242,181,68,.2), transparent 70%);animation:pulse 3.4s ease-in-out infinite;transition:background 1s}
+  #stage.cold .glow{background:radial-gradient(circle, rgba(111,168,214,.24), transparent 70%)}
+  #stage.anger .glow{background:radial-gradient(circle, rgba(229,72,77,.22), transparent 70%)}
+  @keyframes pulse{50%{opacity:.6;transform:scale(1.05)}}
+
+  .act{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;z-index:3}
+  .act.show{display:flex;animation:actIn .5s ease}
+  @keyframes actIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  /* ACT1 turmoil */
+  .turmoil{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:clamp(14px,2.2vh,26px)}
+  .abubs{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(8px,1.2vw,14px);max-width:min(680px,80vw)}
+  .abub{background:#241318;border:1px solid var(--red);color:#F4CFD1;font-weight:700;border-radius:14px;
+    padding:.5em .95em;font-size:clamp(14px,1.7vw,20px);opacity:0;transform:translateY(8px) rotate(var(--rot,0deg))}
+  .act.show .abub:nth-child(1){animation:pop .4s .1s both}
+  .act.show .abub:nth-child(2){animation:pop .4s .35s both}
+  .act.show .abub:nth-child(3){animation:pop .4s .6s both}
+  .act.show .abub:nth-child(4){animation:pop .4s .85s both}
+  @keyframes pop{to{opacity:1;transform:translateY(0) rotate(var(--rot,0deg))}}
+  .emptydesk{display:flex;flex-direction:column;align-items:center;gap:8px;opacity:.85}
+  .plate{background:var(--card);color:#1A2230;font-weight:800;border-radius:8px;padding:.4em .95em;font-size:clamp(14px,1.7vw,19px);text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+  .plate small{display:block;color:#6A7480;font-weight:600;font-size:.72em;margin-top:.1em}
+
+  /* ACT2 isolation */
+  .isolate{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:clamp(12px,2vh,20px)}
+  .spot{position:relative;display:flex;justify-content:center}
+  .spot::before{content:"";position:absolute;top:-6%;left:50%;transform:translateX(-50%);width:150%;height:150%;
+    background:radial-gradient(circle at 50% 40%, rgba(111,168,214,.16), transparent 62%);z-index:-1}
+  .silho2{height:clamp(150px,26vh,240px)}
+  .silho2 path{fill:#232E3C}
+  .quoteb{max-width:min(460px,78vw);background:#161D28;border:1px solid #2A323D;border-radius:16px;border-bottom-left-radius:4px;
+    padding:clamp(12px,1.7vh,17px) clamp(16px,2vw,22px);font-size:clamp(15px,1.9vw,21px);font-weight:600;color:#D4DBE3;line-height:1.4}
+
+  /* ACT3 phone */
+  .phone{position:relative;z-index:3;width:clamp(260px,25vw,360px);background:#0D141C;border:1px solid #2A323D;border-radius:28px;
+    padding:clamp(12px,1.6vh,16px);box-shadow:0 24px 64px rgba(0,0,0,.55), inset 0 0 0 4px #05080C;animation:float 4.5s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(-.5deg)}50%{transform:translateY(-8px) rotate(.5deg)}}
+  .ph-head{display:flex;align-items:center;gap:.5em;padding-bottom:.55em;border-bottom:1px solid #1E2630;margin-bottom:.7em}
+  .ph-av{width:clamp(28px,2.7vw,36px);height:clamp(28px,2.7vw,36px);border-radius:50%;flex:none;background:linear-gradient(135deg,#5a2d30,#3a2023);display:flex;align-items:center;justify-content:center;color:#F2C7C9;font-size:clamp(15px,1.7vw,19px)}
+  .ph-name{font-weight:800;font-size:clamp(15px,1.7vw,19px)}.ph-name small{display:block;color:#E58A8E;font-weight:600;font-size:.66em}
+  .ph-sub{font-size:clamp(12px,1.4vw,15px);color:var(--muted);text-align:center;margin-bottom:.6em}
+  .chat{display:flex;flex-direction:column;gap:clamp(7px,1vh,11px)}
+  .b{max-width:88%;font-size:clamp(15px,1.95vw,21px);line-height:1.36;padding:.5em .82em;border-radius:14px;
+    background:#2A1416;color:#F4CFD1;border:1px solid var(--red);align-self:flex-start;border-bottom-left-radius:4px}
+
+  /* ACT4 two desks */
+  .qmark{position:absolute;z-index:1;font-size:clamp(200px,34vw,420px);font-weight:900;color:#111C29;user-select:none;line-height:1}
+  .desks{position:relative;z-index:3;display:flex;gap:clamp(28px,5vw,72px);align-items:flex-end}
+  .desk{display:flex;flex-direction:column;align-items:center;gap:12px}
+  .desk svg{width:clamp(120px,15vw,180px);height:auto}
+  .same{position:absolute;bottom:clamp(2px,1vh,10px);z-index:3;color:var(--cold);font-family:var(--mono);letter-spacing:.2em;font-size:clamp(12px,1.5vw,16px)}
+
+  .caption{position:absolute;bottom:clamp(4px,1vh,12px);left:0;right:0;text-align:center;z-index:6;
+    font-size:clamp(14px,1.85vw,22px);font-weight:600;color:var(--text);line-height:1.4;padding:0 4%;transition:opacity .4s}
+  .caption b{color:var(--amber)} .caption .r{color:var(--red)} .caption .t{color:var(--teal)}
+
+  /* evidence rail */
+  .rail{width:clamp(290px,32vw,420px);display:flex;flex-direction:column;z-index:10;overflow-y:auto}
+  .rail-h{font-family:var(--mono);font-size:clamp(13px,1.5vw,16px);letter-spacing:.18em;color:var(--amber);text-transform:uppercase;margin-bottom:.7em;flex:none}
+  .rail-h .n{font-size:.85em;color:var(--muted)}
+  .ecard{background:var(--card);border-radius:12px;padding:clamp(12px,1.6vh,16px);margin-bottom:clamp(8px,1.2vh,12px);
+    box-shadow:0 8px 22px rgba(0,0,0,.3);opacity:0;transform:translateX(16px);transition:opacity .5s ease, transform .5s ease;flex:none}
+  .ecard.on{opacity:1;transform:none}
+  .ecard .tag{display:inline-block;background:#1A2230;color:#fff;font-size:clamp(11px,1.25vw,14px);font-weight:800;padding:.2em .6em;border-radius:6px;margin-bottom:.45em}
+  .ecard.crit .tag{background:var(--cold);color:#0B0F16}
+  .ecard .et{font-weight:800;color:#1A2230;font-size:clamp(16px,1.85vw,21px);margin-bottom:.2em}
+  .ecard .ed{color:#46505E;font-size:clamp(13.5px,1.5vw,17px);line-height:1.4}
+  .rail-empty{color:var(--muted);font-size:clamp(12px,1.4vw,15px);font-style:italic;margin-top:.6em;opacity:.7}
+
+  /* vote panel */
+  .vote{position:absolute;left:clamp(20px,3.4vw,46px);right:clamp(20px,3.4vw,46px);bottom:clamp(8px,1.6vh,18px);
+    background:var(--panel);border:1px solid var(--line);border-radius:16px;z-index:30;padding:clamp(13px,1.9vh,20px) clamp(18px,2.4vw,28px);
+    box-shadow:0 -10px 50px rgba(0,0,0,.5);display:none;grid-template-columns:1.3fr 1fr;gap:clamp(16px,2.4vw,32px);align-items:center}
+  .vote.show{display:grid;animation:slideUp .4s ease}
+  @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+  .vote .vlabel{font-family:var(--mono);font-size:clamp(10px,1.2vw,13px);letter-spacing:.18em;color:var(--amber);margin-bottom:.45em}
+  .vote .vq{font-size:clamp(16px,2vw,24px);font-weight:800;line-height:1.3;margin-bottom:.6em}
+  .vopts{display:flex;flex-wrap:wrap;gap:.5em}
+  .vopt{font-weight:800;font-size:clamp(13px,1.5vw,17px);padding:.42em 1em;border:2px solid var(--amber);color:var(--amber);border-radius:999px}
+  .vright{border-left:1px solid var(--line);padding-left:clamp(16px,2vw,28px)}
+  .qr-row{display:flex;align-items:center;gap:.9em;margin-bottom:.6em}
+  .qr{width:clamp(56px,7vw,82px);height:clamp(56px,7vw,82px);border:2px dashed #4A5562;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--mono);font-size:clamp(9px,1vw,11px);color:#6A7480;line-height:1.2}
+  .qr-txt{font-size:clamp(11px,1.3vw,14px);color:var(--muted);line-height:1.4}.qr-txt b{color:var(--text)}
+  .results{margin-top:.1em}
+  .rbar{display:flex;align-items:center;gap:.6em;margin:.28em 0;font-size:clamp(11px,1.3vw,14px)}
+  .rbar .rl{width:clamp(64px,8vw,110px);color:var(--text);font-weight:700;flex:none;text-align:right;line-height:1.2}
+  .rtrack{flex:1;height:clamp(12px,1.6vh,18px);background:#0E141C;border-radius:6px;overflow:hidden;position:relative}
+  .rfill{display:block;height:100%;width:0;background:var(--amber);border-radius:6px;transition:width .9s cubic-bezier(.2,.8,.2,1);min-width:0}
+  .rfill.red{background:var(--red)} .rfill.cold{background:var(--cold)} .rfill.teal{background:var(--teal)}
+  .rbar .rv{width:auto;min-width:6.5em;color:var(--muted);flex:none;text-align:right;font-family:var(--mono);font-size:0.9em}
+  .vnote{font-size:clamp(10px,1.15vw,12.5px);color:#6A7480;margin-top:.45em;font-style:italic}
+  .demo-btn{cursor:pointer;font-family:var(--mono);font-size:clamp(10px,1.2vw,12.5px);letter-spacing:.06em;color:var(--muted);background:rgba(14,20,28,.7);border:1px solid var(--line);padding:.4em .8em;border-radius:7px;margin-top:.45em;transition:.15s}
+  .demo-btn:hover{color:var(--amber);border-color:var(--amber)}
+
+  /* debrief */
+  .debrief{position:absolute;inset:0;z-index:36;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(18px,3.5vh,46px) 5vw;background:radial-gradient(120% 100% at 50% 40%, #131A24, #05080E 90%)}
+  .debrief.show{display:flex;animation:fadeIn .5s ease}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .reveal-tag{display:inline-flex;align-items:center;gap:.5em;background:var(--red);color:#fff;font-weight:900;font-size:clamp(16px,2.4vw,28px);padding:.45em 1.2em;border-radius:999px;margin-bottom:.8em;box-shadow:0 10px 36px rgba(229,72,77,.4)}
+  .dh{font-size:clamp(20px,3vw,34px);font-weight:900;color:var(--text);margin-bottom:.9em;line-height:1.3}
+  .dcards{display:flex;gap:clamp(12px,1.8vw,22px);flex-wrap:wrap;justify-content:center;max-width:1120px}
+  .dcard{background:var(--card);border-radius:14px;padding:clamp(14px,2vh,20px);width:clamp(225px,26vw,320px);box-shadow:0 10px 30px rgba(0,0,0,.35);text-align:left}
+  .dcard .dn{width:1.7em;height:1.7em;border-radius:50%;background:var(--amber);color:#1A1205;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:clamp(13px,1.5vw,17px);margin-bottom:.5em}
+  .dcard.hold .dn{background:var(--teal);color:#08120E}
+  .dcard .dt{font-weight:800;color:#1A2230;font-size:clamp(15px,1.7vw,20px);margin-bottom:.28em;line-height:1.3}
+  .dcard .dd{color:#46505E;font-size:clamp(13px,1.5vw,16px);line-height:1.42}
+  .dclose{margin-top:clamp(14px,2.2vh,24px);color:var(--teal);font-weight:700;font-style:italic;font-size:clamp(14px,1.8vw,20px)}
+
+  .nav{height:8.5vh;min-height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,3.4vw,46px);position:relative;z-index:40}
+  .navbtn{cursor:pointer;font-family:var(--sans);font-weight:800;font-size:clamp(13px,1.6vw,18px);padding:.5em 1.5em;border-radius:999px;border:1.5px solid var(--line);color:var(--text);background:rgba(18,24,33,.6);transition:.15s}
+  .navbtn:hover{border-color:var(--amber);color:var(--amber)}
+  .navbtn.primary{background:var(--amber);color:#1A1205;border-color:var(--amber)}
+  .navbtn:disabled{opacity:.3;cursor:default;border-color:var(--line);color:var(--muted)}
+  .steplabel{font-family:var(--mono);font-size:clamp(11px,1.3vw,14px);color:var(--muted);letter-spacing:.1em}
+
+  #cover{position:absolute;inset:0;z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1em;background:radial-gradient(120% 90% at 50% 42%,#141B26,#05080E);text-align:center;padding:0 8vw}
+  #cover .cc{font-family:var(--mono);color:var(--amber);letter-spacing:.34em;font-size:clamp(12px,1.6vw,16px)}
+  #cover h1{font-size:clamp(42px,9vw,120px);font-weight:900;letter-spacing:-.02em;line-height:1}
+  #cover .ctag{color:var(--muted);font-style:italic;font-weight:600;font-size:clamp(15px,2.6vw,28px)}
+  #cover .chint{color:#6A7480;font-family:var(--mono);font-size:clamp(11px,1.5vw,14px);letter-spacing:.05em;margin-top:.4em}
+  .startbtn{cursor:pointer;border:none;background:var(--amber);color:#1A1205;font-family:var(--sans);font-weight:800;font-size:clamp(16px,2.3vw,23px);padding:.65em 1.9em;border-radius:999px;transition:.15s;margin-top:.4em}
+  .startbtn:hover{transform:translateY(-1px);box-shadow:0 10px 30px rgba(242,181,68,.4)}
+  @media (prefers-reduced-motion: reduce){ *{animation:none!important} .phone{animation:none} }
+  @media (max-width:860px){ .rail{display:none} .vote{grid-template-columns:1fr} .vright{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:.7em} }
+</style>
+</head>
+<body>
+<div id="stage">
+  <span class="br tl"></span><span class="br tr"></span><span class="br bl"></span><span class="br brr"></span>
+
+  <div class="hud">
+    <div class="hud-l">CASE FILE D · <b>우리 반의 가해자</b></div>
+    <div class="acttag" id="acttag">1막 · 분노</div>
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <div class="hypbar">
+    <span class="hl">입장</span>
+    <div class="hyp" id="hyp"></div>
+  </div>
+
+  <div class="main">
+    <div class="scene">
+      <div class="glow"></div>
+
+      <!-- ACT 1 : turmoil -->
+      <div class="act" id="actTurmoil">
+        <div class="turmoil">
+          <div class="abubs">
+            <div class="abub" style="--rot:-2deg">누가 올린 거야?!</div>
+            <div class="abub" style="--rot:1.5deg">가해자 당장 처벌해!</div>
+            <div class="abub" style="--rot:-1deg">누구야 대체…</div>
+            <div class="abub" style="--rot:2deg">우리 반 맞아?</div>
+          </div>
+          <div class="emptydesk">
+            <div class="plate">피해 학생 · ○○<small>딥페이크 피해 · 등교 못 함</small></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACT 2 : isolation -->
+      <div class="act" id="actIsolate">
+        <div class="isolate">
+          <div class="spot">
+            <svg class="silho2" viewBox="0 0 120 160" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><path d="M60 18 a26 26 0 1 1 -.1 0 z M12 160 q0-54 48-54 t48 54 z"/></svg>
+          </div>
+          <div class="quoteb">“친구가 하랬어요. 이거 올리면… 저도 껴준다고.”</div>
+        </div>
+      </div>
+
+      <!-- ACT 3 : 민수도 협박 -->
+      <div class="act" id="actPhone">
+        <div class="phone">
+          <div class="ph-head"><div class="ph-av">!</div><div class="ph-name">‘친구’<small>● 민수에게 온 메시지</small></div></div>
+          <div class="ph-sub">— 민수의 휴대폰 —</div>
+          <div class="chat">
+            <div class="b">안 하면 너도 똑같이 만들어서 뿌린다.</div>
+            <div class="b">우리 사이 아니야? 이 정도는 해야지.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACT 4 : two desks, same classroom -->
+      <div class="act" id="actDesks">
+        <div class="qmark">?</div>
+        <div class="desks">
+          <div class="desk">
+            <div class="plate">피해 학생 · ○○</div>
+            <svg viewBox="0 0 120 92" aria-hidden="true"><rect x="10" y="30" width="100" height="8" rx="2" fill="#3A4658"/><rect x="16" y="38" width="6" height="48" fill="#2A323D"/><rect x="98" y="38" width="6" height="48" fill="#2A323D"/><rect x="48" y="54" width="34" height="6" rx="2" fill="#2A323D"/><rect x="76" y="30" width="6" height="30" fill="#2A323D"/><rect x="50" y="60" width="5" height="26" fill="#1E2630"/><rect x="76" y="60" width="5" height="26" fill="#1E2630"/></svg>
+          </div>
+          <div class="desk">
+            <div class="plate">민수</div>
+            <svg viewBox="0 0 120 92" aria-hidden="true"><rect x="10" y="30" width="100" height="8" rx="2" fill="#3A4658"/><rect x="16" y="38" width="6" height="48" fill="#2A323D"/><rect x="98" y="38" width="6" height="48" fill="#2A323D"/><rect x="48" y="54" width="34" height="6" rx="2" fill="#2A323D"/><rect x="76" y="30" width="6" height="30" fill="#2A323D"/><rect x="50" y="60" width="5" height="26" fill="#1E2630"/><rect x="76" y="60" width="5" height="26" fill="#1E2630"/></svg>
+          </div>
+        </div>
+        <div class="same">SAME CLASSROOM · 같은 교실</div>
+      </div>
+
+      <div class="caption" id="caption"></div>
+
+      <!-- debrief -->
+      <div class="debrief" id="debrief">
+        <div class="reveal-tag">▶ 피해자이면서, 가해자</div>
+        <div class="dh">‘누가 범인인가’로 끝나는 사건은 없다</div>
+        <div class="dcards">
+          <div class="dcard"><div class="dn">1</div><div class="dt">가해자도 우리 학생</div><div class="dd">민수는 몰랐고, 협박에 이용당했다. 그렇다고 피해 학생의 고통이 사라지진 않는다.</div></div>
+          <div class="dcard"><div class="dn">2</div><div class="dt">‘몰랐다’ ≠ 면죄부</div><div class="dd">선도하되, 무엇이 왜 범죄인지 장애 특성에 맞춰 분명히 가르친다.</div></div>
+          <div class="dcard hold"><div class="dn">3</div><div class="dt">분리되지 않는 현실</div><div class="dd">피해 학생 보호가 1순위. 그러나 가해도 방치하면 또 이용당한다. 둘 다 동시에 설계한다.</div></div>
+        </div>
+        <div class="dclose">탐정은 범인을 지목하지만, 교사는 두 아이를 함께 지킨다.</div>
+      </div>
+    </div>
+
+    <div class="rail">
+      <div class="rail-h">증거 보드 <span class="n" id="ecount">0 / 4</span></div>
+      <div id="railEmpty" class="rail-empty">아직 수집된 단서가 없습니다.</div>
+      <div class="ecard" data-s="1"><span class="tag">단서 #1</span><div class="et">딥페이크 피해 발생</div><div class="ed">피해 학생 등교 불가. 교실은 ‘가해자 색출’로 들끓음.</div></div>
+      <div class="ecard" data-s="3"><span class="tag">단서 #2</span><div class="et">최초 유포자 = 민수</div><div class="ed">“껴준다”는 말에 이끌림. 늘 혼자였던 아이.</div></div>
+      <div class="ecard" data-s="5"><span class="tag">단서 #3</span><div class="et">민수도 협박당함</div><div class="ed">“안 하면 너도 똑같이 만든다.” 이용당한 정황.</div></div>
+      <div class="ecard crit" data-s="7"><span class="tag">단서 #4</span><div class="et">분리 불가</div><div class="ed">피해 학생과 민수가 같은 반. 내일도 같은 교실.</div></div>
+    </div>
+
+    <!-- VOTE 1 (D1) -->
+    <div class="vote" id="vote1" data-q="D1" data-opts="1. 피해학생 보호|2. 가해학생 색출|3. 둘 다">
+      <div class="vleft">
+        <div class="vlabel">📱 익명 투표 · 개인 휴대폰</div>
+        <div class="vq">지금, 가장 먼저 해야할 일이 무엇이라고 생각하나요?</div>
+        <div class="vopts"><span class="vopt">1. 피해학생 보호</span><span class="vopt">2. 가해학생 색출</span><span class="vopt">3. 둘 다</span></div>
+      </div>
+      <div class="vright">
+        <div class="qr-row"><div class="qr"></div><div class="qr-txt"></div></div>
+        <div class="results" id="res1">
+          <div class="rbar"><span class="rl">1. 피해학생 보호</span><span class="rtrack"><span class="rfill" data-v="62"></span></span><span class="rv" data-v="62">·</span></div>
+          <div class="rbar"><span class="rl">2. 가해학생 색출</span><span class="rtrack"><span class="rfill red" data-v="30"></span></span><span class="rv" data-v="30">·</span></div>
+          <div class="rbar"><span class="rl">3. 둘 다</span><span class="rtrack"><span class="rfill teal" data-v="8"></span></span><span class="rv" data-v="8">·</span></div>
+        </div>
+        <div class="demo-btn" data-target="res1">데모 결과 보기 ▸</div>
+        <div class="vnote"></div>
+      </div>
+    </div>
+
+    <!-- VOTE 2 (D2) -->
+    <div class="vote" id="vote2" data-q="D2" data-opts="1. 엄중처벌|2. 교육적 선도">
+      <div class="vleft">
+        <div class="vlabel">📱 익명 투표 · 개인 휴대폰</div>
+        <div class="vq">민수를 어떻게 해야 할까요?</div>
+        <div class="vopts"><span class="vopt">1. 엄중처벌</span><span class="vopt">2. 교육적 선도</span></div>
+      </div>
+      <div class="vright">
+        <div class="qr-row"><div class="qr"></div><div class="qr-txt"></div></div>
+        <div class="results" id="res2">
+          <div class="rbar"><span class="rl">1. 엄중처벌</span><span class="rtrack"><span class="rfill red" data-v="44"></span></span><span class="rv" data-v="44">·</span></div>
+          <div class="rbar"><span class="rl">2. 교육적 선도</span><span class="rtrack"><span class="rfill teal" data-v="56"></span></span><span class="rv" data-v="56">·</span></div>
+        </div>
+        <div class="demo-btn" data-target="res2">데모 결과 보기 ▸</div>
+        <div class="vnote"></div>
+      </div>
+    </div>
+
+    <!-- VOTE 3 (D3) -->
+    <div class="vote" id="vote3" data-q="D3" data-opts="1. 민수도 피해자라서 처벌해선 안된다.|2. 아무리 피해자라도 가해행위는 처벌받아야 한다.">
+      <div class="vleft">
+        <div class="vlabel">📱 익명 투표 · 개인 휴대폰</div>
+        <div class="vq">민수는 가해자일까요? 피해자일까요?</div>
+        <div class="vopts"><span class="vopt" style="font-size:12px">1. 민수도 피해자라서 처벌해선 안된다.</span><span class="vopt" style="font-size:12px">2. 아무리 피해자라도 가해행위는 처벌받아야 한다.</span></div>
+      </div>
+      <div class="vright">
+        <div class="qr-row"><div class="qr"></div><div class="qr-txt"></div></div>
+        <div class="results" id="res3">
+          <div class="rbar"><span class="rl">1. 처벌 안됨</span><span class="rtrack"><span class="rfill cold" data-v="38"></span></span><span class="rv" data-v="38">·</span></div>
+          <div class="rbar"><span class="rl">2. 처벌 받아야</span><span class="rtrack"><span class="rfill red" data-v="62"></span></span><span class="rv" data-v="62">·</span></div>
+        </div>
+        <div class="demo-btn" data-target="res3">데모 결과 보기 ▸</div>
+        <div class="vnote"></div>
+      </div>
+    </div>
+
+    <!-- VOTE 4 (D4) 주관식 서술형 응답 수신 패널 -->
+    <div class="vote" id="vote4" data-q="D4" data-opts="" style="grid-template-columns:1.2fr 1fr;">
+      <div class="vleft">
+        <div class="vlabel">💬 현장 교사 주관식 익명 서술형</div>
+        <div class="vq" style="font-size:clamp(14px,1.6vw,19px);line-height:1.4;">사안이 접수되고, 다음 날 아침.<br>피해학생과 민수는 같은 교실에 있습니다.<br><span style="color:var(--amber);">선생님이라면 어떻게 하시겠습니까?</span></div>
+      </div>
+      <div class="vright" style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;">
+        <div class="qr-row" style="margin-bottom:0;"><div class="qr"></div><div class="qr-txt"></div></div>
+        <button id="openSubjBtn" style="background:linear-gradient(135deg,#F2B544,#E0A030);color:#0A0E14;font-weight:900;border:none;padding:10px 18px;border-radius:10px;font-size:14px;cursor:pointer;box-shadow:0 6px 20px rgba(242,181,68,.35);transition:all .2s ease;">
+          💬 제출된 의견 실시간 보기 (<span id="subjCount">0</span>건)
+        </button>
+        <div class="vnote"></div>
+      </div>
+    </div>
+
+    <!-- 서술형 응답 모달 팝업 -->
+    <div id="subjModal" style="position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;background:rgba(5,8,14,.88);backdrop-filter:blur(8px);padding:2vw;">
+      <div style="width:90%;max-width:960px;max-height:85vh;background:#141C26;border:2px solid #2A323D;border-radius:20px;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.8);overflow:hidden;">
+        <div style="padding:18px 24px;background:#0D141C;border-bottom:1px solid #2A323D;display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:18px;font-weight:900;color:#F2B544;display:flex;align-items:center;gap:8px;">
+            <span>💬 선생님들의 현장 대응 의견</span>
+            <span style="font-size:13px;color:#43C6A0;font-weight:700;background:rgba(67,198,160,.15);padding:2px 10px;border-radius:12px;">실시간 연동중</span>
+          </div>
+          <button id="closeSubjBtn" style="background:#2A323D;color:#FFF;border:none;padding:6px 16px;border-radius:8px;font-weight:800;cursor:pointer;">닫기 ✕</button>
+        </div>
+        <div id="subjGrid" style="flex:1;padding:24px;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:16px;">
+          <div style="color:#8B97A4;grid-column:1/-1;text-align:center;padding:40px 0;">아직 제출된 의견이 없습니다.<br>휴대폰 QR로 접속하여 의견을 남겨주세요.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="navbtn" id="prev">◂ 이전</button>
+    <div class="steplabel" id="steplabel"></div>
+    <button class="navbtn primary" id="next">다음 ▸</button>
+  </div>
+
+  <div id="cover">
+    <div class="cc">DIGITAL DETECTIVE · CASE D</div>
+    <h1>우리 반의 가해자</h1>
+    <div class="ctag">피해자와 가해자가, 같은 교실에 앉는다</div>
+    <button class="startbtn" id="startBtn">▶ 사건 열기</button>
+    <div class="chint">강사가 ‘다음’으로 진행 · 방향키 ←/→ 가능</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function(){
+  var stage=document.getElementById('stage'), MAX=8, step=0;
+  var caption=document.getElementById('caption'), acttag=document.getElementById('acttag'),
+      ecount=document.getElementById('ecount'), railEmpty=document.getElementById('railEmpty'),
+      debrief=document.getElementById('debrief'), steplabel=document.getElementById('steplabel'),
+      prevBtn=document.getElementById('prev'), nextBtn=document.getElementById('next'), hypBox=document.getElementById('hyp');
+  var ecards=Array.prototype.slice.call(document.querySelectorAll('.ecard'));
+  var vote1=document.getElementById('vote1'), vote2=document.getElementById('vote2'), vote3=document.getElementById('vote3'), vote4=document.getElementById('vote4');
+  var acts={turmoil:document.getElementById('actTurmoil'),isolate:document.getElementById('actIsolate'),phone:document.getElementById('actPhone'),desks:document.getElementById('actDesks')};
+
+  // ===== 실시간 투표 연동 설정 (사건 A·C와 동일한 값 사용) =====
+  var VOTE_URL = "https://misfreedly-lang.github.io/2026-special-edu-digital-crime/투표앱_모바일.html";
+  var urlParams = new URLSearchParams(window.location.search);
+  var ROOM     = urlParams.get('room') || window.ROOM || "CLASS_01"; // ← 사건 A·C와 같은 세션 코드
+
+  window.addEventListener('message', function(e){
+    if(e.data && e.data.type === 'CHANGE_ROOM' && e.data.room){
+      ROOM = e.data.room;
+      if(typeof syncVote === 'function') syncVote();
+    }
+  });
+  var liveQ=null, tallyTimer=null, _seq=0;
+
+  var ACT=['','1막 · 분노','1막 · 분노','2막 · 가해자','2막 · 가해자','3막 · 민수의 휴대폰','3막 · 민수의 휴대폰','4막 · 피할 수 없는 질문','디브리핑'];
+  var SCENE=['','turmoil','turmoil','isolate','isolate','phone','phone','desks',''];
+  var CAP=['',
+    '우리 반에 딥페이크 사건이 터졌습니다. 피해 학생은 등교하지 못하고, 교실은 ‘가해자가 누구냐’며 들끓습니다.',
+    '지금, <b>가장 먼저 해야할 일</b>이 무엇이라고 생각하나요?',
+    '처음 올린 사람은 — 민수였습니다. 우리 반에서 늘 혼자였던 그 아이.',
+    '민수를 — <b>어떻게</b> 해야 할까요?',
+    '그런데 민수의 휴대폰엔 — 민수도 협박받고 있었습니다.',
+    '민수는 — <b>가해자일까요? 피해자일까요?</b>',
+    '사안이 접수되고, 다음 날 아침. 피해학생과 민수는 <b>같은 교실</b>에 있습니다. 선생님이라면 어떻게 하시겠습니까?',
+    ''];
+  // 입장 트래커 (past=흐리게, r/a/c=활성, t=teal 마무리)
+  var HYP={
+    1:[['가해자를 찾아 처벌','r']], 2:[['가해자를 찾아 처벌','r']],
+    3:[['가해자 처벌','past'],['가해자도 우리 아이?','a']], 4:[['가해자 처벌','past'],['가해자도 우리 아이?','a']],
+    5:[['가해자 처벌','past'],['우리 아이?','past'],['민수도 피해자','c']], 6:[['가해자 처벌','past'],['우리 아이?','past'],['민수도 피해자','c']],
+    7:[['가해자 처벌','past'],['우리 아이?','past'],['민수도 피해자','past'],['둘 다 지켜야','t']],
+    8:[['가해자 처벌','past'],['우리 아이?','past'],['민수도 피해자','past'],['둘 다 지켜야','t']]
+  };
+
+  var dotsBox=document.getElementById('dots');
+  for(var i=0;i<5;i++){ var d=document.createElement('span'); d.className='dot'; dotsBox.appendChild(d); }
+  var dotEls=Array.prototype.slice.call(dotsBox.children);
+  function actIndex(s){ return s<=2?0 : s<=4?1 : s<=6?2 : s===7?3 : 4; }
+
+  function renderHyp(s){
+    var arr=HYP[s]||[], html='';
+    arr.forEach(function(c,i){
+      if(i) html+='<span class="harrow">→</span>';
+      html+='<span class="hchip '+c[1]+'">'+c[0]+'</span>';
+    });
+    hypBox.innerHTML=html;
+  }
+  function showScene(name){ for(var k in acts){ acts[k].classList.toggle('show', k===name); } }
+
+  function render(){
+    var cnt=0; ecards.forEach(function(c){ var on=step>=+c.dataset.s; c.classList.toggle('on',on); if(on)cnt++; });
+    ecount.textContent=cnt+' / 4'; railEmpty.style.display=cnt?'none':'block';
+    showScene(SCENE[step]||'');
+    stage.classList.remove('anger','cold');
+    if(step<=2) stage.classList.add('anger');
+    else if(step>=5) stage.classList.add('cold');
+    caption.innerHTML=CAP[step]||''; caption.style.opacity=(CAP[step])?'1':'0';
+    acttag.textContent=ACT[step]||''; renderHyp(step);
+    var ai=actIndex(step); dotEls.forEach(function(d,idx){ d.classList.toggle('on',idx===ai); });
+    vote1.classList.toggle('show', step===2);
+    vote2.classList.toggle('show', step===4);
+    vote3.classList.toggle('show', step===6);
+    if(vote4) vote4.classList.toggle('show', step===7);
+    debrief.classList.toggle('show', step===8);
+    syncVote();
+    prevBtn.disabled=step<=1; steplabel.textContent='STEP '+step+' / '+MAX;
+    nextBtn.textContent= step>=MAX? '마무리로 ▸':'다음 ▸';
+  }
+  function goNextCase(){
+    try {
+      if(window.parent && window.parent !== window){
+        window.parent.postMessage({ type: 'NEXT_CASE' }, '*');
+      } else { go(1); }
+    } catch(e){ go(1); }
+  }
+  function go(s){ step=Math.max(1,Math.min(MAX,s)); render(); }
+  document.getElementById('cover').addEventListener('click', function(){ this.style.display='none'; go(1); });
+  nextBtn.addEventListener('click', function(){ if(step>=MAX)goNextCase(); else go(step+1); });
+  prevBtn.addEventListener('click', function(){ go(step-1); });
+  document.addEventListener('keydown', function(e){
+    if(document.getElementById('cover').style.display==='none'){
+      if(e.key==='ArrowRight'||e.code==='Space'){ e.preventDefault(); if(step>=MAX)goNextCase(); else go(step+1); }
+      if(e.key==='ArrowLeft'){ e.preventDefault(); go(step-1); }
+    } else if(e.code==='Space'||e.code==='Enter'){ e.preventDefault(); document.getElementById('cover').style.display='none'; go(1); }
+  });
+  document.querySelectorAll('.demo-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var box=document.getElementById(btn.dataset.target);
+      box.querySelectorAll('.rfill').forEach(function(f){ f.style.width=f.dataset.v+'%'; });
+      box.querySelectorAll('.rv').forEach(function(v){ v.textContent=v.dataset.v+'%'; });
+      btn.style.display='none';
+    });
+  });
+
+  // ===== 파이어베이스 실시간 연동 (Firebase Realtime Database 0.1초 소켓 연동) =====
+  var firebaseConfig = {
+    databaseURL: "https://special-edu-teather-class-default-rtdb.asia-southeast1.firebasedatabase.app"
+  };
+  if(!firebase.apps.length){ firebase.initializeApp(firebaseConfig); }
+  var db = firebase.database();
+  var currentTallyRef = null;
+  var currentSubjRef = null;
+
+  function syncVote(){
+    var panel = step===2? vote1 : step===4? vote2 : step===6? vote3 : step===7? vote4 : null;
+    
+    if(liveQ && (!panel || panel.dataset.q!==liveQ.q)){
+      db.ref('rooms/' + ROOM + '/active').set({ q: liveQ.q, opts: '', open: false });
+      if(currentTallyRef){ currentTallyRef.off(); currentTallyRef = null; }
+      if(currentSubjRef){ currentSubjRef.off(); currentSubjRef = null; }
+      liveQ = null;
+    }
+    
+    if(panel && (!liveQ || liveQ.q!==panel.dataset.q)){
+      var q = panel.dataset.q, opts = panel.dataset.opts || '';
+      liveQ = { q: q };
+      db.ref('rooms/' + ROOM + '/active').set({ q: q, opts: opts, open: true });
+      setupQR(panel);
+      if(q === 'D4'){
+        listenSubjective(panel, q);
+      } else {
+        listenTally(panel, q, opts.split('|'));
+      }
+    }
+  }
+
+  function setupQR(panel){
+    var targetRoom = window.ROOM || ROOM || "CLASS_01";
+    var joinUrl = VOTE_URL ? (VOTE_URL + (VOTE_URL.indexOf('?')<0?'?':'&') + 'room=' + encodeURIComponent(targetRoom)) : '';
+    var qrBox = panel.querySelector('.qr');
+    if(qrBox && joinUrl){
+      qrBox.innerHTML = '';
+      var rendered = false;
+      if(typeof QRCode !== 'undefined'){
+        try {
+          var wrap = document.createElement('div');
+          new QRCode(wrap, {
+            text: joinUrl, width: 140, height: 140,
+            colorDark: "#000000", colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.M
+          });
+          var cvs = wrap.querySelector('canvas');
+          if(cvs){
+            cvs.style.cssText = "width:100%;height:100%;object-fit:contain;border-radius:6px;display:block;background:#fff;padding:2px;";
+            qrBox.appendChild(cvs);
+            rendered = true;
+          }
+        } catch(e){}
+      }
+      if(!rendered){
+        var qrImgUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=6&data=" + encodeURIComponent(joinUrl);
+        qrBox.innerHTML = '<img src="' + qrImgUrl + '" alt="QR" style="width:100%;height:100%;object-fit:contain;border-radius:6px;background:#fff;padding:2px;">';
+      }
+    }
+    var txt = panel.querySelector('.qr-txt');
+    if(txt){ txt.innerHTML = '<b>휴대폰 QR 스캔 참여</b><br>세션: <b>' + targetRoom + '</b>'; }
+    var demo = panel.querySelector('.demo-btn');
+    if(demo) demo.style.display = 'none';
+  }
+
+  function listenTally(panel, q, opts){
+    if(currentTallyRef){ currentTallyRef.off(); }
+    currentTallyRef = db.ref('rooms/' + ROOM + '/votes/' + q);
+    
+    currentTallyRef.on('value', function(snapshot){
+      var data = snapshot.val() || {};
+      var counts = {}, total = 0;
+      
+      Object.keys(data).forEach(function(userTok){
+        var item = data[userTok];
+        if(item && item.choice){
+          counts[item.choice] = (counts[item.choice] || 0) + 1;
+          total++;
+        }
+      });
+      
+      var box = panel.querySelector('.results'), html = '';
+      opts.forEach(function(o, i){
+        var n = counts[o] || 0;
+        var pct = total ? Math.round(n / total * 100) : 0;
+        var cls = (i === opts.length - 1) ? 'teal' : (i === 1 ? 'cold' : 'red');
+        html += '<div class="rbar"><span class="rl">' + o + '</span><span class="rtrack"><span class="rfill ' + cls + '" style="width:' + pct + '%"></span></span><span class="rv">' + pct + '% (' + n + '명)</span></div>';
+      });
+      
+      if(box) box.innerHTML = html;
+      var note = panel.querySelector('.vnote');
+      if(note){
+        note.innerHTML = '● Firebase LIVE · 참여 ' + total + '명 ' +
+          '<button onclick="downloadVoteData(\''+q+'\')" style="margin-left:12px;background:#2A323D;color:#F2B544;border:1px solid #F2B544;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;">📥 CSV 저장</button>' +
+          '<button onclick="resetSessionVotes(\''+q+'\')" style="margin-left:6px;background:#2A323D;color:#E5484D;border:1px solid #E5484D;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;">🧹 투표 리셋</button>';
+        note.style.color = '#43C6A0';
+        note.style.fontStyle = 'normal';
+      }
+    });
+  }
+
+  // Firebase Realtime Listener — 서술형(주관식 D4) 실시간 수신
+  function listenSubjective(panel, q){
+    if(currentSubjRef){ currentSubjRef.off(); }
+    currentSubjRef = db.ref('rooms/' + ROOM + '/subjective/' + q);
+
+    currentSubjRef.on('value', function(snapshot){
+      var data = snapshot.val() || {};
+      var list = [];
+      Object.keys(data).forEach(function(k){
+        if(data[k] && data[k].answer){
+          list.push(data[k]);
+        }
+      });
+      
+      var countSpan = document.getElementById('subjCount');
+      if(countSpan) countSpan.textContent = list.length;
+
+      var note = panel.querySelector('.vnote');
+      if(note){
+        note.innerHTML = '● Firebase LIVE · 제출 ' + list.length + '건 ' +
+          '<button onclick="resetSubjVotes(\''+q+'\')" style="margin-left:8px;background:#2A323D;color:#E5484D;border:1px solid #E5484D;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;">🧹 서술형 리셋</button>';
+        note.style.color = '#43C6A0';
+        note.style.fontStyle = 'normal';
+      }
+
+      var grid = document.getElementById('subjGrid');
+      if(grid){
+        if(list.length === 0){
+          grid.innerHTML = '<div style="color:#8B97A4;grid-column:1/-1;text-align:center;padding:40px 0;font-size:16px;">아직 제출된 의견이 없습니다.<br>휴대폰 QR로 접속하여 선생님의 현장 대응 의견을 제출해 주세요.</div>';
+        } else {
+          var html = '';
+          var copyArr = list.slice().reverse();
+          copyArr.forEach(function(item, idx){
+            var time = item.timestamp ? new Date(item.timestamp).toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'}) : '';
+            html += '<div style="background:#1C2633;border:1.5px solid #2A3646;border-radius:14px;padding:16px;box-shadow:0 6px 18px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:8px;">' +
+                      '<div style="font-size:12px;color:#43C6A0;font-weight:700;display:flex;justify-content:space-between;">' +
+                        '<span>익명 선생님 #' + (list.length - idx) + '</span>' +
+                        '<span style="color:#6A7480;">' + time + '</span>' +
+                      '</div>' +
+                      '<div style="font-size:15.5px;color:#EAEEF3;font-weight:600;line-height:1.45;word-break:break-all;">' + escapeHtml(item.answer) + '</div>' +
+                    '</div>';
+          });
+          grid.innerHTML = html;
+        }
+      }
+    });
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
+  }
+
+  // 서술형 모달 팝업 바인딩
+  var subjModal = document.getElementById('subjModal');
+  var openSubjBtn = document.getElementById('openSubjBtn');
+  var closeSubjBtn = document.getElementById('closeSubjBtn');
+  if(openSubjBtn){
+    openSubjBtn.addEventListener('click', function(){
+      if(subjModal) subjModal.style.display = 'flex';
+    });
+  }
+  if(closeSubjBtn){
+    closeSubjBtn.addEventListener('click', function(){
+      if(subjModal) subjModal.style.display = 'none';
+    });
+  }
+  if(subjModal){
+    subjModal.addEventListener('click', function(e){
+      if(e.target === subjModal) subjModal.style.display = 'none';
+    });
+  }
+
+  window.resetSubjVotes = function(qCode){
+    if(confirm("정말로 서술형 의견을 모두 리셋하시겠습니까?")){
+      db.ref('rooms/' + ROOM + '/subjective/' + qCode).remove().then(function(){
+        alert("서술형 응답이 리셋되었습니다.");
+      });
+    }
+  };
+
+  // 강사용 원클릭 데이터 저장 (CSV 다운로드) & 현 세션 DB 초기화 기능
+  window.downloadVoteData = function(qCode){
+    db.ref('rooms/' + ROOM + '/votes/' + (qCode || '')).once('value', function(snapshot){
+      var data = snapshot.val() || {};
+      var csv = "Timestamp,Session,Question,Choice,UserToken\n";
+      Object.keys(data).forEach(function(tok){
+        var d = data[tok];
+        var time = d.timestamp ? new Date(d.timestamp).toLocaleString('ko-KR') : '';
+        csv += '"' + time + '","' + ROOM + '","' + qCode + '","' + (d.choice||'') + '","' + tok + '"\n';
+      });
+      var blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+      var link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "투표결과_" + ROOM + "_" + qCode + "_" + Date.now() + ".csv";
+      link.click();
+    });
+  };
+
+  window.resetSessionVotes = function(qCode){
+    if(confirm("정말로 [" + ROOM + " 세션 - " + qCode + "] 질문의 투표 데이터를 초기화(리셋)하시겠습니까?")){
+      db.ref('rooms/' + ROOM + '/votes/' + qCode).remove().then(function(){
+        alert("투표 데이터가 깨끗하게 초기화되었습니다.");
+      });
+    }
+  };
+})();
+</script>
+</body>
+</html>

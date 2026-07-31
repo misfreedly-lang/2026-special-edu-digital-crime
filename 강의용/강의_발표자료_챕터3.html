@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>장애학생 디지털 성범죄 예방 - 발표자료 v3 (Chapter Ⅴ)</title>
+  <title>장애학생 디지털 성범죄 예방 - 발표자료 v3 (Chapter Ⅲ)</title>
   <!-- Google Fonts: Noto Sans KR, Inter, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,10 +23,10 @@
       --accent-gold-glow: rgba(255, 183, 51, 0.35);
       --signal-red: #FF4D4F;         /* 경고 크림슨 Red */
       --signal-red-glow: rgba(255, 77, 79, 0.4);
-      --vibrant-teal: #36CFC9;       /* 보호 Vibrant Teal (Chapter V Main Accent) */
+      --vibrant-teal: #36CFC9;       /* 보호 Vibrant Teal */
       --vibrant-teal-glow: rgba(54, 207, 201, 0.35);
       
-      --text-main: #F5F7FA;          /* 본문 오프화이트 */
+      --text-main: #F5F7FA;          /* 본문 오프화이트 (명암비 극대화) */
       --text-sub: #C4D1DF;           /* 서브 캡션 (Soft Ice Blue) */
       --text-dark: #6C7A89;
       
@@ -52,13 +52,13 @@
       align-items: center;
     }
 
-    /* 16:9 Presentation Stage Container */
+    /* 16:9 Presentation Stage Container (Venue Screen Optimized: 1920x1080) */
     #stage-container {
       position: relative;
       width: 100vw;
-      height: 56.25vw;
+      height: 56.25vw; /* 16:9 ratio */
       max-height: 100vh;
-      max-width: 177.78vh;
+      max-width: 177.78vh; /* 16:9 ratio */
       background-color: var(--bg-slate);
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
       overflow: hidden;
@@ -66,12 +66,12 @@
       flex-direction: column;
     }
 
-    /* Forensic Corner Brackets Motif (Teal accent for Ch V) */
+    /* Forensic Corner Brackets Motif */
     .corner-bracket {
       position: absolute;
       width: 24px;
       height: 24px;
-      border-color: rgba(54, 207, 201, 0.4);
+      border-color: rgba(255, 183, 51, 0.4);
       border-style: solid;
       pointer-events: none;
       z-index: 10;
@@ -108,12 +108,12 @@
     }
 
     .header-tag {
-      background: rgba(54, 207, 201, 0.15);
-      color: var(--vibrant-teal);
+      background: rgba(255, 183, 51, 0.15);
+      color: var(--accent-gold);
       padding: 3px 8px;
       border-radius: 4px;
       font-size: 0.75rem;
-      border: 1px solid rgba(54, 207, 201, 0.3);
+      border: 1px solid rgba(255, 183, 51, 0.3);
     }
 
     /* Chapter Indicator Dots */
@@ -142,12 +142,12 @@
     }
 
     .indicator-dot.active {
-      color: var(--vibrant-teal);
+      color: var(--accent-gold);
     }
 
     .indicator-dot.active .dot {
-      background-color: var(--vibrant-teal);
-      box-shadow: 0 0 10px var(--vibrant-teal);
+      background-color: var(--accent-gold);
+      box-shadow: 0 0 10px var(--accent-gold);
       transform: scale(1.3);
     }
 
@@ -253,15 +253,15 @@
     }
 
     .btn-nav:hover {
-      background: var(--vibrant-teal);
+      background: var(--accent-gold);
       color: #000;
-      border-color: var(--vibrant-teal);
+      border-color: var(--accent-gold);
     }
 
     .btn-toggle-notes {
-      background: rgba(54, 207, 201, 0.12);
-      border: 1px solid rgba(54, 207, 201, 0.35);
-      color: var(--vibrant-teal);
+      background: rgba(255, 183, 51, 0.12);
+      border: 1px solid rgba(255, 183, 51, 0.35);
+      color: var(--accent-gold);
     }
 
     /* Presenter Notes Overlay Panel */
@@ -272,7 +272,7 @@
       width: 100%;
       max-height: 180px;
       background: rgba(7, 11, 18, 0.95);
-      border-top: 2px solid var(--vibrant-teal);
+      border-top: 2px solid var(--accent-gold);
       padding: 16px 36px;
       overflow-y: auto;
       z-index: 15;
@@ -287,7 +287,7 @@
     .notes-header {
       font-size: 0.75rem;
       font-weight: 800;
-      color: var(--vibrant-teal);
+      color: var(--accent-gold);
       letter-spacing: 1px;
       margin-bottom: 6px;
       display: flex;
@@ -302,10 +302,10 @@
     }
 
     /* ==========================================
-       CHAPTER V SPECIFIC STYLES (Teal Protection Theme)
+       CHAPTER III SPECIFIC STYLES
        ========================================== */
     .slide-ch-cover {
-      background: #081018;
+      background: var(--bg-navy);
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -317,65 +317,114 @@
       font-family: var(--font-mono);
       font-size: 10rem;
       font-weight: 900;
-      color: var(--vibrant-teal);
+      color: var(--accent-gold);
       line-height: 1;
-      text-shadow: 0 0 40px var(--vibrant-teal-glow);
+      text-shadow: 0 0 40px var(--accent-gold-glow);
     }
 
-    .grid-4-teal {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      margin-top: 32px;
-    }
-
-    .card-teal {
-      background: var(--bg-card);
-      border: 1px solid rgba(54, 207, 201, 0.3);
-      border-radius: 14px;
-      padding: 24px 18px;
-      text-align: center;
-    }
-
-    .speech-bubbles-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      margin-top: 32px;
-      align-items: center;
-    }
-
-    .speech-bubble-item {
-      background: rgba(54, 207, 201, 0.1);
-      border: 2px solid var(--vibrant-teal);
-      border-radius: 40px;
-      padding: 18px 48px;
-      font-size: 2rem;
-      font-weight: 900;
-      color: var(--vibrant-teal);
-      box-shadow: 0 0 20px rgba(54, 207, 201, 0.2);
-    }
-
-    .cta-grid-4 {
+    .split-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-top: 28px;
+      gap: 28px;
+      margin-top: 24px;
     }
 
-    .cta-card {
+    .split-card {
+      border-radius: 16px;
+      padding: 36px 32px;
+      position: relative;
+    }
+
+    .split-card.muted {
       background: var(--bg-card);
-      border: 1px solid rgba(54, 207, 201, 0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .split-card.glowing {
+      background: rgba(255,183,51,0.06);
+      border: 2px solid rgba(255,183,51,0.45);
+      box-shadow: 0 0 30px rgba(255,183,51,0.12);
+    }
+
+    .split-tag {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    .split-tag.muted { background: rgba(255,255,255,0.08); color: var(--text-sub); }
+    .split-tag.glow { background: rgba(255,183,51,0.15); color: var(--accent-gold); border: 1px solid rgba(255,183,51,0.4); }
+
+    .warning-card-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 40px;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 16px;
+      padding: 40px;
+      margin-top: 24px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .progress-tracker-badge {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+      background: rgba(0,0,0,0.4);
+      padding: 4px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 183, 51, 0.3);
+    }
+
+    .warning-icon-box {
+      height: 200px;
+      border-radius: 12px;
+      background: rgba(255, 183, 51, 0.08);
+      border: 1px solid rgba(255, 183, 51, 0.2);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .timeline-dual-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    .timeline-column {
+      background: var(--bg-card);
       border-radius: 14px;
       padding: 24px;
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
     }
 
-    .cta-card b {
-      color: var(--vibrant-teal);
-      font-size: 1.15rem;
+    .timeline-column.danger {
+      border-color: rgba(255,77,79,0.5);
+      background: rgba(255,77,79,0.04);
+    }
+
+    .timeline-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.08);
+      font-size: 1.05rem;
     }
   </style>
 </head>
@@ -392,7 +441,7 @@
     <header>
       <div class="header-logo">
         <span>공주대 1정 연수 v3</span>
-        <span class="header-tag">CHAPTER Ⅴ</span>
+        <span class="header-tag">CHAPTER Ⅲ</span>
       </div>
 
       <div class="chapter-indicators">
@@ -408,7 +457,7 @@
           <div class="dot"></div>
           <span>CH.Ⅱ</span>
         </div>
-        <div class="indicator-dot" id="ind-chap3">
+        <div class="indicator-dot active" id="ind-chap3">
           <div class="dot"></div>
           <span>CH.Ⅲ</span>
         </div>
@@ -416,7 +465,7 @@
           <div class="dot"></div>
           <span>CH.Ⅳ</span>
         </div>
-        <div class="indicator-dot active" id="ind-chap5">
+        <div class="indicator-dot" id="ind-chap5">
           <div class="dot"></div>
           <span>CH.Ⅴ</span>
         </div>
@@ -426,219 +475,206 @@
     <!-- Slide Deck Viewport -->
     <div id="slide-viewport">
 
-      <!-- p55 · CHAPTER Ⅴ Cover Teal -->
-      <div class="slide slide-ch-cover active" data-chapter="chap5" data-notes="『(톤 밝게 전환) 이제 우리 아이들에게 어떻게 가르칠까에 대한 고민입니다.』">
-        <div class="roman-num">Ⅴ</div>
+      <!-- p26 · CHAPTER Ⅲ Cover -->
+      <div class="slide slide-ch-cover active" data-chapter="chap3" data-notes="『(톤 낮추고 진지하게) 이제 범죄 피해 혹은 가해자로 장애학생이 왜 더 취약할 수 밖에 없는가에 대해서 알아보려고 합니다.』">
+        <div class="roman-num">Ⅲ</div>
         <div>
-          <div style="font-family: var(--font-mono); color: var(--vibrant-teal); font-size: 1.2rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 8px;">CHAPTER Ⅴ</div>
-          <h2 class="title-large" style="margin-bottom: 0;">무엇을,<br><span class="highlight-teal">어떻게 가르칠까</span></h2>
+          <div style="font-family: var(--font-mono); color: var(--accent-gold); font-size: 1.2rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 8px;">CHAPTER Ⅲ</div>
+          <h2 class="title-large" style="margin-bottom: 0;">장애학생이 왜<br><span class="highlight-gold">더 취약한가</span></h2>
         </div>
       </div>
 
-      <!-- p56 · 4-Method Cards Teal -->
-      <div class="slide" data-chapter="chap5" data-notes="『"우리 애가 이 내용을 이해 못 할 것 같아"라며 내용을 빼지 말고 방식을 바꾸는 걸 제안합니다. 어려운 단어 대신 예시, 역할극, 쉬운 말, 소단위 제시 등 특수교육적 방법론을 적용하세요.』">
-        <h2 class="title-medium">내용을 빼지 말고, <span class="highlight-teal">전달 방식을 바꿔라</span></h2>
-        <p class="subtitle">특수교육 대상 학생의 이해 수준에 맞춘 4가지 실천적 교육 접근법</p>
-        <div class="grid-4-teal">
-          <div class="card-teal">
-            <div style="font-size: 2.5rem; margin-bottom: 12px;">🏫</div>
-            <div style="font-size: 1.2rem; font-weight: 800; color: var(--vibrant-teal); margin-bottom: 8px;">학교 예시 활용</div>
-            <p style="font-size: 0.95rem; color: var(--text-sub);">학생이 일상에서 마주치는 실제 교실·단톡방 상황으로 각색</p>
+      <!-- p27 · 개인의 결함이 아니라, 악용되는 '구조'에 초점 -->
+      <div class="slide" data-chapter="chap3" data-notes="『장애학생이 범죄 피해·가해자가 되었을 때 장애 때문이라고 속단하면 구조적 해결책을 제안하기 어렵습니다. 개인 결함이 아니라 가해자가 파고드는 4가지 구조적 빈틈에 초점을 맞추겠습니다.』">
+        <h2 class="title-medium">개인의 결함이 아니라, <span class="highlight-gold">악용되는 '구조'</span>에 초점</h2>
+        <p class="subtitle">'장애 때문' 속단 탈피 ⟶ 가해자가 파고드는 4가지 구조적 빈틈 분석</p>
+        <div class="split-grid">
+          <div class="split-card muted">
+            <div class="split-tag muted">❌ 개인 결함 프레임</div>
+            <div style="font-size: 1.6rem; font-weight: 800; color: var(--text-sub); margin-bottom: 12px;">"장애학생 특성 때문이다"</div>
+            <p style="color: var(--text-dark); line-height: 1.6;">판단력 부족, 경계심 부족 등 개인의 탓으로 돌려 낙인과 원망만 남기고 구조적 해결책을 제시하지 못함</p>
           </div>
-          <div class="card-teal">
-            <div style="font-size: 2.5rem; margin-bottom: 12px;">🎭</div>
-            <div style="font-size: 1.2rem; font-weight: 800; color: var(--vibrant-teal); margin-bottom: 8px;">역할극 중심</div>
-            <p style="font-size: 0.95rem; color: var(--text-sub);">직접 "안 돼요!", "싫어요!"를 외치는 행동 시뮬레이션</p>
-          </div>
-          <div class="card-teal">
-            <div style="font-size: 2.5rem; margin-bottom: 12px;">💬</div>
-            <div style="font-size: 1.2rem; font-weight: 800; color: var(--vibrant-teal); margin-bottom: 8px;">쉬운 말 풀이</div>
-            <p style="font-size: 0.95rem; color: var(--text-sub);">어려운 법률 용어 대신 "내 사진 캡처 금지" 등 직관적 언어 사용</p>
-          </div>
-          <div class="card-teal">
-            <div style="font-size: 2.5rem; margin-bottom: 12px;">🧩</div>
-            <div style="font-size: 1.2rem; font-weight: 800; color: var(--vibrant-teal); margin-bottom: 8px;">소단위 쪼개기</div>
-            <p style="font-size: 0.95rem; color: var(--text-sub);">한 번에 한 가지 규칙만 15분 단위로 잘라서 반복 지도</p>
+          <div class="split-card glowing">
+            <div class="split-tag glow">⭕ 취약성 구조 프레임</div>
+            <div style="font-size: 1.6rem; font-weight: 800; color: var(--accent-gold); margin-bottom: 12px;">"취약한 환경 구조가 악용된다"</div>
+            <p style="color: var(--text-main); line-height: 1.6;">사회적 고립, 경계부재, 위계순응, 일상의 의존성이라는 4가지 구조적 빈틈을 교사와 학교가 메워주어야 함</p>
           </div>
         </div>
       </div>
 
-      <!-- p57 · Speech Bubbles Teal -->
-      <div class="slide" data-chapter="chap5" data-notes="『"내 몸은 내 것", "싫으면 싫다고 해도 돼", "사진 요구엔 안 돼요"라고 말하는 걸 가르쳐야 합니다. 세월호 참사 이후 저는 안전에 관해서는 도덕적 규범이나 교사 지시보다 자기 결정을 우선하도록 이야기해 줍니다.』">
-        <h2 class="title-medium">핵심 주제 ① <span class="highlight-teal">경계와 동의 / 사진의 자기결정</span></h2>
-        <div class="speech-bubbles-grid">
-          <div class="speech-bubble-item">
-            "내 몸과 내 사진은 <span class="highlight-gold">오직 내 것</span>이에요"
+      <!-- p28 · 취약성 ① 사회적 고립과 관계 욕구 -->
+      <div class="slide" data-chapter="chap3" data-notes="『관계의 고립입니다. 또래 관계가 좁고 고립될수록 온라인의 얄팍한 호의에 목마르게 됩니다. 가해자는 외로움이라는 구조를 파고듭니다.』">
+        <h2 class="title-medium">취약성 ① <span class="highlight-gold">사회적 고립과 관계 욕구</span></h2>
+        <div class="warning-card-layout">
+          <div class="progress-tracker-badge">취약성 1 / 4</div>
+          <div class="warning-icon-box">
+            <div style="font-size: 4rem;">🤝</div>
+            <div style="font-weight: 800; color: var(--accent-gold);">관계의 빈틈</div>
           </div>
-          <div class="speech-bubble-item">
-            "불편하고 싫으면 <span class="highlight-teal">당당히 '싫어!'</span>라고 말해요"
-          </div>
-          <div class="speech-bubble-item">
-            "아무리 친해도 <span class="highlight-red">몸 사진 요구엔 '안 돼요!'</span>"
-          </div>
-        </div>
-      </div>
-
-      <!-- p58 · 2-Rule Cards Teal -->
-      <div class="slide" data-chapter="chap5" data-notes="『나를 불안하게 하는 비밀은 어른에게 말해도 되는 비밀이라고 알려주고, 모르는 사람의 까닭 없는 호의와 선물은 의심하고 경계하도록 가르쳐 주세요.』">
-        <h2 class="title-medium">핵심 주제 ② <span class="highlight-teal">좋은 비밀·나쁜 비밀 & 온라인 안전</span></h2>
-        <div class="cta-grid-4" style="margin-top: 32px;">
-          <div class="card-teal" style="text-align: left; padding: 32px;">
-            <div style="font-size: 1.4rem; font-weight: 800; color: var(--vibrant-teal); margin-bottom: 12px;">🔒 좋은 비밀 vs 나쁜 비밀</div>
-            <p style="font-size: 1.15rem; color: var(--text-main); line-height: 1.6;">
-              "나를 마음 아프게 하거나 불안하게 만드는 비밀은 <b>비밀이 아니에요.</b><br>
-              언제든 교사나 부모님에게 즉시 말해야 하는 나쁜 비밀입니다."
-            </p>
-          </div>
-          <div class="card-teal" style="text-align: left; padding: 32px;">
-            <div style="font-size: 1.4rem; font-weight: 800; color: var(--vibrant-teal); margin-bottom: 12px;">🌐 온라인 관계의 안전 수칙</div>
-            <p style="font-size: 1.15rem; color: var(--text-main); line-height: 1.6;">
-              "얼굴을 직접 본 적 없는 인터넷 아는 형/언니의 까닭 없는 호의와 선물(게임 아이템, 기프티콘)은 <b>의심하고 거절하기</b>"
+          <div>
+            <h3 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 16px;">현실 또래 관계의 고립</h3>
+            <p style="font-size: 1.3rem; color: var(--text-sub); line-height: 1.7;">
+              학교 현장에서 친구 관계가 좁고 외로움에 노출된 장애학생일수록<br>
+              온라인 공간에서 접근하는 가해자의 <b style="color: var(--accent-gold);">얄팍한 호의와 친밀함</b>에 쉽게 마음을 열고 무너집니다.
             </p>
           </div>
         </div>
       </div>
 
-      <!-- p59 · Eduable Guide Teal -->
-      <div class="slide" data-chapter="chap5" data-notes="『국립특수교육원 에듀에이블에 좋은 디지털 성인권 교육자료가 업로드되어 있습니다. 중·고 보건 단원 QR 코드를 넣어두었습니다.』">
-        <h2 class="title-medium"><span class="highlight-teal">📚 현장 즉시 활용</span> — 에듀에이블 성인권 교육자료</h2>
-        <div style="background: var(--bg-card); border: 1px solid rgba(54, 207, 201, 0.4); border-radius: 16px; padding: 36px; margin-top: 28px; display: flex; justify-content: space-between; align-items: center;">
-          <div style="max-width: 70%;">
-            <div style="font-family: var(--font-mono); color: var(--vibrant-teal); font-size: 0.9rem; font-weight: 800; margin-bottom: 8px;">NATIONAL INSTITUTE OF SPECIAL EDUCATION</div>
-            <h3 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 16px;">국립특수교육원 에듀에이블 (Eduable) 보건 단원</h3>
-            <ul style="list-style: none; font-size: 1.15rem; color: var(--text-sub); line-height: 1.8;">
-              <li>🔹 <b>중학 보건 2단원:</b> 소중한 성 인권과 디지털 에티켓</li>
-              <li>🔹 <b>고등 보건 3단원:</b> 교제 성폭력 및 디지털 성범죄 예방 맞춤 자료</li>
-            </ul>
+      <!-- p29 · 취약성 ② 동의·경계 개념의 부재 -->
+      <div class="slide" data-chapter="chap3" data-notes="『경계 교육의 부재입니다. "싫다"고 명확히 거절할 기회와 경계 설정 경험이 없어 무리한 요구 앞에서도 멈출 선을 찾지 못합니다.』">
+        <h2 class="title-medium">취약성 ② <span class="highlight-gold">동의·경계 개념의 부재</span></h2>
+        <div class="warning-card-layout">
+          <div class="progress-tracker-badge">취약성 2 / 4</div>
+          <div class="warning-icon-box">
+            <div style="font-size: 4rem;">🛑</div>
+            <div style="font-weight: 800; color: var(--accent-gold);">경계의 부재</div>
           </div>
-          <div style="background: #FFF; padding: 16px; border-radius: 12px; text-align: center; color: #000;">
-            <div style="font-size: 3.5rem;">📱</div>
-            <div style="font-weight: 800; font-size: 0.85rem;">자료 바로가기</div>
+          <div>
+            <h3 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 16px;">"싫다"고 거절해 본 경험의 결여</h3>
+            <p style="font-size: 1.3rem; color: var(--text-sub); line-height: 1.7;">
+              자신의 몸과 사진에 대해 스스로 <b style="color: var(--accent-gold);">'어디까지 허용할 것인가'</b>에 대한 경계 교육 부족으로<br>
+              가해자의 성적 침해 요구에도 거절하지 못하고 무비판적으로 수용하게 됩니다.
+            </p>
           </div>
         </div>
       </div>
 
-      <!-- p60 · Hero Headline Teal ★클로징 -->
-      <div class="slide" data-chapter="chap5" style="text-align: center; align-items: center;" data-notes="『(천천히) 오늘 수업을 통해 당부드리는 것은, 평소와 다름을 알아채는 눈, 머뭇거리지 않고 절차를 작동시키는 감각, 우리 아이 언어로 미리 가르치는 준비입니다. 발견하는 교사 한 사람이, 한 아이의 피해를 멈출 수 있습니다.』">
-        <div style="background: rgba(54, 207, 201, 0.12); border: 1px solid var(--vibrant-teal); padding: 8px 24px; border-radius: 30px; color: var(--vibrant-teal); font-weight: 800; margin-bottom: 24px;">
-          LECTURE CLOSING MESSAGE
+      <!-- p30 · 취약성 ③ 위계·위력에 대한 취약성 -->
+      <div class="slide" data-chapter="chap3" data-notes="『순응을 강요받아 온 역사입니다. 늘 지시에 따르던 아이는 권력을 쥔 가해자의 강압적 요구를 거절하지 못합니다. 순응이라는 생존 방식이 악용됩니다.』">
+        <h2 class="title-medium">취약성 ③ <span class="highlight-gold">위계·위력에 대한 취약성</span></h2>
+        <div class="warning-card-layout">
+          <div class="progress-tracker-badge">취약성 3 / 4</div>
+          <div class="warning-icon-box">
+            <div style="font-size: 4rem;">⚠️</div>
+            <div style="font-weight: 800; color: var(--signal-red);">순응의 악용</div>
+          </div>
+          <div>
+            <h3 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 16px;">늘 지시에 맞춰온 '순응'의 생존 방식</h3>
+            <p style="font-size: 1.3rem; color: var(--text-sub); line-height: 1.7;">
+              주변 어른이나 선배, 권력자에게 무조건 따라야 했던 생활 습관이 착종되어<br>
+              권력을 쥔 가해자의 강압적이거나 조종적인 요구를 <b style="color: var(--signal-red);">거절할 엄두를 내지 못합니다.</b>
+            </p>
+          </div>
         </div>
-        <h2 style="font-size: 3.4rem; font-weight: 900; line-height: 1.35; margin-bottom: 24px;">
-          발견하는 교사 한 사람이, <br>
-          <span class="highlight-teal">한 아이의 피해를 멈춘다</span>
+      </div>
+
+      <!-- p31 · 취약성 ④ 일상적 의존성 -->
+      <div class="slide" data-chapter="chap3" data-notes="『일상적 의존성입니다. 도움에 기대어야 하는 환경에서 가해자가 '도와줄 유일한 구원자'로 위장할 때 방어벽이 무너집니다.』">
+        <h2 class="title-medium">취약성 ④ <span class="highlight-gold">일상적 의존성</span></h2>
+        <div class="warning-card-layout">
+          <div class="progress-tracker-badge">취약성 4 / 4</div>
+          <div class="warning-icon-box">
+            <div style="font-size: 4rem;">🛡️</div>
+            <div style="font-weight: 800; color: var(--accent-gold);">의존의 허점</div>
+          </div>
+          <div>
+            <h3 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 16px;">도움을 주는 유일한 보호자로 위장</h3>
+            <p style="font-size: 1.3rem; color: var(--text-sub); line-height: 1.7;">
+              일상생활에서 누군가의 도움에 의존해야 하는 특성을 악용하여<br>
+              가해자가 친절한 <b style="color: var(--accent-gold);">'구원자' 또는 '조력자'</b>의 가면을 쓰고 접근할 때 방어막이 완전히 무너집니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- p32 · 피해 후 대처, 무엇이 다른가 -->
+      <div class="slide" data-chapter="chap3" data-notes="『비장애 학생은 직관적으로 범죄임을 알고 계정을 잠그고 신고합니다. 장애학생은 무슨 일이 일어났는지조차 모릅니다. 그래서 피해가 더 늦게 발견됩니다.』">
+        <h2 class="title-medium">피해 후 대처, <span class="highlight-gold">무엇이 다른가</span></h2>
+        <p class="subtitle">비장애 학생 vs 장애 학생의 피해 인지 및 신고 대응 타임라인 대조</p>
+        <div class="timeline-dual-grid">
+          <div class="timeline-column">
+            <div style="font-size: 1.2rem; font-weight: 800; color: var(--vibrant-teal); margin-bottom: 16px;">비장애 학생 (빠른 차단)</div>
+            <div class="timeline-step"><span>1️⃣</span> <b>즉시 범죄 인지</b> — "이상하다, 신고해야지"</div>
+            <div class="timeline-step"><span>2️⃣</span> <b>계정 차단 및 캡처</b> — 증거 확보 및 대화방 이탈</div>
+            <div class="timeline-step"><span>3️⃣</span> <b>부모·교사 알림</b> — 적극적인 구제 요청</div>
+            <div class="timeline-step"><span>4️⃣</span> <b>초기 단기 수사 착수</b> — 빠른 피해 최소화</div>
+          </div>
+          <div class="timeline-column danger">
+            <div style="font-size: 1.2rem; font-weight: 800; color: var(--signal-red); margin-bottom: 16px;">장애 학생 (발견 지연 ⚠️)</div>
+            <div class="timeline-step"><span>1️⃣</span> <b>심각성 미인지</b> — 칭찬이나 장난으로 오해</div>
+            <div class="timeline-step"><span>2️⃣</span> <b>휴대폰 집착 및 불안</b> — 알림에 극심한 행동 변화</div>
+            <div class="timeline-step"><span>3️⃣</span> <b>피해 진술의 한계</b> — 정황 표현에 어려움</div>
+            <div class="timeline-step"><span>4️⃣</span> <b>장기간 은밀한 누적</b> — 심각한 상태에서 뒤늦게 발견</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- p33 · 발견 가능성은 곁에 있는 우리의 관심과 도움 -->
+      <div class="slide" data-chapter="chap3" style="text-align: center; align-items: center;" data-notes="『스스로 못 지키면, 그 신호를 읽어내야 하는 것은 곁에 있는 우리의 도움 뿐입니다.』">
+        <div style="background: rgba(255, 183, 51, 0.1); border: 1px solid var(--accent-gold); padding: 8px 24px; border-radius: 30px; color: var(--accent-gold); font-weight: 800; margin-bottom: 24px;">
+          KEY LESSON FOR TEACHERS
+        </div>
+        <h2 style="font-size: 3.2rem; font-weight: 900; line-height: 1.35; margin-bottom: 24px;">
+          스스로 못 지키면 ⟶ <br>
+          <span class="highlight-gold">곁에 있는 우리의 도움만이 유일하다</span>
         </h2>
-        <p style="font-size: 1.35rem; color: var(--text-sub); max-width: 850px; line-height: 1.6;">
-          지레 포기하지 않고 학생의 미세한 신호를 읽어내어 절차를 켜는 관심,<br>
-          그 효능감으로 교실 속 우리 아이들을 지켜냅시다.
+        <p style="font-size: 1.4rem; color: var(--text-sub); max-width: 800px; line-height: 1.6;">
+          학생에게 스스로 자기 보호 책임을 묻는 것은 한계가 있습니다.<br>
+          교사가 미세한 변화와 구조 요청 신호를 읽어내는 안목을 가져야 합니다.
         </p>
       </div>
 
-      <!-- p61 · Action CTA Teal -->
-      <div class="slide" data-chapter="chap5" data-notes="『긴 1정 연수가 끝나고 학교에 가시거든 다음 질문에 대해 고민하고 실행해 봅시다.』">
-        <h2 class="title-medium">오늘, <span class="highlight-teal">무엇을 확인하시겠습니까?</span></h2>
-        <div class="cta-grid-4">
-          <div class="cta-card">
-            <div>☑️</div>
-            <div>
-              <b>1. 알아챌 사람 확인</b>
-              <p style="font-size: 0.95rem; color: var(--text-sub); margin-top: 4px;">우리 반·학교에서 '평소와 다름'을 가장 먼저 인지할 구조 확립</p>
-            </div>
+      <!-- p34 · '인식 없는 가해'의 늪 -->
+      <div class="slide" data-chapter="chap3" data-notes="『뚜렷한 인식 없이 가해자가 되기도 합니다. "재밌는 사진이니 올려보라"는 부추김에 응하거나, 친구 놀이라는 제안에 가족 사진을 딥페이크 재료로 공유하는 등 인식 없는 가해자로 빠져듭니다.』">
+        <h2 class="title-medium"><span class="highlight-red">'인식 없는 가해'</span>의 늪</h2>
+        <p class="subtitle">범죄 의도 없이 또래 부추김이나 놀이로 오인하여 공범이 되는 위험 구조</p>
+        <div class="split-grid" style="margin-top: 28px;">
+          <div class="split-card muted" style="border-color: rgba(255, 77, 79, 0.4);">
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--signal-red); margin-bottom: 12px;">⚠️ 사례 A. 부추김에 의한 유포</div>
+            <p style="font-size: 1.15rem; color: var(--text-main); line-height: 1.6;">
+              "재밌는 사진이니 톡방에 올리면 선물을 줄게"라는 또래의 부추김과 미끼에 속아 합성 사진을 무심코 단톡방에 게시
+            </p>
           </div>
-          <div class="cta-card">
-            <div>☑️</div>
-            <div>
-              <b>2. 대응 수칙 확인</b>
-              <p style="font-size: 0.95rem; color: var(--text-sub); margin-top: 4px;">피해/가해 모호 상황에서 바로 작동시킬 4-TRACK 준비</p>
-            </div>
-          </div>
-          <div class="cta-card" style="border-color: var(--vibrant-teal); background: rgba(54, 207, 201, 0.08);">
-            <div>☑️</div>
-            <div>
-              <b style="color: var(--vibrant-teal);">3. 인권지원단 보고 절차 (오늘 확인!)</b>
-              <p style="font-size: 0.95rem; color: var(--text-main); margin-top: 4px;">소속 교육청 장애학생 인권지원단 보고 담당자 및 양식 확인</p>
-            </div>
-          </div>
-          <div class="cta-card">
-            <div>☑️</div>
-            <div>
-              <b>4. 눈높이 교육 대화</b>
-              <p style="font-size: 0.95rem; color: var(--text-sub); margin-top: 4px;">학생 수준에 맞는 '동의'와 '경계' 말하기 연습 장면 설계</p>
-            </div>
+          <div class="split-card muted" style="border-color: rgba(255, 77, 79, 0.4);">
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--signal-red); margin-bottom: 12px;">⚠️ 사례 B. 사진 제공 및 공유</div>
+            <p style="font-size: 1.15rem; color: var(--text-main); line-height: 1.6;">
+              범죄 딥페이크 재료인 줄 모르고 '친구 놀이'라는 말에 가족이나 지인의 사진을 타인에게 전송하여 공범으로 전환
+            </p>
           </div>
         </div>
       </div>
 
-      <!-- p62 · Q&A · 감사합니다 & 전문 참고문헌 -->
-      <div class="slide" data-chapter="chap5" style="text-align: center; align-items: center; justify-content: center; gap: 28px; padding: 60px 80px;" data-notes="『연락처 및 전문 연구·법률 판례 참고문헌 안내입니다. Q&A는 남는 시간만큼 진행하겠습니다.』">
-        
-        <!-- Header / Closing Title -->
-        <div>
-          <h2 style="font-size: 3.2rem; font-weight: 900; line-height: 1.2; margin-bottom: 8px;">
-            Q&A · <span class="highlight-teal">감사합니다</span>
-          </h2>
-          <p style="font-size: 1.2rem; color: var(--text-sub); font-weight: 700;">
-            강사 : 최재석 (노성중학교 교사)
-          </p>
-        </div>
-
-        <!-- Academic & Legal References Box (Professional 2-Column Layout) -->
-        <div style="width: 100%; max-width: 1100px; background: rgba(13, 18, 29, 0.85); border: 1.5px solid rgba(54, 207, 201, 0.35); border-radius: 16px; padding: 24px 32px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); text-align: left;">
-          
-          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 12px; margin-bottom: 16px;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="background: rgba(54, 207, 201, 0.15); color: var(--vibrant-teal); border: 1px solid rgba(54, 207, 201, 0.4); padding: 3px 10px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 800;">REFERENCES & LEGAL PRECEDENTS</span>
-              <span style="font-size: 1.05rem; font-weight: 800; color: #FFF;">📚 강의 활용 주요 학술·판례·정책 출처</span>
-            </div>
-            <span style="font-size: 0.8rem; color: var(--text-dark); font-family: var(--font-mono);">Forensic & Educational Research</span>
+      <!-- p35 · 단죄가 아니라 '교육적 개입'이 필요 -->
+      <div class="slide" data-chapter="chap3" data-notes="『가해자를 '나쁜 놈'이라고만 보면 처벌밖에 답이 없습니다. 인식 없는 가해를 고려한다면 무엇이 왜 범죄인지 이해시키고 고통을 알려주는 교육적 개입이 필요합니다.』">
+        <h2 class="title-medium">단죄와 처벌을 넘어 ⟶ <span class="highlight-gold">교육적 개입</span></h2>
+        <div class="split-grid">
+          <div class="split-card muted">
+            <div class="split-tag muted">❌ 단순 낙인과 처벌</div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-sub); margin-bottom: 12px;">"나쁜 아이이니 처벌하자"</div>
+            <p style="color: var(--text-dark); line-height: 1.6;">왜 잘못되었는지 깨닫지 못한 채 처벌만 받을 경우, 또 다른 범죄 표적이 되거나 재발 위험성이 높음</p>
           </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-            
-            <!-- Col 1: Legal Precedents & Statutes -->
-            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 183, 51, 0.2); border-radius: 12px; padding: 16px 20px;">
-              <div style="color: var(--accent-gold); font-size: 0.9rem; font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
-                <span>⚖️</span> <span>관련 법령 및 주요 대법원 판례</span>
-              </div>
-              <ul style="list-style: none; font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; display: flex; flex-direction: column; gap: 8px;">
-                <li style="display: flex; gap: 6px; align-items: flex-start;">
-                  <span style="color: var(--accent-gold);">▪</span>
-                  <span><b>성폭력처벌법:</b> 법률 제20459호 (2024.10.16 개정 공포·시행)</span>
-                </li>
-                <li style="display: flex; gap: 6px; align-items: flex-start;">
-                  <span style="color: var(--accent-gold);">▪</span>
-                  <span><b>대법원 2021도11753:</b> 문형욱(갓갓) n번방 사건 확정 판결</span>
-                </li>
-                <li style="display: flex; gap: 6px; align-items: flex-start;">
-                  <span style="color: var(--accent-gold);">▪</span>
-                  <span><b>대법원 2021도7444 / 2025도10105:</b> 조주빈(박사) 성착취 및 미성년자 대상 성범죄 (총 47년 4개월 확정)</span>
-                </li>
-              </ul>
-            </div>
-
-            <!-- Col 2: Policy Releases & Academic Research -->
-            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(54, 207, 201, 0.2); border-radius: 12px; padding: 16px 20px;">
-              <div style="color: var(--vibrant-teal); font-size: 0.9rem; font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
-                <span>📑</span> <span>정부 정책 자료 및 최신 학술 논문</span>
-              </div>
-              <ul style="list-style: none; font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; display: flex; flex-direction: column; gap: 8px;">
-                <li style="display: flex; gap: 6px; align-items: flex-start;">
-                  <span style="color: var(--vibrant-teal);">▪</span>
-                  <span><b>교육부 보도자료:</b> 「학교 딥페이크 성범죄 피해 점검 및 대책」(2024.08)</span>
-                </li>
-                <li style="display: flex; gap: 6px; align-items: flex-start;">
-                  <span style="color: var(--vibrant-teal);">▪</span>
-                  <span><b>전교조 실태조사:</b> 「학교 딥페이크 실태조사 및 긴급 요구 발표」(2024.08)</span>
-                </li>
-                <li style="display: flex; gap: 6px; align-items: flex-start;">
-                  <span style="color: var(--vibrant-teal);">▪</span>
-                  <span><b>학술논문 (입법학연구):</b> 이경열 외, 「청소년 딥페이크 성범죄의 특성과 대응 방안」(2025)</span>
-                </li>
-              </ul>
-            </div>
-
+          <div class="split-card glowing">
+            <div class="split-tag glow">⭕ 이해와 선도 중심 교육</div>
+            <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent-gold); margin-bottom: 12px;">"무엇이 왜 범죄인지 알려주자"</div>
+            <p style="color: var(--text-main); line-height: 1.6;">상대방이 겪는 고통을 이해시키고, 디지털 경계와 올바른 행동 방식을 가르치는 교육적 접근 병행</p>
           </div>
         </div>
+      </div>
 
+      <!-- p36 · 피해와 가해가 한 사람 안에 겹친다 -->
+      <div class="slide" data-chapter="chap3" data-notes="『피해자였다가 가해자로 변하는 경우도 있습니다. 약점 잡힌 피해자였다가 "사진 유포를 막으려면 다른 친구 신상이나 사진을 가져오라"는 협박에 굴복해 겹지인방 가해자로 전환되기도 합니다.』">
+        <h2 class="title-medium">피해와 가해가 <span class="highlight-red">한 사람 안에 겹친다</span></h2>
+        <p class="subtitle">협박에 굴복하여 피해자에서 가해자로 전환되는 복합적 구조</p>
+        <div style="background: var(--bg-card); border: 1px solid var(--bg-card-border); border-radius: 16px; padding: 36px; margin-top: 24px; display: flex; align-items: center; justify-content: space-around;">
+          <div style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 8px;">🛡️</div>
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--accent-gold);">1. 약점 잡힌 피해자</div>
+            <div style="font-size: 0.95rem; color: var(--text-sub); margin-top: 6px;">음란사진 요구에 응함</div>
+          </div>
+          <div style="font-size: 2.5rem; color: var(--signal-red);">⟶</div>
+          <div style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 8px;">💥</div>
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--signal-red);">2. 추가 유포 협박</div>
+            <div style="font-size: 0.95rem; color: var(--text-sub); margin-top: 6px;">"다른 친구 사진 가져와"</div>
+          </div>
+          <div style="font-size: 2.5rem; color: var(--signal-red);">⟶</div>
+          <div style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 8px;">⚠️</div>
+            <div style="font-size: 1.3rem; font-weight: 800; color: var(--signal-red);">3. 가해자로 전환</div>
+            <div style="font-size: 0.95rem; color: var(--text-sub); margin-top: 6px;">'겹지인방' 공범 복제</div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -656,7 +692,7 @@
     <!-- Navigation Footer Controls -->
     <footer>
       <div class="slide-counter">
-        SLIDE <span id="current-slide-num" class="highlight-teal">01</span> / 08
+        SLIDE <span id="current-slide-num" class="highlight-gold">01</span> / 11
       </div>
 
       <div class="nav-controls">
@@ -702,7 +738,7 @@
     const isInsideIframe = (window !== window.top);
 
     // BroadcastChannel for Dual Screen Sync — ONLY for the main top-level window
-    const channel = isInsideIframe ? null : new BroadcastChannel('presentation_sync_ch5');
+    const channel = isInsideIframe ? null : new BroadcastChannel('presentation_sync_ch3');
 
     function updateSlide(index, fromSync = false) {
       if (index < 0) index = 0;
@@ -843,7 +879,7 @@
 
     function openPresenterView() {
       const windowFeatures = 'width=1400,height=850,menubar=no,toolbar=no,location=no,status=no';
-      presenterWindow = window.open('', 'PresenterViewWindow_CH5', windowFeatures);
+      presenterWindow = window.open('', 'PresenterViewWindow_CH3', windowFeatures);
 
       if (presenterWindow) {
         presenterWindow.document.write(`
@@ -851,13 +887,13 @@
           <html lang="ko">
           <head>
             <meta charset="UTF-8">
-            <title>강사 발표자 모드 v3 (CHAPTER Ⅴ)</title>
+            <title>강사 발표자 모드 v3 (CHAPTER Ⅲ)</title>
             <style>
               * { box-sizing: border-box; margin: 0; padding: 0; }
               body { background: #070A10; color: #EAEEF3; font-family: 'Noto Sans KR', -apple-system, sans-serif; padding: 14px; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
               
-              .pv-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #36CFC9; padding-bottom: 8px; margin-bottom: 10px; }
-              .pv-title { font-size: 1.1rem; font-weight: 800; color: #36CFC9; display: flex; align-items: center; gap: 8px; }
+              .pv-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #FFB733; padding-bottom: 8px; margin-bottom: 10px; }
+              .pv-title { font-size: 1.1rem; font-weight: 800; color: #FFB733; display: flex; align-items: center; gap: 8px; }
               .pv-timer { font-family: monospace; font-size: 1.3rem; color: #36CFC9; font-weight: bold; background: rgba(54,207,201,0.1); padding: 4px 12px; border-radius: 6px; border: 1px solid rgba(54,207,201,0.3); }
 
               /* 50:50 Layout Split */
@@ -866,25 +902,25 @@
               /* Left Column (50%): Previews (Top Large Current, Bottom Next) */
               .pv-left-col { display: flex; flex-direction: column; gap: 10px; height: 100%; overflow: hidden; }
               
-              .preview-card { background: #121824; border: 1px solid rgba(54,207,201,0.3); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; overflow: hidden; }
-              .preview-card-header { font-size: 0.8rem; font-weight: 800; color: #36CFC9; margin-bottom: 6px; display: flex; justify-content: space-between; }
+              .preview-card { background: #121824; border: 1px solid rgba(255,183,51,0.3); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; overflow: hidden; }
+              .preview-card-header { font-size: 0.8rem; font-weight: 800; color: #FFB733; margin-bottom: 6px; display: flex; justify-content: space-between; }
               
               .iframe-wrap { flex: 1; background: #0D121D; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); overflow: hidden; position: relative; width: 100%; height: 100%; }
               .iframe-wrap iframe { width: 100%; height: 100%; border: none; }
 
               /* Right Column (50%): Large Script Editor */
-              .pv-right-col { background: #121824; border: 1px solid rgba(54,207,201,0.3); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; height: 100%; }
+              .pv-right-col { background: #121824; border: 1px solid rgba(255,183,51,0.3); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; height: 100%; }
               .script-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-              .script-title { font-size: 0.95rem; font-weight: 800; color: #36CFC9; }
+              .script-title { font-size: 0.95rem; font-weight: 800; color: #FFB733; }
               
-              .script-editor { flex: 1; background: #080C14; color: #FFF; border: 1px solid rgba(54,207,201,0.4); border-radius: 8px; padding: 16px; font-size: 1.3rem; line-height: 1.8; font-family: inherit; resize: none; outline: none; }
-              .script-editor:focus { border-color: #36CFC9; box-shadow: 0 0 12px rgba(54,207,201,0.4); }
+              .script-editor { flex: 1; background: #080C14; color: #FFF; border: 1px solid rgba(255,183,51,0.4); border-radius: 8px; padding: 16px; font-size: 1.3rem; line-height: 1.8; font-family: inherit; resize: none; outline: none; }
+              .script-editor:focus { border-color: #FFB733; box-shadow: 0 0 12px rgba(255,183,51,0.4); }
 
               /* Bottom Controls Bar */
               .pv-footer { margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
               .pv-btn-group { display: flex; gap: 10px; }
-              .btn-pv { background: #36CFC9; color: #000; border: none; padding: 10px 24px; font-size: 1.05rem; font-weight: 800; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
-              .btn-pv:hover { background: #5CDBD3; transform: translateY(-2px); }
+              .btn-pv { background: #FFB733; color: #000; border: none; padding: 10px 24px; font-size: 1.05rem; font-weight: 800; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
+              .btn-pv:hover { background: #FFC857; transform: translateY(-2px); }
               .btn-pv-sub { background: rgba(255,255,255,0.1); color: #FFF; border: 1px solid rgba(255,255,255,0.2); }
               .btn-pv-sub:hover { background: rgba(255,255,255,0.2); }
             </style>
@@ -892,7 +928,7 @@
           <body>
             <div class="pv-header">
               <div class="pv-title">
-                <span>🎙️ 강사 발표자 모드 v3 (CHAPTER Ⅴ)</span>
+                <span>🎙️ 강사 발표자 모드 v3 (CHAPTER Ⅲ)</span>
                 <span style="font-size: 0.8rem; color: #C4D1DF; font-weight: normal;">| 16:9 실물 Iframe 0초 실시간 동기화 중</span>
               </div>
               <div class="pv-timer" id="pv-clock">⏱ 진행시간: 00:00</div>
@@ -905,10 +941,10 @@
                 <div class="preview-card" style="height: 65%;">
                   <div class="preview-card-header">
                     <span>📺 현재 송출 화면 (대형 실물 16:9)</span>
-                    <span style="color: #36CFC9;">SLIDE <span id="pv-slide-curr">01</span> / <span id="pv-slide-total">08</span></span>
+                    <span style="color: #36CFC9;">SLIDE <span id="pv-slide-curr">01</span> / <span id="pv-slide-total">11</span></span>
                   </div>
                   <div class="iframe-wrap">
-                    <iframe id="pv-iframe-curr" src="강의_발표자료_챕터5.html"></iframe>
+                    <iframe id="pv-iframe-curr" src="강의_발표자료_챕터3.html"></iframe>
                   </div>
                 </div>
 
@@ -918,7 +954,7 @@
                     <span id="pv-next-title">🔮 NEXT (다음 슬라이드)</span>
                   </div>
                   <div class="iframe-wrap">
-                    <iframe id="pv-iframe-next" src="강의_발표자료_챕터5.html" style="opacity: 0.85;"></iframe>
+                    <iframe id="pv-iframe-next" src="강의_발표자료_챕터3.html" style="opacity: 0.85;"></iframe>
                   </div>
                 </div>
               </div>
@@ -993,7 +1029,7 @@
 
     // Load saved script notes from localStorage if available
     slides.forEach((s, i) => {
-      const savedNotes = localStorage.getItem(`script_notes_ch5_slide_${i}`);
+      const savedNotes = localStorage.getItem(`script_notes_ch3_slide_${i}`);
       if (savedNotes !== null) {
         s.setAttribute('data-notes', savedNotes);
       }
@@ -1005,7 +1041,7 @@
         slides[currentIndex].setAttribute('data-notes', newNotes);
         notesContent.textContent = newNotes;
         // Save to Browser's LocalStorage permanently
-        localStorage.setItem(`script_notes_ch5_slide_${currentIndex}`, newNotes);
+        localStorage.setItem(`script_notes_ch3_slide_${currentIndex}`, newNotes);
       }
     }
 
