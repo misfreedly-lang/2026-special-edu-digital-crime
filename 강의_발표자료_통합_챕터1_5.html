@@ -8,6 +8,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
   
+  <!-- Firebase JS SDK (Compat Mode) for Realtime Remote Sync -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  
   <style>
     :root {
 --bg-slate: #0D121D;          /* 주 배경 (딥 슬레이트 네이비) */
@@ -2347,6 +2351,32 @@ display: flex;
     const isPreviewMode = (urlParams.get('mode') === 'preview');
 
     const channel = window.BroadcastChannel ? new BroadcastChannel('presentation_sync_merged_1_5') : null;
+
+    // Firebase Realtime Cross-Device Remote Control Sync (Phone ↔ PC)
+    var syncDb = null;
+    var slideSyncRef = null;
+    try {
+      if (typeof firebase !== 'undefined') {
+        if (!firebase.apps.length) {
+          firebase.initializeApp({
+            databaseURL: "https://special-edu-teather-class-default-rtdb.asia-southeast1.firebasedatabase.app"
+          });
+        }
+        syncDb = firebase.database();
+        slideSyncRef = syncDb.ref('lecture_presentation_sync/currentSlideIndex');
+
+        slideSyncRef.on('value', function(snapshot) {
+          var data = snapshot.val();
+          if (data && typeof data.index === 'number') {
+            if (data.index !== currentIndex) {
+              updateSlide(data.index, true);
+            }
+          }
+        });
+      }
+    } catch (err) {
+      console.warn("Firebase sync init info:", err);
+    }
 
     // Restore saved notes from localStorage
     slides.forEach(function(s, i) {
