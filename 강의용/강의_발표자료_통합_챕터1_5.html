@@ -1086,7 +1086,7 @@ display: flex;
 
     <div id="slide-viewport">
 <!-- p1: Cover [T1: Hero Headline] -->
-      <div class="slide slide-p1 active" data-chapter="part1" data-notes="『안녕하십니까. 충남 논산시 소재의, 노성중 교사 최재석입니다. 오늘이 1정 연수 마지막주차라고 들었는데 얼마나 선생님들이 지친 상태일지 강사인 제가 걱정이 됩니다. 힘들었다고 대답하시더라구요. 제가 덜 힘들게 해드릴 순 없고, 편안하게 들으실 수 있게, 그리고 한가지라도 유익한 정보를 남길 수 있도록 최선에 다해보겠습니다.』">
+      <div class="slide slide-p1 active" data-chapter="part1" data-notes="『안녕하십니까. 충남 논산시 소재의, 노성중 교사 최재석입니다. 오늘이 1정 연수 마지막주차라고 들었는데 얼마나 선생님들이 지친 상태일지 강사인 제가 걱정이 됩니다. 같이 근무하는 보건 선생님이 작년에 1정을 받았는데, 연수 어땠어요 물어보니 힘들었다고 대답하시더라구요. 제가 덜 힘들게 해드릴 순 없고, 편안하게 들으실 수 있게, 그리고 한가지라도 유익한 정보를 남길 수 있도록 최선에 다해보겠습니다.』">
         <div class="p1-badge">1급 정교사 자격연수 · 특수교사 대상</div>
         <h1 class="p1-title">
           <span class="highlight-gold">더 쉽게</span> 당하고,<br>
@@ -2549,12 +2549,12 @@ display: flex;
       pvHtml += '.tb-btn{background:rgba(255,255,255,0.08);color:#E6EDF3;border:1px solid rgba(255,255,255,0.2);padding:4px 8px;border-radius:4px;font-size:0.82rem;font-weight:bold;cursor:pointer;transition:all 0.15s ease}.tb-btn:hover{background:rgba(255,255,255,0.2);transform:scale(1.05)}.script-editor{flex:1;background:#080C14;color:#FFF;border:1px solid rgba(255,183,51,0.4);border-radius:0 0 8px 8px;padding:16px;font-size:1.3rem;line-height:1.8;font-family:inherit;overflow-y:auto;outline:none}.script-editor:focus{border-color:#FFB733;box-shadow:0 0 12px rgba(255,183,51,0.4)}';
       pvHtml += '.pv-footer{margin-top:10px;display:flex;justify-content:space-between;align-items:center}.pv-btn-group{display:flex;gap:10px}.btn-pv{background:#FFB733;color:#000;border:none;padding:10px 24px;font-size:1.05rem;font-weight:800;border-radius:6px;cursor:pointer}.btn-pv:hover{background:#FFC857}.btn-pv-sub{background:rgba(255,255,255,0.1);color:#FFF;border:1px solid rgba(255,255,255,0.2)}.btn-pv-sub:hover{background:rgba(255,255,255,0.2)}';
       pvHtml += '</style></head><body>';
-      pvHtml += '<div class="pv-header"><div class="pv-title"><span>🎙️ 강사 발표자 모드 v3</span></div><div class="pv-timer" id="pv-clock">⏱ 00:00</div></div>';
+      pvHtml += '<div class="pv-header"><div class="pv-title"><span>🎙️ 강사 발표자 모드 v3</span><button class="tb-btn" style="background:#FFB733;color:#000;padding:5px 12px;margin-left:12px;cursor:pointer;" onclick="window.opener.exportNotesToHTML()">💾 HTML 내장 저장</button></div><div class="pv-timer" id="pv-clock">⏱ 00:00</div></div>';
       pvHtml += '<div class="pv-main-grid"><div class="pv-left-col">';
       pvHtml += '<div class="preview-card" style="height:65%"><div class="preview-card-header"><span>📺 현재 송출 화면</span><span style="color:#36CFC9">SLIDE <span id="pv-slide-curr">01</span> / <span id="pv-slide-total">' + totalSlides + '</span></span></div><div class="iframe-wrap"><iframe id="pv-iframe-curr" src="강의_발표자료_통합_챕터1_5.html?mode=preview"></iframe></div></div>';
       pvHtml += '<div class="preview-card" style="height:35%"><div class="preview-card-header"><span id="pv-next-title">🔮 NEXT</span></div><div class="iframe-wrap"><iframe id="pv-iframe-next" src="강의_발표자료_통합_챕터1_5.html?mode=preview" style="opacity:0.85"></iframe></div></div>';
       pvHtml += '</div>';
-      pvHtml += '<div class="pv-right-col"><div class="script-header"><div class="script-title">🎙️ 강사 스크립트 (서식 편집 & 실시간 자동저장 💾)</div><span style="font-size:0.75rem;color:#36CFC9;font-weight:bold">* 글자크기/색상 영구 보존</span></div><div class="script-toolbar" style="display:flex;gap:6px;background:#0D121D;border:1px solid rgba(255,183,51,0.4);border-bottom:none;border-radius:8px 8px 0 0;padding:6px 10px;align-items:center;flex-wrap:wrap;"><button class="tb-btn" onclick="formatDoc(\'fontSize\', \'3\')" title="글자 보통">A</button><button class="tb-btn" onclick="formatDoc(\'fontSize\', \'5\')" title="글자 크게">A+</button><button class="tb-btn" onclick="formatDoc(\'fontSize\', \'6\')" title="글자 특대">A++</button><div style="width:1px;height:16px;background:rgba(255,255,255,0.2);margin:0 2px;"></div><button class="tb-btn" onclick="formatDoc(\'bold\')" title="굵게 (Ctrl+B)"><b>B</b></button><button class="tb-btn" onclick="formatDoc(\'italic\')" title="기울임 (Ctrl+I)"><i>I</i></button><div style="width:1px;height:16px;background:rgba(255,255,255,0.2);margin:0 2px;"></div><button class="tb-btn" onclick="formatDoc(\'foreColor\', \'#FFFFFF\')" style="color:#FFF;background:rgba(255,255,255,0.15);" title="기본 흰색">⚪</button><button class="tb-btn" onclick="formatDoc(\'foreColor\', \'#FF4D4F\')" style="color:#FF4D4F;background:rgba(255,77,79,0.15);" title="빨간색 강조">🔴 빨강</button><button class="tb-btn" onclick="formatDoc(\'foreColor\', \'#36CFC9\')" style="color:#36CFC9;background:rgba(54,207,201,0.15);" title="파란색 강조">🔵 파랑</button><button class="tb-btn" onclick="formatDoc(\'foreColor\', \'#FFB733\')" style="color:#FFB733;background:rgba(255,183,51,0.15);" title="노란색 강조">🟡 노랑</button><div style="width:1px;height:16px;background:rgba(255,255,255,0.2);margin:0 2px;"></div><button class="tb-btn" onclick="formatDoc(\'removeFormat\')" title="서식 지우기">🧹 지우기</button></div><div class="script-editor" id="pv-script-edit" contenteditable="true" placeholder="스크립트를 입력하세요..."></div></div>';
+      pvHtml += '<div class="pv-right-col"><div class="script-header"><div class="script-title">🎙️ 강사 스크립트 (서식 편집 & 실시간 자동저장 💾)</div><button class="tb-btn" style="background:#FFB733;color:#000;font-size:0.75rem;" onclick="window.opener.exportNotesToHTML()">💾 스크립트 HTML에 박아서 다운로드</button></div><div class="script-toolbar" style="display:flex;gap:6px;background:#0D121D;border:1px solid rgba(255,183,51,0.4);border-bottom:none;border-radius:8px 8px 0 0;padding:6px 10px;align-items:center;flex-wrap:wrap;"><button class="tb-btn" onclick="formatDoc(\'fontSize\', \'3\')" title="글자 보통">A</button><button class="tb-btn" onclick="formatDoc(\'fontSize\', \'5\')" title="글자 크게">A+</button><button class="tb-btn" onclick="formatDoc(\'fontSize\', \'6\')" title="글자 특대">A++</button><div style="width:1px;height:16px;background:rgba(255,255,255,0.2);margin:0 2px;"></div><button class="tb-btn" onclick="formatDoc(\'bold\')" title="굵게 (Ctrl+B)"><b>B</b></button><button class="tb-btn" onclick="formatDoc(\'italic\')" title="기울임 (Ctrl+I)"><i>I</i></button><div style="width:1px;height:16px;background:rgba(255,255,255,0.2);margin:0 2px;"></div><button class="tb-btn" onclick="formatDoc(\'foreColor\', \'#FFFFFF\')" style="color:#FFF;background:rgba(255,255,255,0.15);" title="기본 흰색">⚪</button><button class="tb-btn" onclick="formatDoc(\'foreColor\', \'#FF4D4F\')" style="color:#FF4D4F;background:rgba(255,77,79,0.15);" title="빨간색 강조">🔴 빨강</button><button class="tb-btn" onclick="formatDoc(\'foreColor\', \'#36CFC9\')" style="color:#36CFC9;background:rgba(54,207,201,0.15);" title="파란색 강조">🔵 파랑</button><button class="tb-btn" onclick="formatDoc(\'foreColor\', \'#FFB733\')" style="color:#FFB733;background:rgba(255,183,51,0.15);" title="노란색 강조">🟡 노랑</button><div style="width:1px;height:16px;background:rgba(255,255,255,0.2);margin:0 2px;"></div><button class="tb-btn" onclick="formatDoc(\'removeFormat\')" title="서식 지우기">🧹 지우기</button></div><div class="script-editor" id="pv-script-edit" contenteditable="true" placeholder="스크립트를 입력하세요..."></div></div>';
       pvHtml += '</div>';
       pvHtml += '<div class="pv-footer"><div style="font-size:0.85rem;color:#C4D1DF">키보드 ◀ ▶ 또는 Space로 발표 제어</div><div class="pv-btn-group"><button class="btn-pv btn-pv-sub" onclick="window.opener.prevSlide()">◀ 이전</button><button class="btn-pv" onclick="window.opener.nextSlide()">다음 ▶</button></div></div>';
       pvHtml += '<scr' + 'ipt>';
@@ -2569,6 +2569,25 @@ display: flex;
       var in2 = presenterWindow.document.getElementById('pv-iframe-next');
       if (ic) ic.onload = function(){ syncPresenterView(); };
       if (in2) in2.onload = function(){ syncPresenterView(); };
+    }
+
+    function exportNotesToHTML() {
+      for (var i = 0; i < slides.length; i++) {
+        var savedNotes = localStorage.getItem('script_notes_merged_1_5_slide_' + i);
+        if (savedNotes !== null && savedNotes.trim() !== '') {
+          slides[i].setAttribute('data-notes', savedNotes);
+        }
+      }
+      var docHTML = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+      var blob = new Blob([docHTML], { type: 'text/html;charset=utf-8' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = '강의_발표자료_통합_챕터1_5.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+      alert('✅ 로컬스토리지의 최신 강사 스크립트가 HTML 소스코드에 완전히 박혔습니다!\n\n다운로드된 [강의_발표자료_통합_챕터1_5.html] 파일을 USB로 옮기시거나 덮어씌우면 어느 PC에서든 스크립트가 동일하게 로드됩니다.');
     }
 
     function updateCurrentScriptNotes(newNotes) {
